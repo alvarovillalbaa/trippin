@@ -34,13 +34,13 @@ function readCity(value:unknown):CityResult|null{
 }
 
 /** Public Open-Meteo/GeoNames search is for non-commercial use; see docs/integrations.md. */
-export default function NewTripForm({onCreate}:{onCreate:(trip:Trip)=>void}){
+export default function NewTripForm({onCreate,initialCity}:{onCreate:(trip:Trip)=>void;initialCity?:string}){
   const id=useId();
   const [dates]=useState(upcomingWeekend);
-  const [destinationId,setDestinationId]=useState(destinations[0].id);
+  const [destinationId,setDestinationId]=useState(destinations.find(d=>d.city===initialCity)?.id||destinations[0].id);
   const [startDate,setStartDate]=useState(dates.start);
   const [endDate,setEndDate]=useState(dates.end);
-  const [budget,setBudget]=useState(String(destinations[0].suggestedBudget));
+  const [budget,setBudget]=useState(String((destinations.find(d=>d.city===initialCity)||destinations[0]).suggestedBudget));
   const [query,setQuery]=useState('');
   const [results,setResults]=useState<CityResult[]>([]);
   const [selectedCity,setSelectedCity]=useState<CityResult|null>(null);
@@ -52,7 +52,7 @@ export default function NewTripForm({onCreate}:{onCreate:(trip:Trip)=>void}){
   const custom=destinationId==='custom';
   const dayCount=useMemo(()=>{try{return getTripDays(startDate,endDate).length}catch{return null}},[startDate,endDate]);
 
-  useEffect(()=>()=>request.current?.abort(),[]);
+  useEffect(()=>()=>{request.current?.abort();request.current=null},[]);
 
   const resetSearch=()=>{
     request.current?.abort();request.current=null;
@@ -109,7 +109,7 @@ export default function NewTripForm({onCreate}:{onCreate:(trip:Trip)=>void}){
   return <form onSubmit={submit} className="dialog-form">
     <p>A weekend escape or a few days to follow your curiosity.</p>
     {error&&<div role="alert" className="form-error">{error}</div>}
-    <label>Where to?<select value={destinationId} onChange={event=>{resetSearch();setError('');setDestinationId(event.target.value)}}>
+    <label>Where to?<select value={destinationId} onChange={event=>{resetSearch();setError('');setDestinationId(event.target.value);setBudget(String(destinations.find(d=>d.id===event.target.value)?.suggestedBudget||900))}}>
       {destinations.map(place=><option key={place.id} value={place.id}>{place.city}, {place.country}</option>)}
       <option value="custom">Somewhere else</option>
     </select></label>
@@ -140,7 +140,7 @@ export default function NewTripForm({onCreate}:{onCreate:(trip:Trip)=>void}){
       <label>Last day<input type="date" value={endDate} min={startDate||undefined} onChange={event=>setEndDate(event.target.value)} required/></label>
     </div>
     <label>Whole-trip budget (€)<input type="number" min="1" max="1000000" step="0.01" value={budget} onChange={event=>setBudget(event.target.value)} required/></label>
-    <p className="form-note">{dayCount?`${dayCount} ${dayCount===1?'day':'days'}, ready to shape. `:''}Your itinerary starts with open days. Add your stops, travel, and stay; no reservations or activities are invented. Trips can be up to 31 days.</p>
+    <p className="form-note">{dayCount?`${dayCount} ${dayCount===1?'day':'days'}, ready to shape. `:''}Start with a blank itinerary. Add your stops, flights, and stay as you go. Trips can be up to 31 days.</p>
     <button className="primary" type="submit" disabled={searching}>Let’s go <ArrowRight size={16}/></button>
   </form>;
 }

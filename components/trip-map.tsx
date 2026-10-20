@@ -11,6 +11,7 @@ export default function TripMap({trip,activities,selected,onSelect}:{trip:Trip;a
   const [failed,setFailed]=useState(false);
   const [mode,setMode]=useState<'street'|'terrain'>('street');
   useEffect(()=>{
+    setFailed(false);
     let disposed=false;
     void import('leaflet').then(L=>{
       if(disposed||!element.current)return;

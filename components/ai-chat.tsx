@@ -175,7 +175,7 @@ export function AiChat({ context, onClose }: { context: string; onClose: () => v
       </footer>
 
       <style jsx>{`
-        .trippin-ai { position:fixed;z-index:100;right:24px;top:24px;bottom:24px;width:min(440px,calc(100vw - 48px));background:#fffef9;color:#24372e;border:1px solid #dedfd3;border-radius:22px;box-shadow:0 20px 100px #0b271c38;display:flex;flex-direction:column;overflow:hidden;font-family:inherit; }
+        .trippin-ai { position:fixed;z-index:100;left:auto;right:24px;top:24px;bottom:24px;margin:0;height:calc(100dvh - 48px);max-height:none;width:min(440px,calc(100vw - 48px));background:#fffef9;color:#24372e;border:1px solid #dedfd3;border-radius:22px;box-shadow:0 20px 100px #0b271c38;display:flex;flex-direction:column;overflow:hidden;font-family:inherit; }
         .ai-header { display:flex;align-items:center;gap:12px;padding:22px 20px;border-bottom:1px solid #e6e7dc; }
         .ai-icon { display:flex;align-items:center;justify-content:center;width:38px;height:38px;flex-shrink:0;background:#eaf0d9;border-radius:12px;color:#436431; }
         .ai-header h2 { font-size:16px;line-height:1.3;margin:0;font-weight:600;letter-spacing:-.3px; }

@@ -16,7 +16,7 @@ Verified against official provider documentation on 20 October 2026. Seed trips,
 | Luma | External discovery | [API](https://docs.luma.com/reference/getting-started-with-your-api) needs Plus and a key scoped to an owned calendar; not a universal city feed. |
 | Ticketmaster | Server-side event search when configured; external checkout | [Discovery API](https://developer.ticketmaster.com/products-and-docs/apis/discovery/) needs a key. Native purchase requires approved Partner API access. See [adapter setup](providers.md). |
 | Strava | External club search; first-party manually entered trip activities | [API policy](https://www.strava.com/legal/api_policy) restricts AI and agent-mediated data use. No Strava data enters EVE. OAuth import requires explicit provider approval of the full use case. |
-| Bank expenses | Manual daily spending preferences, manual expenses, CSV import | [Plaid](https://plaid.com/docs/launch-checklist/) requires consent-based Link, backend token exchange, production/product approval, and geography-specific onboarding. No bank access or token storage is shipped. |
+| Bank expenses | Manual preferences, CSV import, optional Plaid Sandbox Link with aggregate preference preview | [Sandbox setup](bank.md). No production bank linking. Real accounts require consent-based Link, backend authorization, production/product approval, and geography-specific onboarding. Tokens and transactions are not persisted. |
 | Destination search | Public Open-Meteo city geocoding, explicit city selection | [Geocoding API](https://open-meteo.com/en/docs/geocoding-api) public endpoint is for noncommercial/prototype use; subscribe before commercial use. |
 
 ## Community setup and privacy
