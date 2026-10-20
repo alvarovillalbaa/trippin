@@ -50,6 +50,8 @@ export interface Expense {
 
 export interface Booking {
   id: string;
+  /** A reservation replaces this itinerary admission estimate in projected cost. */
+  activityId?: string;
   type: "flight" | "stay" | "event";
   title: string;
   reference: string;

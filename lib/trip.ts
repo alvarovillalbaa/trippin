@@ -46,7 +46,7 @@ export function createTrip(destination: Destination | string, startDate: string,
 }
 
 export function formatMoney(amount: number, currency = "EUR"): string {
-  return new Intl.NumberFormat("en-IE", { style: "currency", currency, maximumFractionDigits: 0 }).format(amount);
+  return new Intl.NumberFormat("en-IE", { style: "currency", currency, minimumFractionDigits: Number.isInteger(amount) ? 0 : 2, maximumFractionDigits: 2 }).format(amount);
 }
 
 export function formatDate(value: string, options: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" }): string {
@@ -74,6 +74,7 @@ export function getTripCost(trip: Trip, profile: Profile): TripCost {
 
   for (const day of trip.days) {
     for (const activity of day.activities) {
+      if (trip.bookings.some((booking) => booking.activityId === activity.id)) continue;
       const linked = trip.expenses.filter((expense) => expense.activityId === activity.id);
       if (activity.status !== "skipped" || linked.length) {
         const cost = linked.length ? linked.reduce((sum, item) => sum + item.amount, 0) : activity.cost;
@@ -84,7 +85,7 @@ export function getTripCost(trip: Trip, profile: Profile): TripCost {
   }
 
   for (const booking of trip.bookings) {
-    const linked = trip.expenses.filter((expense) => expense.bookingId === booking.id && !usedExpenses.has(expense.id));
+    const linked = trip.expenses.filter((expense) => (expense.bookingId === booking.id || (booking.activityId && expense.activityId === booking.activityId)) && !usedExpenses.has(expense.id));
     bookings += linked.length ? linked.reduce((sum, item) => sum + item.amount, 0) : booking.cost;
     linked.forEach((expense) => usedExpenses.add(expense.id));
   }
@@ -249,7 +250,7 @@ function isBooking(value: unknown): value is Booking {
   if (!record(value)) return false;
   return id(value.id) && ["flight", "stay", "event"].includes(value.type as string)
     && text(value.title, 200) && text(value.reference, 200) && isDate(value.date)
-    && publicUrl(value.url) && amount(value.cost) && optionalText(value.notes, 4000)
+    && publicUrl(value.url) && amount(value.cost) && optionalText(value.notes, 4000) && optionalId(value.activityId)
     && ["estimate", "reserved"].includes(value.status as string) && ["demo", "custom"].includes(value.source as string);
 }
 
@@ -295,6 +296,8 @@ export function isTrip(value: unknown): value is Trip {
   try { dates = getTripDays(value.startDate, value.endDate); } catch { return false; }
   if (dates.length !== value.days.length || value.days.some((day, index) => day.date !== dates[index])) return false;
   const activities = value.days.flatMap((day) => day.activities);
+  const linkedBookings = value.bookings.filter((booking) => booking.activityId);
+  if (new Set(linkedBookings.map((booking) => booking.activityId)).size !== linkedBookings.length) return false;
   return uniqueIds(value.days) && uniqueIds(activities) && uniqueIds(value.expenses) && uniqueIds(value.bookings)
     && uniqueIds(value.joinRequests) && uniqueIds(value.companions);
 }

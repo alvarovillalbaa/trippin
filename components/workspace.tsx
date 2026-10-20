@@ -100,8 +100,21 @@ export default function Workspace(){
     if(editing)updateActivity(editing.id,()=>activity);else updateTrip(t=>({...t,days:t.days.map((d,i)=>i===dayIndex?{...d,activities:[...d.activities,activity].sort((a,b)=>a.time.localeCompare(b.time))}:d)}));
     close();notify(editing?'Plan updated.':'A little more to look forward to.');
   };
-  const submitExpense=(event:FormEvent<HTMLFormElement>)=>{event.preventDefault();const form=new FormData(event.currentTarget);const linked=field(form,'estimate');const expense:Expense={id:makeId('expense'),title:field(form,'title'),category:field(form,'category') as Expense['category'],amount:Number(form.get('amount')),date:field(form,'date'),...(linked.startsWith('booking:')?{bookingId:linked.slice(8)}:linked.startsWith('activity:')?{activityId:linked.slice(9)}:{})};updateTrip(t=>({...t,expenses:[...t.expenses,expense]}));close();notify('Expense recorded. Your budget is up to date.')};
-  const submitBooking=(event:FormEvent<HTMLFormElement>)=>{event.preventDefault();if(!editingBooking&&trip.bookings.length>=100){setError('Keep up to 100 reservations per trip.');return}const form=new FormData(event.currentTarget);const booking:Booking={id:editingBooking?.id||makeId('booking'),type:field(form,'type') as Booking['type'],title:field(form,'title'),reference:field(form,'reference'),date:field(form,'date'),url:safeUrl(field(form,'url')),cost:Number(form.get('cost')),notes:field(form,'notes'),status:field(form,'status') as Booking['status'],source:'custom'};updateTrip(t=>({...t,bookings:editingBooking?t.bookings.map(b=>b.id===booking.id?booking:b):[...t.bookings,booking]}));close();notify('Reservation saved in your trip wallet.')};
+  const submitExpense=(event:FormEvent<HTMLFormElement>)=>{
+    event.preventDefault();
+    if(trip.expenses.length>=1000){setError('Keep up to 1,000 expenses per trip. Export a backup to archive them.');return}
+    const form=new FormData(event.currentTarget),linked=field(form,'estimate');
+    const expense:Expense={id:makeId('expense'),title:field(form,'title'),category:field(form,'category') as Expense['category'],amount:Number(form.get('amount')),date:field(form,'date'),...(linked.startsWith('booking:')?{bookingId:linked.slice(8)}:linked.startsWith('activity:')?{activityId:linked.slice(9)}:{})};
+    updateTrip(t=>({...t,expenses:[...t.expenses,expense]}));close();notify('Expense recorded. Your budget is up to date.');
+  };
+  const submitBooking=(event:FormEvent<HTMLFormElement>)=>{
+    event.preventDefault();
+    if(!editingBooking&&trip.bookings.length>=100){setError('Keep up to 100 reservations per trip.');return}
+    const form=new FormData(event.currentTarget),activityId=field(form,'activityId')||undefined;
+    if(activityId&&trip.bookings.some(b=>b.activityId===activityId&&b.id!==editingBooking?.id)){setError('That activity already has a linked reservation. Edit it instead.');return}
+    const booking:Booking={id:editingBooking?.id||makeId('booking'),activityId,type:field(form,'type') as Booking['type'],title:field(form,'title'),reference:field(form,'reference'),date:field(form,'date'),url:safeUrl(field(form,'url')),cost:Number(form.get('cost')),notes:field(form,'notes'),status:field(form,'status') as Booking['status'],source:'custom'};
+    updateTrip(t=>({...t,bookings:editingBooking?t.bookings.map(b=>b.id===booking.id?booking:b):[...t.bookings,booking]}));close();notify('Reservation saved in your trip wallet.');
+  };
   const reorder=(id:string,direction:number)=>{updateTrip(t=>({...t,days:t.days.map((d,i)=>{if(i!==dayIndex)return d;const next=[...d.activities];const visible=next.map((a,index)=>a.alternativeFor?-1:index).filter(index=>index>=0);const index=visible.findIndex(position=>next[position].id===id),target=index+direction;if(index<0||target<0||target>=visible.length)return d;const from=visible[index],to=visible[target];[next[from],next[to]]=[next[to],next[from]];return{...d,activities:next}})}))};
   const chooseAlternative=(option:Activity)=>{
     if(!editing)return;
@@ -121,7 +134,7 @@ export default function Workspace(){
     try{let owner=localStorage.getItem('trippin.owner');if(!owner){owner=crypto.randomUUID()+crypto.randomUUID();localStorage.setItem('trippin.owner',owner)}const response=await fetch('/api/community',{method:'POST',headers:{'Content-Type':'application/json','x-trip-owner':owner},body:JSON.stringify({trip:snapshot(),host:state.profile.name})});const data=await response.json();if(!response.ok)throw new Error(data.error||'Could not publish this trip.');updateTrip(t=>({...t,isPublic:true}));const url=window.location.origin+'/?trip='+trip.id;setShareUrl(url);setPublicTrips(list=>[...list.filter(t=>t.id!==trip.id),{...snapshot(),isPublic:true}]);notify('Your trip is open for join requests.')}catch(e){setError(e instanceof Error?e.message:'Could not publish.')}finally{setBusy(false)}
   };
   const sendJoin=async(event:FormEvent<HTMLFormElement>)=>{event.preventDefault();if(!joining)return;setBusy(true);const form=new FormData(event.currentTarget);try{const response=await fetch('/api/community',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({tripId:joining.id,name:field(form,'name'),message:field(form,'message'),contact:field(form,'contact')})});const data=await response.json();if(!response.ok)throw new Error(data.error);close();notify('Join request sent. The host can review it in Trippin.')}catch(e){setError(e instanceof Error?e.message:'Could not send the request.')}finally{setBusy(false)}};
-  const importCsv=async(file?:File)=>{if(!file)return;try{const rows=parseExpenseCsv(await file.text());const expenses=rows.map(row=>({...row,id:makeId('expense'),category:(categories as readonly string[]).includes(row.category)?row.category as Expense['category']:'other' as const}));updateTrip(t=>({...t,expenses:[...t.expenses,...expenses]}));notify(`${expenses.length} expenses imported into ${trip.city}.`)}catch(e){notify(e instanceof Error?e.message:'Could not import CSV.')}if(fileInput.current)fileInput.current.value=''};
+  const importCsv=async(file?:File)=>{if(!file)return;try{const rows=parseExpenseCsv(await file.text());if(rows.length+trip.expenses.length>1000)throw new Error('Keep up to 1,000 expenses per trip.');const expenses=rows.map(row=>({...row,id:makeId('expense'),category:(categories as readonly string[]).includes(row.category)?row.category as Expense['category']:'other' as const}));updateTrip(t=>({...t,expenses:[...t.expenses,...expenses]}));notify(`${expenses.length} expenses imported into ${trip.city}.`)}catch(e){notify(e instanceof Error?e.message:'Could not import CSV.')}if(fileInput.current)fileInput.current.value=''};
   const budgetPercent=trip.budget>0?Math.min(100,Math.round(cost.total/trip.budget*100)):cost.total>0?100:0;
   const aiContext=JSON.stringify({city:trip.city,country:trip.country,startDate:trip.startDate,endDate:trip.endDate,budget:trip.budget,interests:state.profile.interests,days:trip.days.map(d=>({date:d.date,activities:d.activities.filter(a=>!a.alternativeFor).map(a=>({title:a.title,time:a.time,cost:a.cost,status:a.status}))}))});
 
@@ -663,6 +676,7 @@ export default function Workspace(){
 </div>
 <label>Booking reference<input name="reference" defaultValue={editingBooking?.reference} maxLength={80} placeholder="Optional — stays private in this browser"/>
 </label>
+<label>Replaces an itinerary cost?<select name="activityId" defaultValue={editingBooking?.activityId||''}><option value="">No, it’s separate from my stops</option>{trip.days.flatMap(d=>d.activities).filter(a=>!a.alternativeFor&&!trip.bookings.some(b=>b.activityId===a.id&&b.id!==editingBooking?.id)).map(a=><option key={a.id} value={a.id}>{a.title}</option>)}</select></label>
 <label>Booking or ticket URL<input name="url" type="url" defaultValue={editingBooking?.url} placeholder="https://…"/>
 </label>
 <label>Anything else?<textarea name="notes" defaultValue={editingBooking?.notes} maxLength={800} placeholder="Check-in time, seat number, a little reminder…"/>
