@@ -1,0 +1,1 @@
+export async function GET(){return Response.json({application:'trippin',version:'0.1.0',status:'ok',storage:'browser-local',communityConfigured:Boolean(process.env.UPSTASH_REDIS_REST_URL&&process.env.UPSTASH_REDIS_REST_TOKEN)},{headers:{'Cache-Control':'no-store'}})}

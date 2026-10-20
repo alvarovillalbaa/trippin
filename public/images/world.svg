@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title description">
+  <title id="title">A world of possibilities</title>
+  <desc id="description">An abstract globe and a winding route on a soft green background.</desc>
+  <defs><linearGradient id="sky" x2="1" y2="1"><stop stop-color="#43685b"/><stop offset="1" stop-color="#173f35"/></linearGradient></defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <g fill="none" stroke="#a6bba0" stroke-width="2" opacity=".3">
+    <circle cx="1110" cy="430" r="330"/>
+    <ellipse cx="1110" cy="430" rx="190" ry="330"/>
+    <ellipse cx="1110" cy="430" rx="75" ry="330"/>
+    <ellipse cx="1110" cy="430" rx="330" ry="110"/>
+    <ellipse cx="1110" cy="430" rx="330" ry="235"/>
+    <path d="M780 430h660M1110 100v660"/>
+  </g>
+  <path d="M150 700C270 380 660 700 810 390S1150 200 1360 370" fill="none" stroke="#d7bf94" stroke-width="4" stroke-linecap="round" stroke-dasharray="8 16" opacity=".65"/>
+  <circle cx="810" cy="390" r="13" fill="#ed8853"/>
+  <circle cx="810" cy="390" r="31" fill="none" stroke="#ed8853" stroke-width="2" opacity=".6"/>
+  <g fill="#e9ecd9" opacity=".55"><circle cx="350" cy="175" r="3"/><circle cx="585" cy="305" r="2"/><circle cx="1300" cy="720" r="3"/><circle cx="125" cy="385" r="2"/></g>
+</svg>
