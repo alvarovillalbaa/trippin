@@ -192,8 +192,10 @@ export function getTravelBadges(trips: Trip[]): Badge[] {
     if (seenEvents.has(eventKey)) continue;
     seenEvents.add(eventKey);
     eventBadges.push({
-      id: `event-${eventKey}`, title: activity.title.slice(0, 100),
-      description: `Event marked complete in ${trip.city}${activity.event.scheduledDate ? ` on ${activity.event.scheduledDate}` : ""}. Self-reported from your saved trip; attendance is not verified by the organizer.`,
+      id: `event-${eventKey}`, title: `${activity.event.provider === "demo" ? "Sample · " : ""}${activity.title}`.slice(0, 100),
+      description: activity.event.provider === "demo"
+        ? `Fictional sample event marked complete in the planner for ${trip.city}. This is not a real event or attendance record.`
+        : `Event marked complete in ${trip.city}${activity.event.scheduledDate ? ` on ${activity.event.scheduledDate}` : ""}. Self-reported from your saved trip; attendance is not verified by the organizer.`,
       icon: "ticket", earned: true, source: "derived",
     });
   }
