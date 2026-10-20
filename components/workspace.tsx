@@ -4,7 +4,7 @@ import {useCallback,useEffect,useMemo,useRef,useState, type FormEvent} from 'rea
 import dynamic from 'next/dynamic';
 import {ArrowUpRight,ArrowLeft,ArrowRight,ArrowUp,ArrowDown,Plus,MapPin,CalendarDays,Compass,Wallet,Ticket,ChevronDown,ChevronRight,Check,CheckCircle2,Clock,Footprints,Plane,Building2,Coffee,Sun,CloudSun,Users,Share2,Sparkles,Settings2,Search,Heart,Leaf,Mountain,Music2,Utensils,Landmark,MoreHorizontal,Download,Upload,ExternalLink,Trash2,Map,LayoutList,Pencil,X,Globe,ShieldCheck,Route,BookOpen,Link as LinkIcon} from 'lucide-react';
 import {seedTrips,seedProfile,destinations,demoPeople,demoEvents} from '@/lib/data';
-import {formatMoney,formatDate,getTripCost,getTripDays,getWalkingRoute,getTravelBadges,isTrip,isWorkspace,makeId,restoreWorkspace} from '@/lib/trip';
+import {formatMoney,formatDate,getTripCost,getTripDays,getWalkingRoute,getTravelBadges,isTrip,isWorkspace,makeId,publicTripSnapshot,restoreWorkspace} from '@/lib/trip';
 import type {Trip,Activity,Booking,Expense,Profile,WorkspaceState} from '@/lib/types';
 import {parseExpenseCsv} from '@/lib/csv';
 import Dialog from './dialog';
@@ -124,7 +124,8 @@ export default function Workspace(){
     updateTrip(t=>({...t,days:t.days.map(d=>d.activities.some(a=>a.id===original.id)?{...d,activities:d.activities.flatMap(item=>item.id===original.id?[replacement,{...item,status:'skipped' as const,alternativeFor:nextId}]:item.id===option.id&&option.alternativeFor===original.id?[]:[item.alternativeFor===original.id?{...item,alternativeFor:nextId}:item])}:d)}));
     setSelected(nextId);close();notify('A little change of plan. Your budget and map are updated.');
   };
-  const snapshot=()=>({...trip,isPublic:false,bookings:[],expenses:[],joinRequests:[],companions:[],days:trip.days.map(d=>({...d,activities:d.activities.map(a=>({...a,bookingUrl:undefined}))}))});
+  const snapshot=()=>publicTripSnapshot(trip);
+  const removeBooking=(booking:Booking)=>updateTrip(t=>({...t,bookings:t.bookings.filter(b=>b.id!==booking.id),expenses:t.expenses.map(expense=>expense.bookingId===booking.id&&booking.activityId?{...expense,bookingId:undefined,activityId:booking.activityId}:expense)}));
   const reviewRequests=async()=>{setBusy(true);setError('');try{const owner=localStorage.getItem('trippin.owner')||'';const response=await fetch(`/api/community?id=${trip.id}`,{headers:{'x-trip-owner':owner}});const data=await response.json();if(!response.ok)throw new Error(data.error);setRequests(data.requests||[])}catch(e){setError(e instanceof Error?e.message:'Could not load requests.')}finally{setBusy(false)}};
   const decideRequest=async(id:string,status:'accepted'|'declined')=>{setBusy(true);setError('');try{const response=await fetch('/api/community',{method:'PATCH',headers:{'Content-Type':'application/json','x-trip-owner':localStorage.getItem('trippin.owner')||''},body:JSON.stringify({tripId:trip.id,requestId:id,action:status})});const data=await response.json();if(!response.ok)throw new Error(data.error);setRequests(list=>list?.map(item=>item.id===id?{...item,status}:item)||[]);notify(`Request ${status}. Contact the traveler directly to arrange details.`)}catch(e){setError(e instanceof Error?e.message:'Could not update request.')}finally{setBusy(false)}};
   const unpublish=async()=>{setBusy(true);try{const response=await fetch(`/api/community?id=${trip.id}`,{method:'DELETE',headers:{'x-trip-owner':localStorage.getItem('trippin.owner')||''}});const data=await response.json();if(!response.ok)throw new Error(data.error);updateTrip(t=>({...t,isPublic:false}));setPublicTrips(list=>list.filter(t=>t.id!==trip.id));setRequests(null);notify('Trip unpublished and join requests removed.')}catch(e){setError(e instanceof Error?e.message:'Could not unpublish.')}finally{setBusy(false)}};
@@ -509,7 +510,7 @@ export default function Workspace(){
 <h3>{booking.title}</h3>
 <p>{formatDate(booking.date)} · {formatMoney(booking.cost)}{booking.status==='estimate'?' estimate':''}</p>{booking.reference&&<span className="booking-reference">Reference: {booking.reference}</span>}{booking.notes&&<p className="booking-notes">{booking.notes}</p>}</div>
 <div className="booking-actions">{booking.url&&<a className="secondary" href={safeUrl(booking.url)} target="_blank" rel="noreferrer">View details <ArrowUpRight size={14}/>
-</a>}<button className="icon-button" aria-label={`Edit booking ${booking.title}`} onClick={()=>{setEditingBooking(booking);open('booking')}}><Pencil size={15}/></button><button className="icon-button" aria-label={`Remove booking ${booking.title}`} onClick={()=>updateTrip(t=>({...t,bookings:t.bookings.filter(b=>b.id!==booking.id)}))}>
+</a>}<button className="icon-button" aria-label={`Edit booking ${booking.title}`} onClick={()=>{setEditingBooking(booking);open('booking')}}><Pencil size={15}/></button><button className="icon-button" aria-label={`Remove booking ${booking.title}`} onClick={()=>removeBooking(booking)}>
 <Trash2 size={15}/>
 </button>
 </div>
@@ -676,7 +677,7 @@ export default function Workspace(){
 </div>
 <label>Booking reference<input name="reference" defaultValue={editingBooking?.reference} maxLength={80} placeholder="Optional — stays private in this browser"/>
 </label>
-<label>Replaces an itinerary cost?<select name="activityId" defaultValue={editingBooking?.activityId||''}><option value="">No, it’s separate from my stops</option>{trip.days.flatMap(d=>d.activities).filter(a=>!a.alternativeFor&&!trip.bookings.some(b=>b.activityId===a.id&&b.id!==editingBooking?.id)).map(a=><option key={a.id} value={a.id}>{a.title}</option>)}</select></label>
+<label>Replaces an itinerary cost?<select name="activityId" defaultValue={editingBooking?.activityId||''}><option value="">No, it’s separate from my stops</option>{editingBooking?.activityId&&<option value={editingBooking.activityId}>{trip.days.flatMap(d=>d.activities).find(a=>a.id===editingBooking.activityId)?.title||'Previously linked stop (removed from agenda)'}</option>}{trip.days.flatMap(d=>d.activities).filter(a=>a.id!==editingBooking?.activityId&&!a.alternativeFor&&!trip.bookings.some(b=>b.activityId===a.id&&b.id!==editingBooking?.id)).map(a=><option key={a.id} value={a.id}>{a.title}</option>)}</select></label>
 <label>Booking or ticket URL<input name="url" type="url" defaultValue={editingBooking?.url} placeholder="https://…"/>
 </label>
 <label>Anything else?<textarea name="notes" defaultValue={editingBooking?.notes} maxLength={800} placeholder="Check-in time, seat number, a little reminder…"/>

@@ -49,6 +49,27 @@ export function formatMoney(amount: number, currency = "EUR"): string {
   return new Intl.NumberFormat("en-IE", { style: "currency", currency, minimumFractionDigits: Number.isInteger(amount) ? 0 : 2, maximumFractionDigits: 2 }).format(amount);
 }
 
+/** Public links are a projection, never a copy of potentially extended backup records. */
+export function publicTripSnapshot(trip: Trip): Trip {
+  const allowedImages = new Set(["/images/munich.jpg", "/images/lisbon.jpg", "/images/copenhagen.jpg", "/images/barcelona.jpg", "/images/world.svg"]);
+  return {
+    id: trip.id, title: trip.title, city: trip.city, country: trip.country,
+    startDate: trip.startDate, endDate: trip.endDate, lat: trip.lat, lng: trip.lng,
+    image: allowedImages.has(trip.image) ? trip.image : "/images/world.svg",
+    description: trip.description, budget: trip.budget, currency: trip.currency, isPublic: false,
+    bookings: [], expenses: [], joinRequests: [], companions: [],
+    days: trip.days.map((day) => ({
+      id: day.id, date: day.date, label: day.label,
+      activities: day.activities.map((activity) => ({
+        id: activity.id, title: activity.title, category: activity.category,
+        description: activity.description, time: activity.time, duration: activity.duration,
+        cost: activity.cost, lat: activity.lat, lng: activity.lng, location: activity.location,
+        status: activity.status, source: activity.source, alternativeFor: activity.alternativeFor,
+      })),
+    })),
+  };
+}
+
 export function formatDate(value: string, options: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" }): string {
   if (!isDate(value)) return "Invalid date";
   return new Intl.DateTimeFormat("en-GB", { ...options, timeZone: "UTC" }).format(new Date(`${value}T12:00:00.000Z`));
@@ -86,7 +107,10 @@ export function getTripCost(trip: Trip, profile: Profile): TripCost {
 
   for (const booking of trip.bookings) {
     const linked = trip.expenses.filter((expense) => (expense.bookingId === booking.id || (booking.activityId && expense.activityId === booking.activityId)) && !usedExpenses.has(expense.id));
-    bookings += linked.length ? linked.reduce((sum, item) => sum + item.amount, 0) : booking.cost;
+    const cost = linked.length ? linked.reduce((sum, item) => sum + item.amount, 0) : booking.cost;
+    const activity = trip.days.flatMap((day) => day.activities).find((item) => item.id === booking.activityId);
+    if (activity?.category === "food" || activity?.category === "transport") addLocalCost(activity.category, cost, "activity");
+    else bookings += cost;
     linked.forEach((expense) => usedExpenses.add(expense.id));
   }
 
