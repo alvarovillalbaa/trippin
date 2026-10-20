@@ -1,29 +1,40 @@
 {
-  "checkedAt": "2026-10-20T07:32:36Z",
+  "checkedAt": "2026-10-20T07:54:35Z",
   "application": "trippin",
   "version": "0.1.0",
   "repository": "https://github.com/alvarovillalbaa/trippin",
-  "verifiedApplicationCommit": "feba3942e682c15a2f16d6d40adf7692ca917f26",
+  "verifiedApplicationCommit": "2edc61e508d7b3f9712025027a164bb3d2049870",
   "vercel": {
     "teamId": "team_JpdIsOJgYNpX0ywVZ54Zdb7m",
     "projectId": "prj_xuwm0LbMAUFWKzYZv7IzHshOqoh8",
-    "deploymentId": "dpl_ERZQxqiqutY8woTpiLwo42LttTae",
+    "deploymentId": "dpl_GSyaa5Ephq4aga8xDN5NGwGE7Bax",
     "source": "git",
     "target": "production",
     "state": "READY",
     "productionUrl": "https://trippin-theta.vercel.app",
-    "inspectionUrl": "https://vercel.com/my-team-4f230354/trippin/ERZQxqiqutY8woTpiLwo42LttTae",
+    "inspectionUrl": "https://vercel.com/my-team-4f230354/trippin/GSyaa5Ephq4aga8xDN5NGwGE7Bax",
     "nodeVersion": "24.x",
     "nextVersion": "16.4.2",
     "eveVersion": "0.81.1"
   },
   "buildEvidence": [
-    "Compiled successfully in 2.7s",
-    "Finished TypeScript in 4.2s",
+    "Compiled successfully in 2.8s",
+    "Finished TypeScript in 2.8s",
     "EVE service built at .eve/vercel-services/eve/.vercel/output",
-    "Build Completed in /vercel/output [20s]"
+    "Build Completed in /vercel/output [18s]"
   ],
   "httpChecks": [
+    { "path": "/", "method": "GET", "status": 200, "assertion": "Trippin title and initial Munich itinerary in HTML" },
+    { "path": "/api/health", "method": "GET", "status": 200, "assertion": "application trippin, status ok, browser-local storage, communityConfigured false" },
+    { "path": "/eve/v1/health", "method": "GET", "status": 200, "assertion": "ok true, Workflow entry ready; no model turn executed" },
+    { "path": "/api/providers", "method": "POST", "provider": "ticketmaster", "countryCode": "DE", "startDate": "2026-10-22", "endDate": "2026-10-25", "status": 503, "assertion": "setup_required, no provider request" },
+    { "path": "/api/providers", "method": "POST", "provider": "ticketmaster", "startDate": "2026-02-30", "endDate": "2026-03-01", "status": 400, "assertion": "invalid_dates rejects impossible calendar date" },
+    { "path": "/api/providers", "method": "POST", "provider": "ticketmaster", "countryCode": "de", "status": 400, "assertion": "invalid_country rejects lowercase country code" }
+  ],
+  "baselineHttpChecks": {
+    "applicationCommit": "feba3942e682c15a2f16d6d40adf7692ca917f26",
+    "checkedAt": "2026-10-20T07:32:36Z",
+    "checks": [
     { "path": "/", "method": "GET", "status": 200, "assertion": "Trippin title and initial Munich itinerary in HTML" },
     { "path": "/api/health", "method": "GET", "status": 200, "assertion": "application trippin, status ok, browser-local storage" },
     { "path": "/eve/v1/health", "method": "GET", "status": 200, "assertion": "ok true, Workflow entry ready; no model turn executed" },
@@ -36,7 +47,8 @@
     { "path": "/api/community", "method": "POST", "status": 503, "assertion": "Missing shared-store configuration refuses publishing" },
     { "path": "/api/bank", "method": "GET", "status": 200, "assertion": "Sandbox disabled, realBankLinking false" },
     { "path": "/api/bank", "method": "POST", "status": 503, "assertion": "Missing Sandbox setup refuses Link creation" }
-  ],
+    ]
+  },
   "publicProviderProbes": [
     { "source": "Open-Meteo geocoding", "query": "Kyoto", "result": "Kyoto, Japan; 35.02107, 135.75385" },
     { "source": "Open-Meteo weather", "query": "Munich current temperature and weather code", "result": "Valid current weather object received" }
@@ -46,15 +58,22 @@
     "Provider credentials remain server-only",
     "Linked food/transport reservations feed daily allowances",
     "Removing reservations preserves linked actual expense reconciliation",
-    "Reservation editing preserves hidden or removed activity links"
+    "Reservation editing preserves hidden or removed activity links",
+    "Optional event preferences and metadata preserve older backup compatibility",
+    "Event preferences filter discovery locally without being sent to Ticketmaster",
+    "Event-to-itinerary draft requires an explicit EUR estimate for missing or foreign-currency quotes",
+    "Unknown dates and canceled, postponed, or rescheduled events cannot be directly added",
+    "Individual event badges deduplicate provider/event identity; fictional events retain sample labels",
+    "Shared trip projections omit event ticket URLs and fetched price notes"
   ],
-  "otherChecks": { "gitDiffCheck": "passed", "relativeDocumentationLinks": { "checked": 12, "broken": 0 } },
+  "otherChecks": { "gitDiffCheck": "passed", "relativeDocumentationLinks": { "checked": 13, "broken": 0 } },
   "unverified": [
     "Desktop and mobile browser interaction QA; explicit user approval requested under AGENTS.md",
     "PNG downloads, Clipboard API, localStorage persistence, and backup flows in a browser",
+    "Browser event filtering, draft editing, itinerary save, and event badge flow",
     "Configured Upstash Redis writes, atomic scripts, and multi-browser join flow",
     "AI model reply and durable Workflow turn",
-    "Credentialed FlightAware and Ticketmaster responses",
+    "Credentialed FlightAware and Ticketmaster responses, including exact local date-range query serialization and event venue/price normalization",
     "Plaid Sandbox Link, transaction aggregation, and Item cleanup with real Sandbox credentials"
   ],
   "notProvided": [
@@ -62,5 +81,5 @@
     "Production bank-account linking",
     "Verified social identities, account recovery, or public-community moderation"
   ],
-  "localStorageGuard": { "result": "failed", "freeGiB": 32.4, "requiredGiB": 34, "action": "Stopped local install; used hosted builds; no local dependency environment or broad compile" }
+  "localStorageGuard": { "result": "failed", "freeGiB": 32.2, "requiredGiB": 34, "action": "Kept local installation stopped; used hosted builds; no local dependency environment or broad compile" }
 }

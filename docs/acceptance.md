@@ -4,7 +4,7 @@ This release builds the product with provider credentials deferred at Alvaro's r
 
 | Brief | Implementation | Proof scope |
 | --- | --- | --- |
-| Solo/weekend/4–7-day trips | Multiple trips, any city via geocoding, editable dates/budgets, private browser persistence and backup | Source inspected; hosted TypeScript/production build. City provider/browser flow not exercised. |
+| Solo/weekend/4–7-day trips | Multiple trips, any city via geocoding, editable dates/budgets, private browser persistence and backup | Source inspected; hosted TypeScript/production build. Geocoding endpoint probed separately; browser city-search flow not exercised. |
 | Map on right | Leaflet/OSM, selected-day pins, walking estimates, external directions, mobile map toggle | Source/build; no browser or tile rendering proof. |
 | Flexible itinerary | Add/edit/reorder/complete/skip/swap stops, seeded rain alternative, date changes preserve agenda order | Source/build; interaction QA not run. |
 | Full trip costs | Flights/stays/tickets, activity admissions, daily food/transport, linked actual expenses; ticket reservations can replace itinerary estimates | Source/build; no financial/provider quotes claimed. |
