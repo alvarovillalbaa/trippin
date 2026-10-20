@@ -6,7 +6,7 @@ import {destinations} from '@/lib/data';
 import {createTrip,getTripDays} from '@/lib/trip';
 import type {Destination,Trip} from '@/lib/types';
 
-type CityResult={id:number;name:string;country:string;region:string;lat:number;lng:number};
+type CityResult={id:number;name:string;country:string;countryCode?:string;region:string;lat:number;lng:number};
 
 function localDate(date:Date){
   return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
@@ -30,7 +30,8 @@ function readCity(value:unknown):CityResult|null{
   if(typeof city.feature_code==='string'&&!city.feature_code.startsWith('PPL'))return null;
   const country=typeof city.country==='string'&&city.country.trim()?city.country:typeof city.country_code==='string'?city.country_code:'';
   if(!country||country.length>100)return null;
-  return {id:city.id,name:city.name,country,region:typeof city.admin1==='string'?city.admin1.slice(0,100):'',lat:city.latitude,lng:city.longitude};
+  const countryCode=typeof city.country_code==='string'&&/^[A-Z]{2}$/.test(city.country_code)?city.country_code:undefined;
+  return {id:city.id,name:city.name,country,countryCode,region:typeof city.admin1==='string'?city.admin1.slice(0,100):'',lat:city.latitude,lng:city.longitude};
 }
 
 /** Public Open-Meteo/GeoNames search is for non-commercial use; see docs/integrations.md. */
@@ -94,7 +95,7 @@ export default function NewTripForm({onCreate,initialCity}:{onCreate:(trip:Trip)
       let destination:Destination|undefined=destinations.find(place=>place.id===destinationId);
       if(custom){
         if(!selectedCity)throw new Error('Search for your city and choose a result first.');
-        destination={id:`place-${selectedCity.id}`,city:selectedCity.name,country:selectedCity.country,lat:selectedCity.lat,lng:selectedCity.lng,image:'/images/world.svg',description:`Your own little chapter in ${selectedCity.name}. Start with open days and make the plan yours.`,suggestedBudget:0,centerTransfer:'Add airport and city transfer details after checking local transport.',tags:[]};
+        destination={id:`place-${selectedCity.id}`,city:selectedCity.name,country:selectedCity.country,countryCode:selectedCity.countryCode,lat:selectedCity.lat,lng:selectedCity.lng,image:'/images/world.svg',description:`Your own little chapter in ${selectedCity.name}. Start with open days and make the plan yours.`,suggestedBudget:0,centerTransfer:'Add airport and city transfer details after checking local transport.',tags:[]};
       }
       if(!destination)throw new Error('Choose a destination.');
       const amount=Number(budget);

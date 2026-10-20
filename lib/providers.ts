@@ -1,4 +1,5 @@
 type JsonObject = Record<string, unknown>;
+import type {ActivityCategory} from './types';
 
 export type ProviderName = 'flightaware' | 'ticketmaster';
 export type FlightLookupResult = Awaited<ReturnType<typeof lookupFlight>>;
@@ -148,15 +149,45 @@ export async function lookupFlight(identifier: unknown, date?: unknown) {
   return { source: sources.flightaware, mode: 'live' as const, fetchedAt: new Date().toISOString(), identifier: ident, date: date ?? null, flights, moreAvailable: data.flights.length > 12 || Boolean(object(data.links).next) };
 }
 
-export async function discoverEvents(city: unknown, size: unknown = 8) {
+function calendarDate(value: unknown): value is string {
+  if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(value))return false;
+  const date=new Date(`${value}T12:00:00.000Z`);
+  return Number.isFinite(date.getTime())&&date.toISOString().slice(0,10)===value;
+}
+
+function coordinate(value:unknown,maximum:number):number|null {
+  if(typeof value!=='number'&&(typeof value!=='string'||!value.trim()))return null;
+  const parsed=Number(value);
+  return Number.isFinite(parsed)&&Math.abs(parsed)<=maximum?parsed:null;
+}
+
+function eventCategory(segment:string|null,genre:string|null):ActivityCategory {
+  const classification=`${segment||''} ${genre||''}`.toLowerCase();
+  if(/food|drink|culinary|tasting/.test(classification))return 'food';
+  if(/running|cycling|outdoor/.test(classification))return 'outdoors';
+  if(/music|concert|jazz|dance|club/.test(classification))return 'nightlife';
+  if(/arts|theatre|theater|film|museum|comedy/.test(classification))return 'culture';
+  return 'community';
+}
+
+export async function discoverEvents(city: unknown, size: unknown = 8, options: {startDate?:unknown;endDate?:unknown;countryCode?:unknown} = {}) {
   if (typeof city !== 'string' || city.trim().length < 2 || city.trim().length > 80 || !/^[\p{L}\p{M}\p{N} .,'’()\-]+$/u.test(city.trim())) throw new ProviderError(400, 'invalid_city', 'Enter a city name between 2 and 80 characters.');
   if (typeof size !== 'number' || !Number.isInteger(size) || size < 1 || size > 12) throw new ProviderError(400, 'invalid_size', 'Request between 1 and 12 events.');
+  const {startDate,endDate,countryCode}=options;
+  const hasDates=startDate!==undefined||endDate!==undefined;
+  if(hasDates&&(!calendarDate(startDate)||!calendarDate(endDate)||endDate<startDate||Date.parse(endDate)-Date.parse(startDate)>30*dayMs))throw new ProviderError(400,'invalid_dates','Choose valid trip dates spanning up to 31 days.');
+  if(countryCode!==undefined&&(typeof countryCode!=='string'||!/^[A-Z]{2}$/.test(countryCode)))throw new ProviderError(400,'invalid_country','Use a two-letter country code.');
   const url = new URL('https://app.ticketmaster.com/discovery/v2/events.json');
   url.searchParams.set('apikey', credential('ticketmaster'));
   url.searchParams.set('city', city.trim());
+  if(typeof countryCode==='string')url.searchParams.set('countryCode',countryCode);
   url.searchParams.set('size', String(size));
   url.searchParams.set('sort', 'date,asc');
-  url.searchParams.set('startDateTime', new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'));
+  if(hasDates){
+    url.searchParams.set('localStartDateTime',`${startDate}T00:00:00,${endDate}T23:59:59`);
+    url.searchParams.set('includeTBA','no');
+    url.searchParams.set('includeTBD','no');
+  }else url.searchParams.set('startDateTime', new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'));
   const data = await providerJson(url);
   const embedded = object(data._embedded);
   const total = number(object(data.page).totalElements);
@@ -165,17 +196,20 @@ export async function discoverEvents(city: unknown, size: unknown = 8) {
     const event = object(value), dates = object(event.dates), start = object(dates.start);
     const venues = object(event._embedded).venues;
     const venue = object(Array.isArray(venues) ? venues[0] : undefined);
+    const classification=object(Array.isArray(event.classifications)?event.classifications[0]:undefined);
+    const segment=text(object(classification.segment).name,80),genre=text(object(classification.genre).name,80);
     const price = object(Array.isArray(event.priceRanges) ? event.priceRanges[0] : undefined);
-    const min = number(price.min), max = number(price.max), currency = text(price.currency, 3);
+    const min = number(price.min), max = number(price.max), rawCurrency = text(price.currency, 3)?.toUpperCase();
+    const currency=rawCurrency&&/^[A-Z]{3}$/.test(rawCurrency)?rawCurrency:null;
     return {
-      id: text(event.id), title: text(event.name, 300),
+      id: text(event.id,160), title: text(event.name, 200), category:eventCategory(segment,genre),
       date: text(start.localDate, 10), time: text(start.localTime, 12), startsAt: instant(start.dateTime),
       dateToBeAnnounced: Boolean(start.dateTBA || start.dateTBD), timeToBeAnnounced: Boolean(start.timeTBA || start.noSpecificTime),
       timezone: text(dates.timezone, 80), status: text(object(dates.status).code, 40),
-      location: { venue: text(venue.name), city: text(object(venue.city).name), country: text(object(venue.country).countryCode, 2) },
+      location: { venue: text(venue.name), city: text(object(venue.city).name), country: text(object(venue.country).countryCode, 2),lat:coordinate(object(venue.location).latitude,90),lng:coordinate(object(venue.location).longitude,180) },
       url: externalUrl(event.url),
       price: min !== null && min >= 0 && currency ? { min, max: max !== null && max >= min ? max : null, currency, isFinalTotal: false } : null,
     };
-  }).filter(event => event.id && event.title);
-  return { source: sources.ticketmaster, mode: 'live' as const, fetchedAt: new Date().toISOString(), city: city.trim(), events, moreAvailable: total > events.length };
+  }).filter(event => event.id && event.title&&(!hasDates||(calendarDate(event.date)&&event.date>=String(startDate)&&event.date<=String(endDate)&&!event.dateToBeAnnounced)));
+  return { source: sources.ticketmaster, mode: 'live' as const, fetchedAt: new Date().toISOString(), city: city.trim(), startDate:startDate??null,endDate:endDate??null,countryCode:countryCode??null,events, moreAvailable: total > events.length };
 }

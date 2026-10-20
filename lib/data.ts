@@ -3,25 +3,25 @@ import type { Activity, DemoEvent, DemoPerson, Destination, Profile, Trip } from
 /** Every price, itinerary, profile, event and social interaction here is demo data. */
 export const destinations: Destination[] = [
   {
-    id: "munich", city: "Munich", country: "Germany", lat: 48.1372, lng: 11.5756,
+    id: "munich", city: "Munich", country: "Germany", countryCode: "DE", lat: 48.1372, lng: 11.5756,
     image: "/images/munich.jpg", description: "Old-world streets, green escapes, and a table worth staying for.",
     suggestedBudget: 850, centerTransfer: "Airport → center: allow around 45 min by S-Bahn. Check the current timetable and fare.",
     tags: ["Culture", "Outdoors", "Good food"],
   },
   {
-    id: "lisbon", city: "Lisbon", country: "Portugal", lat: 38.7223, lng: -9.1393,
+    id: "lisbon", city: "Lisbon", country: "Portugal", countryCode: "PT", lat: 38.7223, lng: -9.1393,
     image: "/images/lisbon.jpg", description: "A little slower. A little sunnier. Follow the hills to the sea.",
     suggestedBudget: 620, centerTransfer: "Airport → center: allow around 35 min by metro. Check the current timetable and fare.",
     tags: ["Food", "Architecture", "Nightlife"],
   },
   {
-    id: "copenhagen", city: "Copenhagen", country: "Denmark", lat: 55.6761, lng: 12.5683,
+    id: "copenhagen", city: "Copenhagen", country: "Denmark", countryCode: "DK", lat: 55.6761, lng: 12.5683,
     image: "/images/copenhagen.jpg", description: "Design-minded days, harbor walks, and very good coffee.",
     suggestedBudget: 940, centerTransfer: "Airport → center: allow around 20 min by metro. Check current fares in DKK; trip estimates use EUR.",
     tags: ["Design", "Coffee", "Cycling"],
   },
   {
-    id: "barcelona", city: "Barcelona", country: "Spain", lat: 41.3874, lng: 2.1686,
+    id: "barcelona", city: "Barcelona", country: "Spain", countryCode: "ES", lat: 41.3874, lng: 2.1686,
     image: "/images/barcelona.jpg", description: "Architecture on every corner. Sea air at the end of the day.",
     suggestedBudget: 760, centerTransfer: "Airport → center: allow around 40 min by bus. Check the current timetable and fare.",
     tags: ["Architecture", "Beach", "Food"],
@@ -49,6 +49,7 @@ export const demoEvents: DemoEvent[] = [
 export const seedProfile: Profile = {
   name: "Alex Morgan", homeCity: "Madrid", bio: "Travel light. Take the scenic route. Leave room for the unexpected.",
   interests: ["Architecture", "Coffee", "Art", "Outdoors", "Local food"], dailyFoodBudget: 38, dailyTransportBudget: 10,
+  openToEvents: ["culture", "food", "outdoors", "community"],
   badges: [
     { id: "badge-solo", title: "Solo, together", description: "Demo badge · your first independent adventure.", icon: "compass", earned: true, source: "demo" },
     { id: "badge-germany", title: "Hallo, Germany", description: "Demo badge · a little Bavarian curiosity.", icon: "flag", earned: true, source: "demo" },
@@ -59,7 +60,7 @@ export const seedProfile: Profile = {
 
 export const seedTrips: Trip[] = [
   {
-    id: "trip-munich", title: "A little Munich escape", city: "Munich", country: "Germany",
+    id: "trip-munich", title: "A little Munich escape", city: "Munich", country: "Germany", countryCode: "DE",
     startDate: "2026-10-22", endDate: "2026-10-25", lat: 48.1372, lng: 11.5756,
     image: "/images/munich.jpg", description: "Four days of good coffee, art, and getting a little lost. A demo trip, ready to make your own.",
     budget: 850, currency: "EUR", isPublic: false, companions: [],
@@ -76,13 +77,13 @@ export const seedTrips: Trip[] = [
         activity({ id: "m2-bakery", title: "A proper bakery morning", category: "food", description: "Your morning coffee ritual, with no rush to get anywhere.", time: "09:00", duration: 45, cost: 10, lat: 48.1498, lng: 11.5762, location: "Maxvorstadt" }),
         activity({ id: "m2-art", title: "Get a little lost in modern art", category: "culture", description: "Art, architecture, and design in one generous afternoon. Admission is a demo estimate.", time: "10:30", duration: 150, cost: 12, lat: 48.1468, lng: 11.5723, location: "Pinakothek der Moderne", bookingUrl: "https://www.pinakothek-der-moderne.de/en/" }),
         activity({ id: "m2-lunch", title: "A long lunch in Maxvorstadt", category: "food", description: "Choose a neighborhood kitchen and leave a little room for dessert.", time: "13:30", duration: 75, cost: 20, lat: 48.1510, lng: 11.5669, location: "Maxvorstadt" }),
-        activity({ id: "m2-meet", title: "Design, drinks & new faces", category: "community", description: "Demo meetup · an imagined gathering to show how events fit into your trip. No real event or ticket.", time: "18:30", duration: 120, cost: 12, lat: 48.1280, lng: 11.5690, location: "Glockenbachviertel" }),
+        activity({ id: "m2-meet", title: "Design, drinks & new faces", category: "community", description: "Demo meetup · an imagined gathering to show how events fit into your trip. No real event or ticket.", time: "18:30", duration: 120, cost: 12, lat: 48.1280, lng: 11.5690, location: "Glockenbachviertel", event: { provider: "demo", id: "event-design", scheduledDate: "2026-10-23" } }),
       ] },
       { id: "munich-day-3", date: "2026-10-24", label: "A different side of the city", activities: [
         activity({ id: "m3-isar", title: "An easy morning by the Isar", category: "outdoors", description: "Walk the river, stop when you feel like it, and let the city wake up.", time: "09:00", duration: 90, cost: 0, lat: 48.1289, lng: 11.5830, location: "Isar riverbanks" }),
         activity({ id: "m3-brunch", title: "Brunch in Glockenbach", category: "food", description: "Neighborhood energy, a second coffee, and nowhere urgent to be.", time: "11:00", duration: 75, cost: 22, lat: 48.1279, lng: 11.5703, location: "Glockenbachviertel" }),
         activity({ id: "m3-palace", title: "A quiet palace-garden afternoon", category: "outdoors", description: "Wander the grounds. Allow additional time for public transport; map walking estimates are direct distances.", time: "14:00", duration: 150, cost: 0, lat: 48.1583, lng: 11.5033, location: "Nymphenburg Palace park" }),
-        activity({ id: "m3-jazz", title: "A little jazz, a late night", category: "nightlife", description: "Demo event · an imagined small-venue jazz set. Check a real listing before making plans.", time: "20:30", duration: 120, cost: 18, lat: 48.1485, lng: 11.5650, location: "Maxvorstadt" }),
+        activity({ id: "m3-jazz", title: "A little jazz, a late night", category: "nightlife", description: "Demo event · an imagined small-venue jazz set. Check a real listing before making plans.", time: "20:30", duration: 120, cost: 18, lat: 48.1485, lng: 11.5650, location: "Maxvorstadt", event: { provider: "demo", id: "event-jazz", scheduledDate: "2026-10-24" } }),
       ] },
       { id: "munich-day-4", date: "2026-10-25", label: "One last slow morning", activities: [
         activity({ id: "m4-breakfast", title: "Your last Munich coffee", category: "food", description: "One more coffee and a few favorite moments in your journal.", time: "09:00", duration: 60, cost: 12, lat: 48.1372, lng: 11.5756, location: "Old town" }),
@@ -97,14 +98,14 @@ export const seedTrips: Trip[] = [
     ],
   },
   {
-    id: "trip-lisbon", title: "Chasing the Lisbon light", city: "Lisbon", country: "Portugal", startDate: "2026-11-13", endDate: "2026-11-15",
+    id: "trip-lisbon", title: "Chasing the Lisbon light", city: "Lisbon", country: "Portugal", countryCode: "PT", startDate: "2026-11-13", endDate: "2026-11-15",
     lat: 38.7223, lng: -9.1393, image: "/images/lisbon.jpg", description: "A demo weekend of tiled streets, long lunches, and Atlantic light.", budget: 620, currency: "EUR", isPublic: false, joinRequests: [], companions: [], expenses: [],
     bookings: [{ id: "l-stay", type: "stay", title: "A guesthouse near Baixa", reference: "DEMO · no reservation", date: "2026-11-13", cost: 180, status: "estimate", source: "demo", notes: "Sample estimate: 2 nights × €90. No real availability." }],
     days: [
       { id: "lisbon-day-1", date: "2026-11-13", label: "Follow the light", activities: [
         activity({ id: "l1-coffee", title: "A bica and a pastel de nata", category: "food", description: "Ease into the city, one small coffee at a time.", time: "09:30", duration: 45, cost: 7, lat: 38.7106, lng: -9.1426, location: "Chiado" }),
         activity({ id: "l1-alfama", title: "Take the long way through Alfama", category: "culture", description: "Follow the tiled streets uphill and pause at the viewpoints.", time: "11:00", duration: 120, cost: 0, lat: 38.7119, lng: -9.1303, location: "Alfama" }),
-        activity({ id: "l1-sunset", title: "Golden-hour photo walk", category: "community", description: "Demo event · a fictional walk to explore how travel and meeting people can fit together.", time: "16:00", duration: 90, cost: 0, lat: 38.7119, lng: -9.1303, location: "Miradouro de Santa Luzia" }),
+        activity({ id: "l1-sunset", title: "Golden-hour photo walk", category: "community", description: "Demo event · a fictional walk to explore how travel and meeting people can fit together.", time: "16:00", duration: 90, cost: 0, lat: 38.7119, lng: -9.1303, location: "Miradouro de Santa Luzia", event: { provider: "demo", id: "event-lisbon", scheduledDate: "2026-11-13" } }),
       ] },
       { id: "lisbon-day-2", date: "2026-11-14", label: "By the river", activities: [
         activity({ id: "l2-belem", title: "A morning in Belém", category: "culture", description: "Riverside walks and monastery views. Admission and transport are separate from this free outdoor stop.", time: "10:00", duration: 120, cost: 0, lat: 38.6979, lng: -9.2065, location: "Belém" }),
@@ -118,12 +119,12 @@ export const seedTrips: Trip[] = [
     ],
   },
   {
-    id: "trip-copenhagen", title: "Copenhagen, at your pace", city: "Copenhagen", country: "Denmark", startDate: "2026-12-04", endDate: "2026-12-06",
+    id: "trip-copenhagen", title: "Copenhagen, at your pace", city: "Copenhagen", country: "Denmark", countryCode: "DK", startDate: "2026-12-04", endDate: "2026-12-06",
     lat: 55.6761, lng: 12.5683, image: "/images/copenhagen.jpg", description: "A demo design-minded weekend, with room for a second coffee. EUR amounts are illustrative, not currency quotes.", budget: 940, currency: "EUR", isPublic: false, joinRequests: [], companions: [], expenses: [],
     bookings: [{ id: "c-stay", type: "stay", title: "A cozy base in Nørrebro", reference: "DEMO · no reservation", date: "2026-12-04", cost: 250, status: "estimate", source: "demo", notes: "Sample estimate: 2 nights × €125. No real accommodation or current exchange rate." }],
     days: [
       { id: "copenhagen-day-1", date: "2026-12-04", label: "Coffee & good design", activities: [
-        activity({ id: "c1-coffee", title: "Coffee & design walk", category: "community", description: "Demo event · an imagined walk around independent Nørrebro shops.", time: "10:00", duration: 90, cost: 8, lat: 55.6890, lng: 12.5530, location: "Nørrebro" }),
+        activity({ id: "c1-coffee", title: "Coffee & design walk", category: "community", description: "Demo event · an imagined walk around independent Nørrebro shops.", time: "10:00", duration: 90, cost: 8, lat: 55.6890, lng: 12.5530, location: "Nørrebro", event: { provider: "demo", id: "event-copenhagen", scheduledDate: "2026-12-04" } }),
         activity({ id: "c1-market", title: "A market lunch", category: "food", description: "Let the counters at Torvehallerne do the choosing.", time: "12:30", duration: 75, cost: 24, lat: 55.6835, lng: 12.5714, location: "Torvehallerne" }),
         activity({ id: "c1-lakes", title: "A lap around the lakes", category: "outdoors", description: "Take the scenic route back and stop for a warm drink.", time: "14:30", duration: 90, cost: 0, lat: 55.6867, lng: 12.5650, location: "The Lakes" }),
       ] },

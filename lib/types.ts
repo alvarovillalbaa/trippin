@@ -11,6 +11,14 @@ export type ActivityCategory =
 export type ActivityStatus = "planned" | "done" | "skipped";
 export type DataSource = "demo" | "custom" | "ai";
 
+export interface ActivityEvent {
+  provider: "ticketmaster" | "manual" | "demo";
+  id: string;
+  scheduledDate?: string;
+  fetchedAt?: string;
+  priceNote?: string;
+}
+
 export interface Activity {
   id: string;
   title: string;
@@ -27,6 +35,7 @@ export interface Activity {
   /** This option starts skipped and replaces the named activity when selected. */
   alternativeFor?: string;
   bookingUrl?: string;
+  event?: ActivityEvent;
   source: DataSource;
 }
 
@@ -87,6 +96,7 @@ export interface Trip {
   title: string;
   city: string;
   country: string;
+  countryCode?: string;
   startDate: string;
   endDate: string;
   lat: number;
@@ -117,6 +127,7 @@ export interface Profile {
   bio: string;
   homeCity: string;
   interests: string[];
+  openToEvents?: ActivityCategory[];
   dailyFoodBudget: number;
   dailyTransportBudget: number;
   badges: Badge[];
@@ -126,6 +137,7 @@ export interface Destination {
   id: string;
   city: string;
   country: string;
+  countryCode?: string;
   lat: number;
   lng: number;
   image: string;

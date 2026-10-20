@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   try {
     const body = await readBody(request);
     if (body.provider === 'flightaware') return reply(await lookupFlight(body.identifier, body.date));
-    if (body.provider === 'ticketmaster') return reply(await discoverEvents(body.city, body.size));
+    if (body.provider === 'ticketmaster') return reply(await discoverEvents(body.city, body.size,{startDate:body.startDate,endDate:body.endDate,countryCode:body.countryCode}));
     return reply({ error: 'Choose a supported provider.', code: 'invalid_provider' }, 400);
   } catch (error) {
     if (error instanceof ProviderError) return reply({ error: error.message, code: error.code }, error.status);

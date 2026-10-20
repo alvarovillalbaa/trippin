@@ -1,12 +1,26 @@
 import { destinations, seedProfile, seedTrips } from "./data";
 import type {
-  Activity, ActivityCategory, Badge, Booking, DemoPerson, Destination, Expense,
+  Activity, ActivityCategory, ActivityEvent, Badge, Booking, DemoPerson, Destination, Expense,
   JoinRequest, Profile, Trip, TripCost, TripDay, WorkspaceState,
 } from "./types";
 
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
 const categories: ActivityCategory[] = ["culture", "food", "outdoors", "nightlife", "community", "transport", "stay", "other"];
+const eventCategories: ActivityCategory[] = ["culture", "food", "outdoors", "nightlife", "community"];
+const interestAliases: Record<string, string[]> = {
+  culture: ["culture", "architecture", "art", "design"],
+  food: ["food", "coffee", "local food"],
+  outdoors: ["outdoors", "running", "cycling"],
+  nightlife: ["nightlife", "music"],
+  community: ["community", "meet people"],
+};
 const dayMilliseconds = 86_400_000;
+
+export function getEventPreferences(profile: Profile): ActivityCategory[] {
+  if (profile.openToEvents !== undefined) return eventCategories.filter((category) => profile.openToEvents?.includes(category));
+  const interests = profile.interests.map((interest) => interest.trim().toLowerCase());
+  return eventCategories.filter((category) => interests.some((interest) => interestAliases[category].includes(interest)));
+}
 
 export function makeId(prefix = "item"): string {
   const random = globalThis.crypto?.randomUUID?.() ?? `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
@@ -37,7 +51,7 @@ export function createTrip(destination: Destination | string, startDate: string,
   const dates = getTripDays(startDate, endDate);
   return {
     id: makeId("trip"), title: title?.trim() || `${place.city}, at your pace`,
-    city: place.city, country: place.country, startDate, endDate,
+    city: place.city, country: place.country, countryCode: place.countryCode, startDate, endDate,
     lat: place.lat, lng: place.lng, image: place.image, description: place.description,
     budget: place.suggestedBudget, currency: "EUR", isPublic: false,
     days: dates.map((date, index) => ({ id: makeId("day"), date, label: index === 0 ? "Find your rhythm" : index === dates.length - 1 ? "A slower goodbye" : "Room for the unexpected", activities: [] })),
@@ -53,7 +67,7 @@ export function formatMoney(amount: number, currency = "EUR"): string {
 export function publicTripSnapshot(trip: Trip): Trip {
   const allowedImages = new Set(["/images/munich.jpg", "/images/lisbon.jpg", "/images/copenhagen.jpg", "/images/barcelona.jpg", "/images/world.svg"]);
   return {
-    id: trip.id, title: trip.title, city: trip.city, country: trip.country,
+    id: trip.id, title: trip.title, city: trip.city, country: trip.country, countryCode: trip.countryCode,
     startDate: trip.startDate, endDate: trip.endDate, lat: trip.lat, lng: trip.lng,
     image: allowedImages.has(trip.image) ? trip.image : "/images/world.svg",
     description: trip.description, budget: trip.budget, currency: trip.currency, isPublic: false,
@@ -65,6 +79,9 @@ export function publicTripSnapshot(trip: Trip): Trip {
         description: activity.description, time: activity.time, duration: activity.duration,
         cost: activity.cost, lat: activity.lat, lng: activity.lng, location: activity.location,
         status: activity.status, source: activity.source, alternativeFor: activity.alternativeFor,
+        event: activity.event ? {
+          provider: activity.event.provider, id: activity.event.id, scheduledDate: activity.event.scheduledDate,
+        } : undefined,
       })),
     })),
   };
@@ -167,12 +184,27 @@ export function getTravelBadges(trips: Trip[]): Badge[] {
     title: country, description: `An activity marked complete in ${country}. Based on your saved trip, not location verification.`,
     icon: "flag", earned: true, source: "derived",
   }));
+  const seenEvents = new Set<string>();
+  const eventBadges: Badge[] = [];
+  for (const { activity, trip } of completed) {
+    if (!activity.event) continue;
+    const eventKey = `${activity.event.provider}:${activity.event.id}`;
+    if (seenEvents.has(eventKey)) continue;
+    seenEvents.add(eventKey);
+    eventBadges.push({
+      id: `event-${eventKey}`, title: activity.title.slice(0, 100),
+      description: `Event marked complete in ${trip.city}${activity.event.scheduledDate ? ` on ${activity.event.scheduledDate}` : ""}. Self-reported from your saved trip; attendance is not verified by the organizer.`,
+      icon: "ticket", earned: true, source: "derived",
+    });
+  }
   return [
     { id: "first-step", title: "The first step", description: "Mark your first activity complete.", icon: "compass", earned: completed.length > 0, source: "derived" },
     { id: "culture-curious", title: "Culture curious", description: "Complete three culture activities.", icon: "landmark", earned: completed.filter(({ activity }) => activity.category === "culture").length >= 3, source: "derived" },
     { id: "outdoors-person", title: "Take it outside", description: "Complete three outdoor activities.", icon: "tree", earned: completed.filter(({ activity }) => activity.category === "outdoors").length >= 3, source: "derived" },
     { id: "new-faces", title: "New faces", description: "Complete a community activity.", icon: "users", earned: completed.some(({ activity }) => activity.category === "community"), source: "derived" },
+    { id: "first-event", title: "Your first event", description: "Mark an event complete to collect its badge. Completion is self-reported, not verified attendance.", icon: "ticket", earned: eventBadges.length > 0, source: "derived" },
     ...countryBadges,
+    ...eventBadges,
   ];
 }
 
@@ -251,6 +283,18 @@ const publicUrl = (value: unknown): boolean => {
 };
 const imagePath = (value: unknown): boolean => text(value, 2000) && (value.startsWith("/images/") || publicUrl(value));
 
+function isActivityEvent(value: unknown): value is ActivityEvent {
+  if (!record(value) || !["ticketmaster", "manual", "demo"].includes(value.provider as string)
+    || !id(value.id) || !value.id.trim() || value.id !== value.id.trim()) return false;
+  if (value.scheduledDate !== undefined && !isDate(value.scheduledDate)) return false;
+  if (value.fetchedAt !== undefined) {
+    if (!text(value.fetchedAt, 24) || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value.fetchedAt)) return false;
+    const parsed = new Date(value.fetchedAt);
+    if (!Number.isFinite(parsed.getTime()) || parsed.toISOString() !== value.fetchedAt) return false;
+  }
+  return optionalText(value.priceNote, 500);
+}
+
 function isActivity(value: unknown): value is Activity {
   if (!record(value)) return false;
   return id(value.id) && text(value.title, 200) && category(value.category) && text(value.description, 4000)
@@ -260,6 +304,7 @@ function isActivity(value: unknown): value is Activity {
     && (value.image === undefined || imagePath(value.image))
     && ["planned", "done", "skipped"].includes(value.status as string)
     && optionalId(value.alternativeFor) && publicUrl(value.bookingUrl)
+    && (value.event === undefined || isActivityEvent(value.event))
     && ["demo", "custom", "ai"].includes(value.source as string);
 }
 
@@ -297,6 +342,8 @@ function isBadge(value: unknown): value is Badge {
 function isProfile(value: unknown): value is Profile {
   return record(value) && text(value.name, 100) && text(value.bio, 1000) && text(value.homeCity, 100)
     && strings(value.interests) && amount(value.dailyFoodBudget) && amount(value.dailyTransportBudget)
+    && (value.openToEvents === undefined || (Array.isArray(value.openToEvents) && value.openToEvents.length <= eventCategories.length
+      && value.openToEvents.every((category) => eventCategories.includes(category)) && new Set(value.openToEvents).size === value.openToEvents.length))
     && Array.isArray(value.badges) && value.badges.length <= 100 && value.badges.every(isBadge) && uniqueIds(value.badges);
 }
 
@@ -308,6 +355,7 @@ function isDay(value: unknown): value is TripDay {
 export function isTrip(value: unknown): value is Trip {
   if (!record(value) || !id(value.id) || !text(value.title, 200) || !text(value.city, 100)
     || !text(value.country, 100) || !isDate(value.startDate) || !isDate(value.endDate)
+    || !(value.countryCode === undefined || (typeof value.countryCode === "string" && /^[A-Z]{2}$/.test(value.countryCode)))
     || !latitude(value.lat) || !longitude(value.lng) || !imagePath(value.image) || !text(value.description, 4000)
     || !amount(value.budget) || value.currency !== "EUR" || typeof value.isPublic !== "boolean"
     || !Array.isArray(value.days) || value.days.length < 1 || value.days.length > 31 || !value.days.every(isDay)

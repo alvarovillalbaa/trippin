@@ -3,8 +3,8 @@
 import {useCallback,useEffect,useMemo,useRef,useState, type FormEvent} from 'react';
 import dynamic from 'next/dynamic';
 import {ArrowUpRight,ArrowLeft,ArrowRight,ArrowUp,ArrowDown,Plus,MapPin,CalendarDays,Compass,Wallet,Ticket,ChevronDown,ChevronRight,Check,CheckCircle2,Clock,Footprints,Plane,Building2,Coffee,Sun,CloudSun,Users,Share2,Sparkles,Settings2,Search,Heart,Leaf,Mountain,Music2,Utensils,Landmark,MoreHorizontal,Download,Upload,ExternalLink,Trash2,Map,LayoutList,Pencil,X,Globe,ShieldCheck,Route,BookOpen,Link as LinkIcon} from 'lucide-react';
-import {seedTrips,seedProfile,destinations,demoPeople,demoEvents} from '@/lib/data';
-import {formatMoney,formatDate,getTripCost,getTripDays,getWalkingRoute,getTravelBadges,isTrip,isWorkspace,makeId,publicTripSnapshot,restoreWorkspace} from '@/lib/trip';
+import {seedTrips,seedProfile,destinations} from '@/lib/data';
+import {formatMoney,formatDate,getTripCost,getTripDays,getWalkingRoute,getTravelBadges,getEventPreferences,isTrip,isWorkspace,makeId,publicTripSnapshot,restoreWorkspace} from '@/lib/trip';
 import type {Trip,Activity,Booking,Expense,Profile,WorkspaceState} from '@/lib/types';
 import {parseExpenseCsv} from '@/lib/csv';
 import Dialog from './dialog';
@@ -15,6 +15,9 @@ import NewTripForm from './new-trip-form';
 import BankPreferences from './bank-preferences';
 import TripRecap from './trip-recap';
 import TripSettings from './trip-settings';
+import EventPlanForm from './event-plan-form';
+import EventIdeas from './event-ideas';
+import type {EventPlanDraft} from '@/lib/events';
 
 const TripMap=dynamic(()=>import('./trip-map'),{ssr:false,loading:()=> <div className="map-panel map-loading">
 <Compass size={32}/>
@@ -22,7 +25,7 @@ const TripMap=dynamic(()=>import('./trip-map'),{ssr:false,loading:()=> <div clas
 </div>});
 const storageKey='trippin.workspace.v1';
 type View='itinerary'|'discover'|'budget'|'bookings'|'profile';
-type Modal='trip'|'tripSettings'|'activity'|'expense'|'booking'|'share'|'settings'|'alternatives'|'join'|null;
+type Modal='trip'|'tripSettings'|'activity'|'event'|'expense'|'booking'|'share'|'settings'|'alternatives'|'join'|null;
 type CommunityRequest={id:string;name:string;message:string;contact:string;status:'pending'|'accepted'|'declined'};
 const categories=['culture','food','outdoors','nightlife','community','transport','stay','other'] as const;
 const categoryIcon={culture:Landmark,food:Utensils,outdoors:Leaf,nightlife:Music2,community:Users,transport:Plane,stay:Building2,other:Compass};
@@ -43,6 +46,7 @@ export default function Workspace(){
   const [modal,setModal]=useState<Modal>(null);
   const [editing,setEditing]=useState<Activity|null>(null);
   const [editingBooking,setEditingBooking]=useState<Booking|null>(null);
+  const [eventDraft,setEventDraft]=useState<EventPlanDraft|null>(null);
   const [newTripCity,setNewTripCity]=useState<string|undefined>(undefined);
   const [selected,setSelected]=useState<string|null>(null);
   const [mobileMap,setMobileMap]=useState(false);
@@ -67,7 +71,7 @@ export default function Workspace(){
   const route=getWalkingRoute(activities);
   const notify=(message:string)=>{setToast(message)};
   const selectPlace=useCallback((id:string)=>setSelected(id),[]);
-  const close=()=>{setModal(null);setError('');setEditing(null);setEditingBooking(null);setShareUrl('');setRequests(null)};
+  const close=()=>{setModal(null);setError('');setEditing(null);setEditingBooking(null);setEventDraft(null);setShareUrl('');setRequests(null)};
   const open=(value:Modal)=>{setError('');setModal(value)};
   const updateTrip=(updater:(value:Trip)=>Trip)=>setState(s=>({...s,trips:s.trips.map(t=>t.id===trip.id?updater(t):t)}));
   const updateActivity=(id:string,updater:(a:Activity)=>Activity)=>updateTrip(t=>({...t,days:t.days.map(d=>({...d,activities:d.activities.map(a=>a.id===id?updater(a):a)}))}));
@@ -92,11 +96,14 @@ export default function Workspace(){
   },[trip.lat,trip.lng]);
 
   const addTrip=(next:Trip)=>{if(state.trips.length>=40){setError('Keep up to 40 trips in this browser. Export a backup to archive older trips.');return}setState(s=>({...s,trips:[...s.trips,next],selectedTripId:next.id}));setDayIndex(0);setSelected(null);setView('itinerary');close();notify('New trip, fresh possibilities. Your itinerary is ready to shape.')};
+  const planEvent=(draft:EventPlanDraft)=>{setEventDraft(draft);open('event')};
+  const saveEvent=(activity:Activity,targetDay:number)=>{updateTrip(t=>({...t,days:t.days.map((d,index)=>index===targetDay?{...d,activities:[...d.activities,activity].sort((a,b)=>a.time.localeCompare(b.time))}:d)}));setDayIndex(targetDay);setSelected(activity.id);setView('itinerary');setMobileMap(false);close();notify('Event added to your day and admission budget. Save a linked reservation after booking.')};
   const submitActivity=(event:FormEvent<HTMLFormElement>)=>{
     event.preventDefault();const form=new FormData(event.currentTarget);const lat=Number(form.get('lat')),lng=Number(form.get('lng'));
     if(!editing&&day.activities.length>=60){setError('Keep up to 60 stops and alternatives in a day.');return}
     if(!Number.isFinite(lat)||!Number.isFinite(lng)||Math.abs(lat)>90||Math.abs(lng)>180){setError('Enter valid map coordinates.');return}
-    const activity:Activity={...editing,id:editing?.id||makeId('activity'),title:field(form,'title'),category:field(form,'category') as Activity['category'],description:field(form,'description'),time:field(form,'time'),duration:Number(form.get('duration')),cost:Number(form.get('cost')),lat,lng,location:field(form,'location'),status:editing?.status||'planned',source:'custom',bookingUrl:safeUrl(field(form,'url'))};
+    const activityId=editing?.id||makeId('activity');
+    const activity:Activity={...editing,id:activityId,title:field(form,'title'),category:field(form,'category') as Activity['category'],description:field(form,'description'),time:field(form,'time'),duration:Number(form.get('duration')),cost:Number(form.get('cost')),lat,lng,location:field(form,'location'),status:editing?.status||'planned',source:editing?.source==='demo'?'demo':'custom',bookingUrl:safeUrl(field(form,'url')),event:form.get('isEvent')?(editing?.event||{provider:'manual',id:`manual-${activityId}`,scheduledDate:day.date}):undefined};
     if(editing)updateActivity(editing.id,()=>activity);else updateTrip(t=>({...t,days:t.days.map((d,i)=>i===dayIndex?{...d,activities:[...d.activities,activity].sort((a,b)=>a.time.localeCompare(b.time))}:d)}));
     close();notify(editing?'Plan updated.':'A little more to look forward to.');
   };
@@ -137,7 +144,7 @@ export default function Workspace(){
   const sendJoin=async(event:FormEvent<HTMLFormElement>)=>{event.preventDefault();if(!joining)return;setBusy(true);const form=new FormData(event.currentTarget);try{const response=await fetch('/api/community',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({tripId:joining.id,name:field(form,'name'),message:field(form,'message'),contact:field(form,'contact')})});const data=await response.json();if(!response.ok)throw new Error(data.error);close();notify('Join request sent. The host can review it in Trippin.')}catch(e){setError(e instanceof Error?e.message:'Could not send the request.')}finally{setBusy(false)}};
   const importCsv=async(file?:File)=>{if(!file)return;try{const rows=parseExpenseCsv(await file.text());if(rows.length+trip.expenses.length>1000)throw new Error('Keep up to 1,000 expenses per trip.');const expenses=rows.map(row=>({...row,id:makeId('expense'),category:(categories as readonly string[]).includes(row.category)?row.category as Expense['category']:'other' as const}));updateTrip(t=>({...t,expenses:[...t.expenses,...expenses]}));notify(`${expenses.length} expenses imported into ${trip.city}.`)}catch(e){notify(e instanceof Error?e.message:'Could not import CSV.')}if(fileInput.current)fileInput.current.value=''};
   const budgetPercent=trip.budget>0?Math.min(100,Math.round(cost.total/trip.budget*100)):cost.total>0?100:0;
-  const aiContext=JSON.stringify({city:trip.city,country:trip.country,startDate:trip.startDate,endDate:trip.endDate,budget:trip.budget,interests:state.profile.interests,days:trip.days.map(d=>({date:d.date,activities:d.activities.filter(a=>!a.alternativeFor).map(a=>({title:a.title,time:a.time,cost:a.cost,status:a.status}))}))});
+  const aiContext=JSON.stringify({city:trip.city,country:trip.country,startDate:trip.startDate,endDate:trip.endDate,budget:trip.budget,interests:state.profile.interests,openToEvents:getEventPreferences(state.profile),days:trip.days.map(d=>({date:d.date,activities:d.activities.filter(a=>!a.alternativeFor).map(a=>({title:a.title,time:a.time,cost:a.cost,status:a.status}))}))});
 
   return <div className="app-shell">
     <a href="#main-content" className="skip-link">Skip to trip</a>
@@ -305,6 +312,7 @@ export default function Workspace(){
 <span>
 <MapPin size={12}/>{activity.location}</span>
 </div>
+{activity.event&&<div className="activity-event-note"><span><Ticket size={12}/>{activity.event.provider==='demo'?'Sample event':activity.event.provider==='ticketmaster'?'Ticketmaster event':'Your event'}</span>{activity.event.scheduledDate&&activity.event.scheduledDate!==day.date&&<strong>Originally scheduled {formatDate(activity.event.scheduledDate)} · check before you go</strong>}{activity.bookingUrl&&<a href={safeUrl(activity.bookingUrl)} target="_blank" rel="noreferrer">Ticket details <ArrowUpRight size={12}/></a>}</div>}
 <div className="activity-bottom">
 <button className={`status-button ${activity.status==='done'?'completed':''}`} onClick={()=>updateActivity(activity.id,a=>({...a,status:a.status==='done'?'planned':'done'}))}>{activity.status==='done'?<>
 <CheckCircle2 size={13}/>Been there</>:<>
@@ -411,7 +419,8 @@ export default function Workspace(){
 </span>
 <ArrowUpRight size={19}/>
 </a>)}</div>
-<ProviderPanel key={trip.id} mode="events" city={trip.city}/>
+<ProviderPanel key={trip.id} mode="events" city={trip.city} countryCode={trip.countryCode||destinations.find(destination=>destination.city===trip.city&&destination.country===trip.country)?.countryCode} startDate={trip.startDate} endDate={trip.endDate} preferences={getEventPreferences(state.profile)} onAddEvent={planEvent}/>
+<EventIdeas trip={trip} preferences={getEventPreferences(state.profile)} onAdd={planEvent}/>
 </div>}
       {view==='budget'&&<div className="content-page">
 <div className="page-eyebrow">LESS GUESSWORK. MORE GOOD DAYS.</div>
@@ -446,7 +455,7 @@ export default function Workspace(){
 <h3>Your everyday rhythm.</h3>
 <p>Daily allowances fill gaps around the costs you’ve already planned.</p>
 </div>
-<form onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);setState(s=>({...s,profile:{...s.profile,dailyFoodBudget:Number(f.get('food')),dailyTransportBudget:Number(f.get('transport'))},trips:s.trips.map(t=>t.id===trip.id?{...t,budget:Number(f.get('budget'))}:t)}));notify('Daily spending and trip budget updated.')}}>
+<form key={`${trip.id}:${trip.budget}:${state.profile.dailyFoodBudget}:${state.profile.dailyTransportBudget}`} onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);setState(s=>({...s,profile:{...s.profile,dailyFoodBudget:Number(f.get('food')),dailyTransportBudget:Number(f.get('transport'))},trips:s.trips.map(t=>t.id===trip.id?{...t,budget:Number(f.get('budget'))}:t)}));notify('Daily spending and trip budget updated.')}}>
 <label>Food / day (€)<input type="number" min="0" max="10000" name="food" defaultValue={state.profile.dailyFoodBudget} required/>
 </label>
 <label>Transport / day (€)<input type="number" min="0" max="10000" name="transport" defaultValue={state.profile.dailyTransportBudget} required/>
@@ -540,7 +549,7 @@ export default function Workspace(){
 <div className="page-eyebrow">A PASSPORT TO YOUR KIND OF TRAVEL.</div>
 <h1>A little about you.</h1>
 <p className="page-intro">Less tourist checklist. More things that feel like you.</p>
-<form className="profile-form" onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);setState(s=>({...s,profile:{...s.profile,name:field(f,'name'),bio:field(f,'bio'),homeCity:field(f,'homeCity'),interests:f.getAll('interest').map(String)}}));notify('Profile updated. Here’s to your next chapter.')}}>
+<form className="profile-form" key={JSON.stringify(state.profile)} onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);setState(s=>({...s,profile:{...s.profile,name:field(f,'name'),bio:field(f,'bio'),homeCity:field(f,'homeCity'),interests:f.getAll('interest').map(String),openToEvents:f.getAll('eventType').map(String) as Profile['openToEvents']}}));notify('Profile updated. Here’s to your next chapter.')}}>
 <div className="profile-intro">
 <span className="avatar large">{state.profile.name.slice(0,1)}</span>
 <span>
@@ -562,16 +571,19 @@ export default function Workspace(){
 <span>
 <Icon size={16}/>{categoryLabel[c as keyof typeof categoryLabel]}</span>
 </label>})}</div>
+<h3>What events would you be open to?</h3>
+<p className="form-note">These choices filter event ideas. Use All events in Discover whenever you want to try something different.</p>
+<div className="interest-picker">{(['culture','food','outdoors','nightlife','community'] as const).map(category=>{const Icon=categoryIcon[category];return <label key={category}><input type="checkbox" name="eventType" value={category} defaultChecked={getEventPreferences(state.profile).includes(category)}/><span><Icon size={16}/>{categoryLabel[category]}</span></label>})}</div>
 <button className="primary" type="submit">Save your profile <Check size={16}/>
 </button>
 </form>
 <div className="section-heading">
 <div>
 <h2>Little moments. Lasting memories.</h2>
-<p>Badges follow the places you go and activities you mark done.</p>
+<p>Country and individual event badges follow the moments you mark done. Attendance is self-reported.</p>
 </div>
 </div>
-<div className="badges">{getTravelBadges(state.trips).map(badge=><div key={badge.id} className={badge.earned?'':'locked'}><span>{badge.icon==='flag'?'◎':badge.icon==='users'?'✳':'✺'}</span><strong>{badge.title}</strong><small>{badge.description}</small></div>)}</div>
+<div className="badges">{getTravelBadges(state.trips).map(badge=><div key={badge.id} className={badge.earned?'':'locked'}><span>{badge.icon==='flag'?'◎':badge.icon==='users'?'✳':badge.icon==='ticket'?<Ticket size={32}/>:'✺'}</span><strong>{badge.title}</strong><small>{badge.description}</small></div>)}</div>
 <TripRecap trip={trip} profile={state.profile}/>
 <div className="integration-notice">
 <ShieldCheck size={21}/>
@@ -595,9 +607,10 @@ export default function Workspace(){
 <X size={15}/>
 </button>
 </div>}
-    {modal&&<Dialog title={modal==='trip'?'A new chapter.':modal==='activity'?(editing?'Change the plan.':'A good little detour.'):modal==='expense'?'A little expense.':modal==='booking'?'Keep the details close.':modal==='share'?'Good plans are worth sharing.':modal==='alternatives'?'A different kind of good.':modal==='join'?'A few new faces.':'A few helpful details.'} onClose={close} wide={modal==='settings'}>
+    {modal&&<Dialog title={modal==='trip'?'A new chapter.':modal==='event'?'Make it part of your trip.':modal==='activity'?(editing?'Change the plan.':'A good little detour.'):modal==='expense'?'A little expense.':modal==='booking'?'Keep the details close.':modal==='share'?'Good plans are worth sharing.':modal==='alternatives'?'A different kind of good.':modal==='join'?'A few new faces.':'A few helpful details.'} onClose={close} wide={modal==='settings'}>
       {error&&<div role="alert" className="form-error">{error}</div>}
       {modal==='trip'&&<NewTripForm onCreate={addTrip} initialCity={newTripCity}/>}
+      {modal==='event'&&eventDraft&&<EventPlanForm draft={eventDraft} trip={trip} onSave={saveEvent}/>}
       {modal==='tripSettings'&&<TripSettings trip={trip} canDelete={state.trips.length>1} onSave={updated=>{updateTrip(()=>updated);setDayIndex(0);setSelected(null);close();notify('Trip details updated. Your agenda is ready to keep moving.')}} onDelete={()=>{setState(s=>{const remaining=s.trips.filter(t=>t.id!==trip.id);return{...s,trips:remaining,selectedTripId:remaining[0].id}});setDayIndex(0);setSelected(null);close();notify('Trip deleted from this browser.')}}/>}
       {modal==='activity'&&<form className="dialog-form" onSubmit={submitActivity}>
 <label>What’s the plan?<input name="title" defaultValue={editing?.title} required maxLength={140} placeholder="Coffee, then see where we end up"/>
@@ -613,6 +626,7 @@ export default function Workspace(){
 </label>
 <label>Place or neighborhood<input name="location" defaultValue={editing?.location} maxLength={120} required/>
 </label>
+<label className="event-checkbox"><input type="checkbox" name="isEvent" defaultChecked={Boolean(editing?.event)}/><span>This stop is an event · earn its badge when marked done</span></label>
 <div className="form-grid">
 <label>Time to enjoy it (min)<input name="duration" type="number" min="5" max="1440" defaultValue={editing?.duration||60} required/>
 </label>

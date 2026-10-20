@@ -93,7 +93,7 @@ async function body(request: Request): Promise<Record<string, unknown>> {
 // Free-text itinerary fields remain public and need the host's review.
 function publicTrip(trip: Trip): Trip {
   return {
-    id: trip.id, title: trip.title, city: trip.city, country: trip.country,
+    id: trip.id, title: trip.title, city: trip.city, country: trip.country, countryCode:trip.countryCode,
     startDate: trip.startDate, endDate: trip.endDate, lat: trip.lat, lng: trip.lng,
     image: trip.image, description: trip.description, budget: trip.budget, currency: trip.currency,
     isPublic: true, expenses: [], bookings: [], companions: [], joinRequests: [],
@@ -104,6 +104,7 @@ function publicTrip(trip: Trip): Trip {
         description: activity.description, time: activity.time, duration: activity.duration,
         cost: activity.cost, lat: activity.lat, lng: activity.lng, location: activity.location,
         image: activity.image, status: activity.status, alternativeFor: activity.alternativeFor, source: activity.source,
+        event:activity.event?{provider:activity.event.provider,id:activity.event.id,scheduledDate:activity.event.scheduledDate}:undefined,
       })),
     })),
   };

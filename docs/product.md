@@ -9,8 +9,8 @@ Trippin helps solo travelers and people with a weekend or 4–7 days make the mo
 3. Keep an interactive map on the right on desktop with selected-day places, estimates of walking distance/time, and external directions. Mobile gets an accessible map toggle.
 4. Show full projected costs: flights, stays, event admissions, food, transport, and actual expenses without double counting linked reservations.
 5. Keep flight, stay, and event reservations together, with external booking links. Native purchasing depends on provider agreements and payment setup.
-6. Personalize around interests and ordinary daily spending. Bank credentials never enter Trippin; manual expense input and CSV import work without a bank provider.
-7. Support a travel profile, derived country/activity badges, sharing, public trips, and join requests. Sample people and events must remain visibly labeled.
+6. Personalize around interests, explicit event preferences, and ordinary daily spending. Event discovery fits the trip's local dates and can become an editable stop with a confirmed EUR estimate. Bank credentials never enter Trippin; manual expense input and CSV import work without a bank provider.
+7. Support a travel profile, derived country/activity and individual-event badges, sharing, public trips, and join requests. Event badges follow self-reported completion and deduplicate provider identity across copied trips. Sample people and events must remain visibly labeled.
 8. Offer an EVE assistant using Vercel's framework, with explicit credential availability, errors, and user consent before using private trip context.
 9. Publish source to `alvarovillalbaa/trippin` and deploy on Vercel; keep release evidence and remaining provider prerequisites.
 

@@ -34,7 +34,7 @@ does not request private account data. Do not add private tools or integrations
 without an application session and a server-enforced per-session ownership ACL.
 
 Sharing the limited trip plan is opt-in and off by default. The checkbox sends
-only the supplied city, dates, interests, itinerary titles, and planning
+only the supplied city, dates, interests, event preferences, itinerary titles, and planning
 estimates as ephemeral `clientContext` for that turn. Booking references, actual
 expenses, bank data, and payment data must never enter this context. Typed chat
 messages still go to the model provider and the durable EVE runtime; the UI asks
