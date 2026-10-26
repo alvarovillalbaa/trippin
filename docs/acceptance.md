@@ -17,4 +17,6 @@ This release builds the product with provider credentials deferred at Alvaro's r
 | AI with EVE | Real agent, arithmetic/stay tools, streaming hook, consent for limited context, cancellation, explicit setup state | EVE build and health verified; disabled sessions return401. No live model/Workflow turn. |
 | GitHub + Vercel | Public repository, Git-backed Node24 production deployment, public alias | GitHub commit state, Vercel READY/build logs, public HTTP200, bounded receipts in deployment-verification.json. |
 
+The [26 October shared-itinerary import repair](results/2026/10-26/shared-plan-import.md) adds 20 passing pure frontend-data checks for bounded, non-destructive imports, write-before-URL-consumption ordering, failure retention, and reload after consumption. Browser history and StrictMode interaction remain source-reviewed rather than browser-verified.
+
 Before broad public social use, add account recovery/verified session ownership, moderation and stronger abuse controls. Before activating paid APIs/AI, configure budgets and rate controls. Real bank linking and native purchases need their respective account/payment/consent designs and provider approvals.

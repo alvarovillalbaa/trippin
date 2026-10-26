@@ -4,7 +4,7 @@ import {useCallback,useEffect,useMemo,useRef,useState, type FormEvent} from 'rea
 import dynamic from 'next/dynamic';
 import {ArrowUpRight,ArrowLeft,ArrowRight,ArrowUp,ArrowDown,Plus,MapPin,CalendarDays,Compass,Wallet,Ticket,ChevronDown,ChevronRight,Check,CheckCircle2,Clock,Footprints,Plane,Building2,Coffee,Sun,CloudSun,Users,Share2,Sparkles,Settings2,Search,Heart,Leaf,Mountain,Music2,Utensils,Landmark,MoreHorizontal,Download,Upload,ExternalLink,Trash2,Map,LayoutList,Pencil,X,Globe,ShieldCheck,Route,BookOpen,Link as LinkIcon} from 'lucide-react';
 import {seedTrips,seedProfile,destinations} from '@/lib/data';
-import {formatMoney,formatDate,getTripCost,getTripDays,getWalkingRoute,getTravelBadges,getEventPreferences,isTrip,isWorkspace,makeId,publicTripSnapshot,restoreWorkspace} from '@/lib/trip';
+import {formatMoney,formatDate,getTripCost,getTripDays,getWalkingRoute,getTravelBadges,getEventPreferences,isTrip,isWorkspace,makeId,publicTripSnapshot,restoreWorkspace,importSharedPlan,persistWorkspace} from '@/lib/trip';
 import type {Trip,Activity,Booking,Expense,Profile,WorkspaceState} from '@/lib/types';
 import {parseExpenseCsv} from '@/lib/csv';
 import Dialog from './dialog';
@@ -64,6 +64,8 @@ export default function Workspace(){
   const [requests,setRequests]=useState<CommunityRequest[]|null>(null);
   const fileInput=useRef<HTMLInputElement>(null);
   const backupInput=useRef<HTMLInputElement>(null);
+  const initialized=useRef(false);
+  const pendingPlan=useRef<{tripId:string;hash:string}|null>(null);
   const trip=state.trips.find(t=>t.id===state.selectedTripId)||state.trips[0];
   const day=trip.days[Math.min(dayIndex,trip.days.length-1)];
   const activities=useMemo(()=>day?.activities.filter(a=>!a.alternativeFor)||[],[day]);
@@ -78,16 +80,36 @@ export default function Workspace(){
   const selectTrip=(id:string)=>{setState(s=>({...s,selectedTripId:id}));setDayIndex(0);setSelected(null);setView('itinerary');setMobileMap(false)};
 
   useEffect(()=>{
-    try{setState(restoreWorkspace(localStorage.getItem(storageKey)))}catch{setToast('Browser storage is unavailable. Export a backup to keep your changes.')}
+    if(initialized.current)return;
+    initialized.current=true;
+    let restored=initial,notice='';
+    try{restored=restoreWorkspace(localStorage.getItem(storageKey))}catch{notice='Browser storage is unavailable. Export a backup to keep your changes.'}
+    const sharedPlan=importSharedPlan(restored,window.location.href);
+    setState(sharedPlan.workspace);
+    if(sharedPlan.status==='imported'){
+      pendingPlan.current={tripId:sharedPlan.workspace.selectedTripId,hash:window.location.hash};
+      notice=['Shared itinerary added. Saving it in this browser…',notice].filter(Boolean).join(' ');
+    }else if(sharedPlan.status==='full')notice=['Adding this itinerary would exceed this browser’s workspace limit. Your existing trips are unchanged.',notice].filter(Boolean).join(' ');
+    else if(sharedPlan.status==='invalid')notice=['This itinerary link is invalid. Your existing trips are unchanged.',notice].filter(Boolean).join(' ');
+    if(notice)setToast(notice);
     setReady(true);
     void fetch('/api/community').then(r=>r.json()).then(data=>{setSocialReady(data.available===true);setPublicTrips(Array.isArray(data.trips)?data.trips.filter(isTrip):[])}).catch(()=>{});
     const shared=new URLSearchParams(window.location.search).get('trip');
     if(shared&&/^[a-zA-Z0-9_-]{1,80}$/.test(shared))void fetch(`/api/community?id=${shared}`).then(r=>r.json()).then(data=>{if(isTrip(data.trip)){setJoining(data.trip);setModal('join')}}).catch(()=>setToast('This shared trip could not be loaded.'));
-    if(window.location.hash.startsWith('#plan=')){
-      try{const encoded=window.location.hash.slice(6);if(encoded.length>32000)throw new Error();const raw:unknown=JSON.parse(decodeURIComponent(escape(atob(encoded))));if(!isTrip(raw))throw new Error();const copy:Trip={...raw,id:makeId('trip'),isPublic:false,bookings:[],expenses:[],joinRequests:[],companions:[]};setState(s=>({...s,trips:[...s.trips,copy],selectedTripId:copy.id}));setDayIndex(0);setSelected(null);setToast('Shared itinerary saved as a new trip in your browser.')}catch{setToast('This itinerary link is invalid. Ask for a fresh link.')}
-    }
   },[]);
-  useEffect(()=>{if(ready)try{localStorage.setItem(storageKey,JSON.stringify(state))}catch{setToast('Your browser could not save. Export a backup before leaving.')}},[state,ready]);
+  useEffect(()=>{
+    if(!ready)return;
+    const pending=pendingPlan.current,includesPlan=pending&&state.trips.some(t=>t.id===pending.tripId);
+    const result=persistWorkspace(state,serialized=>localStorage.setItem(storageKey,serialized),includesPlan&&pending?()=>{
+      const url=new URL(window.location.href);
+      if(url.hash===pending.hash){url.hash='';window.history.replaceState(window.history.state,'',url.href)}
+    }:undefined);
+    if(result==='unsaved')setToast(includesPlan?'This itinerary is here for this visit, but could not be saved. Keep the shared link or export a backup before leaving.':'Your browser could not save. Export a backup before leaving.');
+    else if(pending){
+      if(result==='link-retained')setToast('Shared itinerary saved. The link could not be cleared; open Trippin home before reloading.');
+      else{pendingPlan.current=null;if(includesPlan)setToast('Shared itinerary saved as a new trip in your browser.')}
+    }
+  },[state,ready]);
   useEffect(()=>{if(!toast)return;const timer=setTimeout(()=>setToast(''),5000);return()=>clearTimeout(timer)},[toast]);
   useEffect(()=>{
     const controller=new AbortController();setWeather(null);

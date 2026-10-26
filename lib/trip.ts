@@ -15,6 +15,7 @@ const interestAliases: Record<string, string[]> = {
   community: ["community", "meet people"],
 };
 const dayMilliseconds = 86_400_000;
+const workspaceLengthLimit = 2_000_000;
 
 export function getEventPreferences(profile: Profile): ActivityCategory[] {
   if (profile.openToEvents !== undefined) return eventCategories.filter((category) => profile.openToEvents?.includes(category));
@@ -385,14 +386,54 @@ export function isWorkspace(value: unknown): value is WorkspaceState {
 
 /** Only fully validated data can enter the workspace from local storage or a backup. */
 export function restoreWorkspace(raw: string | null): WorkspaceState {
-  if (!raw || raw.length > 2_000_000) return initialWorkspace();
+  if (!raw || raw.length > workspaceLengthLimit) return initialWorkspace();
   try {
     const parsed: unknown = JSON.parse(raw);
     return isWorkspace(parsed) ? parsed : initialWorkspace();
   } catch { return initialWorkspace(); }
 }
 
-export function serializeWorkspace(state: WorkspaceState): string {
+export type SharedPlanImport =
+  | { status: "none" | "invalid" | "full"; workspace: WorkspaceState }
+  | { status: "imported"; workspace: WorkspaceState; url: string };
+
+/** Accept a shared itinerary once; only accepted imports return a consumed URL. */
+export function importSharedPlan(workspace: WorkspaceState, href: string): SharedPlanImport {
+  try {
+    const url = new URL(href);
+    if (!url.hash.startsWith("#plan=")) return { status: "none", workspace };
+    const encoded = url.hash.slice(6);
+    if (encoded.length > 32_000) return { status: "invalid", workspace };
+    const bytes = Uint8Array.from(atob(encoded), character => character.charCodeAt(0));
+    const raw: unknown = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
+    if (!isTrip(raw)) return { status: "invalid", workspace };
+    if (workspace.trips.length >= 40) return { status: "full", workspace };
+    const copy: Trip = { ...raw, id: makeId("trip"), isPublic: false, bookings: [], expenses: [], joinRequests: [], companions: [] };
+    const next = { ...workspace, trips: [...workspace.trips, copy], selectedTripId: copy.id };
+    try { serializeWorkspace(next, 0); } catch { return { status: "full", workspace }; }
+    url.hash = "";
+    return {
+      status: "imported",
+      workspace: next,
+      url: url.href,
+    };
+  } catch { return { status: "invalid", workspace }; }
+}
+
+export function serializeWorkspace(state: WorkspaceState, indentation = 2): string {
   if (!isWorkspace(state)) throw new Error("The trip backup contains invalid or unsupported data.");
-  return JSON.stringify(state, null, 2);
+  const serialized = JSON.stringify(state, null, indentation);
+  if (serialized.length > workspaceLengthLimit) throw new Error("This workspace is too large to save. Export a backup before making room.");
+  return serialized;
+}
+
+/** Keep the last durable workspace when validation or storage fails. */
+export function persistWorkspace(
+  state: WorkspaceState,
+  write: (serialized: string) => void,
+  consumeSharedUrl?: () => void,
+): "saved" | "unsaved" | "link-retained" {
+  try { write(serializeWorkspace(state, 0)); } catch { return "unsaved"; }
+  try { consumeSharedUrl?.(); } catch { return "link-retained"; }
+  return "saved";
 }
