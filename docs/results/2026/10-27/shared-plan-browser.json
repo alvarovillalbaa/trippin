@@ -1,0 +1,73 @@
+{
+  "observedAt": "2026-10-27T07:54:31.784Z",
+  "url": "https://trippin-theta.vercel.app",
+  "authorization": "Owner explicitly approved focused desktop/mobile checks with disposable private trips, editing/budget/reload, one-time shared-link import and fixture-only teardown.",
+  "logicCommit": "624d815b20f0cb7f9bb3f6cb6d4773b7a0511485",
+  "logicDeployment": "dpl_6w8KLuDEHyyciQeCwXwxqhuE6opb",
+  "mobileLabelCommit": "76c9d8a39ccc5ff98fef4d2d217b436217359cb5",
+  "mobileLabelDeployment": "dpl_FdDn8TMTQphiM8bXoWmzEfK2NfhH",
+  "fixture": {
+    "title": "QA shared import · 27 Oct 2026",
+    "originalId": "trip-aa80cbf9-af9d-4ed0-b634-6b972117ac2d",
+    "importedCopyId": "trip-53e6799a-dc0b-4923-9ed8-1aae88dce9c6",
+    "destination": "Lisbon, Portugal",
+    "dates": [
+      "2026-11-03",
+      "2026-11-04"
+    ],
+    "budgetEUR": 420,
+    "activityCostEUR": 18,
+    "privateExpenseEUR": 12
+  },
+  "checks": {
+    "baselineTripCount": 3,
+    "afterCreation": 4,
+    "editsSurvivedReload": true,
+    "orderAfterReload": [
+      "QA park stop",
+      "QA gallery stop"
+    ],
+    "clipboardMatchedVisibleShareUrl": true,
+    "sharedExpenses": 0,
+    "sharedBookings": 0,
+    "privateExpenseAbsentFromShare": true,
+    "afterImport": 5,
+    "firstReloadTripCount": 5,
+    "secondReloadTripCount": 5,
+    "hashConsumed": true,
+    "exactQueryPreserved": true,
+    "importedBudgetShowsZeroRecorded": true,
+    "originalBudgetStillShowsTwelve": true,
+    "mobileMapAndItineraryToggle": true,
+    "mobileAssistantNamed": true
+  },
+  "layout": {
+    "mobileViewportWidth": 390,
+    "mobileClientWidth": 375,
+    "mobileScrollWidth": 375,
+    "desktopViewportWidth": 1440,
+    "desktopViewportHeight": 756
+  },
+  "teardown": {
+    "method": "Actual per-trip confirmation checkbox and Delete trip button, guarded by the two owned fixture IDs.",
+    "afterImportedCopyDeletion": 4,
+    "afterBothDeletions": 3,
+    "afterFinalReload": 3,
+    "baselineIdsPreserved": true,
+    "bothFixtureIdsAbsent": true,
+    "originalSelectionRestored": true,
+    "storageCleared": false
+  },
+  "artifacts": [
+    "shared-plan-desktop.png",
+    "shared-plan-mobile.png",
+    "shared-plan-mobile-map.png"
+  ],
+  "notes": [
+    "Direct date fill initially changed visible native values without committing React state; native keyboard adjustment committed the values, and the saved/reloaded 3–4 November range was verified.",
+    "A first snapshot of the newly deployed app showed its three server-rendered samples; a later settled snapshot restored all five trips. Teardown was verified only after the workspace had restored.",
+    "No AI/model turn, paid travel lookup, community publication, bank linking, CSV/file upload or backup import was performed.",
+    "40-trip/serialized-size boundaries and write/history failures remain covered by focused data tests, not destructive live quota tests.",
+    "These are Chrome desktop/narrow viewport checks, not physical mobile-device, cross-browser or screen-reader acceptance."
+  ]
+}
