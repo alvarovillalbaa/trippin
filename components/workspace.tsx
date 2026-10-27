@@ -1,12 +1,13 @@
 'use client';
 
-import {useCallback,useEffect,useMemo,useRef,useState, type FormEvent} from 'react';
+import {useCallback,useEffect,useMemo,useReducer,useRef,useState, type FormEvent} from 'react';
 import dynamic from 'next/dynamic';
 import {ArrowUpRight,ArrowLeft,ArrowRight,ArrowUp,ArrowDown,Plus,MapPin,CalendarDays,Compass,Wallet,Ticket,ChevronDown,ChevronRight,Check,CheckCircle2,Clock,Footprints,Plane,Building2,Coffee,Sun,CloudSun,Users,Share2,Sparkles,Settings2,Search,Heart,Leaf,Mountain,Music2,Utensils,Landmark,MoreHorizontal,Download,Upload,ExternalLink,Trash2,Map,LayoutList,Pencil,X,Globe,ShieldCheck,Route,BookOpen,Link as LinkIcon} from 'lucide-react';
 import {seedTrips,seedProfile,destinations} from '@/lib/data';
 import {formatMoney,formatDate,getTripCost,getTripDays,getWalkingRoute,getTravelBadges,getEventPreferences,isTrip,makeId,publicTripSnapshot,restoreWorkspace,importSharedPlan,persistWorkspace,MAX_BACKUP_FILE_BYTES,exportWorkspaceBackup,parseWorkspaceBackup} from '@/lib/trip';
 import type {Trip,Activity,Booking,Expense,Profile,WorkspaceState} from '@/lib/types';
 import {parseExpenseCsv} from '@/lib/csv';
+import {createWorkspaceEditor,workspaceReducer,type WorkspaceUpdate,type CsvImportTicket} from '@/lib/workspace-state';
 import Dialog from './dialog';
 import {AiChat} from './ai-chat';
 import StayComparison from './stay-comparison';
@@ -39,7 +40,9 @@ function safeUrl(value:string){try{const url=new URL(value);return ['https:','ht
 function dayLabel(date:string){return new Date(`${date}T12:00:00`).toLocaleDateString('en-GB',{weekday:'short',day:'numeric'})}
 
 export default function Workspace(){
-  const [state,setState]=useState<WorkspaceState>(initial);
+  const [workspaceEdit,dispatchWorkspace]=useReducer(workspaceReducer,initial,createWorkspaceEditor);
+  const state=workspaceEdit.workspace;
+  const setState=useCallback((update:WorkspaceUpdate)=>dispatchWorkspace({type:'update',update}),[]);
   const [ready,setReady]=useState(false);
   const [view,setView]=useState<View>('itinerary');
   const [dayIndex,setDayIndex]=useState(0);
@@ -63,6 +66,7 @@ export default function Workspace(){
   const [busy,setBusy]=useState(false);
   const [requests,setRequests]=useState<CommunityRequest[]|null>(null);
   const fileInput=useRef<HTMLInputElement>(null);
+  const csvReadGeneration=useRef(0);
   const backupInput=useRef<HTMLInputElement>(null);
   const backupReadGeneration=useRef(0);
   const initialized=useRef(false);
@@ -98,6 +102,8 @@ export default function Workspace(){
     const shared=new URLSearchParams(window.location.search).get('trip');
     if(shared&&/^[a-zA-Z0-9_-]{1,80}$/.test(shared))void fetch(`/api/community?id=${shared}`).then(r=>r.json()).then(data=>{if(isTrip(data.trip)){setJoining(data.trip);setModal('join')}}).catch(()=>setToast('This shared trip could not be loaded.'));
   },[]);
+  // Save failures run after this notice so an import cannot hide an unsaved-data warning.
+  useEffect(()=>{if(workspaceEdit.csvNotice)setToast(workspaceEdit.csvNotice.message)},[workspaceEdit.csvNotice]);
   useEffect(()=>{
     if(!ready)return;
     const pending=pendingPlan.current,includesPlan=pending&&state.trips.some(t=>t.id===pending.tripId);
@@ -165,7 +171,7 @@ export default function Workspace(){
     try{let owner=localStorage.getItem('trippin.owner');if(!owner){owner=crypto.randomUUID()+crypto.randomUUID();localStorage.setItem('trippin.owner',owner)}const response=await fetch('/api/community',{method:'POST',headers:{'Content-Type':'application/json','x-trip-owner':owner},body:JSON.stringify({trip:snapshot(),host:state.profile.name})});const data=await response.json();if(!response.ok)throw new Error(data.error||'Could not publish this trip.');updateTrip(t=>({...t,isPublic:true}));const url=window.location.origin+'/?trip='+trip.id;setShareUrl(url);setPublicTrips(list=>[...list.filter(t=>t.id!==trip.id),{...snapshot(),isPublic:true}]);notify('Your trip is open for join requests.')}catch(e){setError(e instanceof Error?e.message:'Could not publish.')}finally{setBusy(false)}
   };
   const sendJoin=async(event:FormEvent<HTMLFormElement>)=>{event.preventDefault();if(!joining)return;setBusy(true);const form=new FormData(event.currentTarget);try{const response=await fetch('/api/community',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({tripId:joining.id,name:field(form,'name'),message:field(form,'message'),contact:field(form,'contact')})});const data=await response.json();if(!response.ok)throw new Error(data.error);close();notify('Join request sent. The host can review it in Trippin.')}catch(e){setError(e instanceof Error?e.message:'Could not send the request.')}finally{setBusy(false)}};
-  const importCsv=async(file?:File)=>{if(!file)return;try{const rows=parseExpenseCsv(await file.text());if(rows.length+trip.expenses.length>1000)throw new Error('Keep up to 1,000 expenses per trip.');const expenses=rows.map(row=>({...row,id:makeId('expense'),category:(categories as readonly string[]).includes(row.category)?row.category as Expense['category']:'other' as const}));updateTrip(t=>({...t,expenses:[...t.expenses,...expenses]}));notify(`${expenses.length} expenses imported into ${trip.city}.`)}catch(e){notify(e instanceof Error?e.message:'Could not import CSV.')}if(fileInput.current)fileInput.current.value=''};
+  const importCsv=async(file?:File)=>{if(!file)return;const input=fileInput.current,requestId=++csvReadGeneration.current,ticket:CsvImportTicket={tripId:trip.id,identity:workspaceEdit.tripIdentities.get(trip.id),requestId};try{const rows=parseExpenseCsv(await file.text());const expenses=rows.map(row=>({...row,id:makeId('expense'),category:(categories as readonly string[]).includes(row.category)?row.category as Expense['category']:'other' as const}));dispatchWorkspace({type:'csv-import',ticket,expenses})}catch(e){dispatchWorkspace({type:'csv-error',ticket,message:e instanceof Error?e.message:'Could not import CSV.'})}finally{if(input&&fileInput.current===input&&csvReadGeneration.current===requestId)input.value=''}};
   const budgetPercent=trip.budget>0?Math.min(100,Math.round(cost.total/trip.budget*100)):cost.total>0?100:0;
   const aiContext=JSON.stringify({city:trip.city,country:trip.country,startDate:trip.startDate,endDate:trip.endDate,budget:trip.budget,interests:state.profile.interests,openToEvents:getEventPreferences(state.profile),days:trip.days.map(d=>({date:d.date,activities:d.activities.filter(a=>!a.alternativeFor).map(a=>({title:a.title,time:a.time,cost:a.cost,status:a.status}))}))});
 

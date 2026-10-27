@@ -17,4 +17,6 @@ Create trips worldwide with city search; edit dates, budget, and daily stops; sk
 
 CSV expenses use EUR; an explicit foreign, blank or ambiguous currency column is rejected. Compact backups preserve private workspace data and restore within the existing workspace limit; oversized or unsupported in-memory data remains exportable as a recovery archive. Restore validates the file and saves it before replacing current trips. See the [CSV/backup repair and verification limits](docs/results/2026/10-27/csv-backup-repair.md).
 
+Overlapping CSV reads append against the latest trip and workspace limits. Reads for a deleted or restored trip are ignored; newer edits survive. See the [CSV state repair](docs/results/2026/10-27/csv-import-state.md).
+
 EVE needs model credentials and the Vercel Workflow runtime for durable hosted execution. The public trip directory and requests need `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`. Missing integrations display explicit setup states. Never put provider secrets into browser environment variables.

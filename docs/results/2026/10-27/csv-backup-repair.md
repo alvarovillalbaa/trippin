@@ -41,7 +41,7 @@ Independent source reviews checked currency compatibility and backup/ordering co
 
 The AST adapter does not prove React reconciliation, native `File`/download APIs, actual browser quota or desktop/mobile interaction. Existing earlier browser evidence retains its original shared-plan/editing scope. The [prepared eight-case browser/temporary-CI proposal](../../../proposals/csv-backup-browser.md) remains inactive pending explicit approval. Provider credentials, EVE model execution, public/community persistence, bank and identity requirements retain their existing gates.
 
-The [separate CSV target/capacity race](source-audit.md#separate-open-csv-follow-up) remains open; this repair does not claim the importer is complete under every concurrent edit. No full-goal completion claim is made.
+The [separate CSV target/capacity race](source-audit.md#separate-csv-follow-up) was outside this repair and has since received its own [state repair and focused evidence](csv-import-state.md). That later receipt owns its publication status and proof limits. No full-goal completion claim is made.
 
 ## Publication
 
