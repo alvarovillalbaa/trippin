@@ -1,6 +1,6 @@
 # CSV currency and backup integrity
 
-Status: source repair and focused checks complete locally; publication/hosted readback pending below. Browser file selection/download and provider acceptance remain separate. The full multi-project goal is active.
+Status: source repair published, 58 focused checks passed, hosted compilation/typecheck and public delivery verified. Browser file selection/download and provider acceptance remain separate. The full multi-project goal is active.
 
 Baseline: [56121aa4fcd9f24f35202a03aa35b76bb19c1a72](https://github.com/alvarovillalbaa/trippin/commit/56121aa4fcd9f24f35202a03aa35b76bb19c1a72). The [owning audit](source-audit.md) identified the two original defects against the [product contract](../../../product.md).
 
@@ -39,10 +39,12 @@ Independent source reviews checked currency compatibility and backup/ordering co
 
 ## Remaining acceptance
 
-The AST adapter does not prove React reconciliation, native `File`/download APIs, actual browser quota or desktop/mobile interaction. Existing earlier browser evidence retains its original shared-plan/editing scope. New file-flow browser acceptance remains open. Provider credentials, EVE model execution, public/community persistence, bank and identity requirements retain their existing gates.
+The AST adapter does not prove React reconciliation, native `File`/download APIs, actual browser quota or desktop/mobile interaction. Existing earlier browser evidence retains its original shared-plan/editing scope. The [prepared eight-case browser/temporary-CI proposal](../../../proposals/csv-backup-browser.md) remains inactive pending explicit approval. Provider credentials, EVE model execution, public/community persistence, bank and identity requirements retain their existing gates.
 
 The [separate CSV target/capacity race](source-audit.md#separate-open-csv-follow-up) remains open; this repair does not claim the importer is complete under every concurrent edit. No full-goal completion claim is made.
 
 ## Publication
 
-Pending source commit and production deployment verification at the time this section was authored.
+Source [11206ac303c1aecd93313b4fac5d2ae791948542](https://github.com/alvarovillalbaa/trippin/commit/11206ac303c1aecd93313b4fac5d2ae791948542) matched the remote `main` readback. An immutable connected read of the live CSV parser returned Git blob `5890729f2d7627e56f6f9ad71ffad57756649ae3`, equal to the local blob.
+
+Production deployment `dpl_59bTcEqmKr9gW2ogWkjjVeTEqMEY` reached `READY` at that exact SHA with the canonical Trippin alias. Build logs show successful compilation, completed TypeScript checking, Node.js 24 runtime, build completion and deployment completion. A connected HTTP fetch of [the public app](https://trippin-theta.vercel.app/) returned 200 and identified that deployment. This is hosted build/delivery proof, not browser file-flow acceptance or provider execution. A documentation-only follow-up retains the checked runtime/test bytes.

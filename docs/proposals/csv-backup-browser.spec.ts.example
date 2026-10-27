@@ -1,0 +1,272 @@
+// INACTIVE: copy only into an explicitly approved disposable CI checkout.
+// Four real DOM scenarios run once per desktop/mobile Chromium project.
+import { test as base, expect, type BrowserContext, type Page, type Response } from '@playwright/test';
+import { createHash } from 'node:crypto';
+import { isWorkspace } from '../../lib/trip';
+import type { Activity, Trip, WorkspaceState } from '../../lib/types';
+
+const ORIGIN = 'https://trippin-theta.vercel.app';
+const EXPECTED_DEPLOYMENT = process.env.TRIPPIN_EXPECTED_DEPLOYMENT || '';
+if (!/^dpl_[A-Za-z0-9]+$/.test(EXPECTED_DEPLOYMENT)) {
+  throw new Error('Set TRIPPIN_EXPECTED_DEPLOYMENT to the READY deployment ID served by the public alias.');
+}
+const STORAGE_KEY = 'trippin.workspace.v1';
+const DATE = '2026-11-03';
+const RAW_CAP = 16 * 1024 * 1024;
+const csvInput = 'input[type="file"][accept=".csv,text/csv"]';
+const backupInput = 'input[type="file"][accept="application/json,.json"]';
+
+function stop(tripIndex: number, index: number): Activity {
+  return {
+    id: `browser-qa-stop-${tripIndex}-${index}`, title: `Authored stop ${index}`,
+    category: 'culture', description: '', time: '09:00', duration: 30, cost: 0,
+    lat: 40.4, lng: -3.7, location: 'Authored square', status: 'planned', source: 'custom',
+  };
+}
+function privateTrip(index: number): Trip {
+  return {
+    id: `browser-qa-trip-${index}`, title: `Private authored trip ${index}`,
+    city: `QA City ${index}`, country: 'Spain', countryCode: 'ES',
+    startDate: DATE, endDate: DATE, lat: 40.4, lng: -3.7,
+    image: '/images/munich.jpg', description: 'Authored acceptance data only.',
+    budget: 1000, currency: 'EUR',
+    days: [{ id: `browser-qa-day-${index}`, date: DATE, label: 'Authored day', activities: [stop(index, 0)] }],
+    expenses: [{ id: `browser-qa-expense-${index}`, title: 'Kept authored expense', category: 'food', amount: 3.5, date: DATE }],
+    bookings: [], isPublic: false, joinRequests: [], companions: [],
+  };
+}
+function workspace(): WorkspaceState {
+  const value: WorkspaceState = {
+    version: 1, trips: [privateTrip(0)], selectedTripId: 'browser-qa-trip-0',
+    profile: {
+      name: 'Authored backup owner', bio: 'Disposable browser fixture.', homeCity: 'QA City',
+      interests: [], openToEvents: [], dailyFoodBudget: 0, dailyTransportBudget: 0, badges: [],
+    },
+  };
+  if (!isWorkspace(value)) throw new Error('The authored fixture does not satisfy the actual workspace model.');
+  return value;
+}
+function largeWorkspace(character: string): WorkspaceState {
+  const value = workspace();
+  value.trips = Array.from({ length: 9 }, (_, index) => {
+    const trip = privateTrip(index);
+    trip.days[0].activities = Array.from({ length: 60 }, (_, stopIndex) => stop(index, stopIndex));
+    return trip;
+  });
+  value.selectedTripId = value.trips.at(-1)!.id;
+  value.profile.name = character === '漢' ? 'CJK backup fixture' : 'Legacy pretty backup fixture';
+  const target = 1_999_900;
+  let remaining = target - JSON.stringify(value).length;
+  if (remaining <= 0) throw new Error('Fixture metadata exceeds its intended size.');
+  for (const trip of value.trips) for (const activity of trip.days[0].activities) {
+    const length = Math.min(4000, remaining);
+    activity.description = character.repeat(length);
+    remaining -= length;
+  }
+  if (remaining !== 0 || JSON.stringify(value).length !== target || !isWorkspace(value)) {
+    throw new Error('The bounded nine-trip/sixty-stop fixture is invalid.');
+  }
+  return value;
+}
+
+type Guard = { unexpected: string[]; blockedApi: number; blockedWeather: number; blockedTiles: number };
+type Fixtures = { authoredWorkspace: WorkspaceState; networkGuard: Guard };
+const guards = new WeakMap<BrowserContext, Guard>();
+const test = base.extend<Fixtures>({
+  authoredWorkspace: [workspace(), { option: true }],
+  storageState: async ({ authoredWorkspace }, use) => {
+    if (!isWorkspace(authoredWorkspace) || authoredWorkspace.trips.some(trip => trip.isPublic)) {
+      throw new Error('Use only private, valid authored workspace fixtures.');
+    }
+    await use({
+      cookies: [],
+      origins: [{ origin: ORIGIN, localStorage: [{ name: STORAGE_KEY, value: JSON.stringify(authoredWorkspace) }] }],
+    });
+  },
+  networkGuard: [async ({ context }, use) => {
+    const guard: Guard = { unexpected: [], blockedApi: 0, blockedWeather: 0, blockedTiles: 0 };
+    guards.set(context, guard);
+    await context.route('**/*', async route => {
+      const request = route.request(), url = new URL(request.url());
+      if (!['GET', 'HEAD'].includes(request.method())) {
+        if (guard.unexpected.length < 20) guard.unexpected.push(`${request.method()} ${url.origin}${url.pathname}`);
+        await route.abort('blockedbyclient');
+      } else if (url.origin === ORIGIN && (url.pathname === '/api' || url.pathname.startsWith('/api/'))) {
+        guard.blockedApi++;
+        await route.abort('blockedbyclient');
+      } else if (url.origin === ORIGIN) {
+        await route.continue();
+      } else if (url.origin === 'https://api.open-meteo.com' && url.pathname === '/v1/forecast') {
+        guard.blockedWeather++;
+        await route.abort('blockedbyclient');
+      } else if (url.origin === 'https://tile.openstreetmap.org' && /^\/\d+\/\d+\/\d+\.png$/.test(url.pathname)) {
+        guard.blockedTiles++;
+        await route.abort('blockedbyclient');
+      } else {
+        if (guard.unexpected.length < 20) guard.unexpected.push(`${request.method()} ${url.origin}${url.pathname}`);
+        await route.abort('blockedbyclient');
+      }
+    });
+    await use(guard);
+    expect(guard.unexpected, 'No cross-origin request or app-origin mutation may escape the guard.').toEqual([]);
+    console.log(`Out-of-scope reads blocked: api=${guard.blockedApi}, weather=${guard.blockedWeather}, tiles=${guard.blockedTiles}`);
+    guards.delete(context);
+  }, { auto: true }],
+});
+
+function digest(value: unknown): string {
+  return createHash('sha256').update(JSON.stringify(value)).digest('hex');
+}
+async function expectDeployment(response: Response | null): Promise<void> {
+  if (!response) throw new Error('The public root navigation did not return an HTTP response.');
+  const url = new URL(response.url());
+  expect(url.origin).toBe(ORIGIN);
+  expect(url.pathname).toBe('/');
+  const ids = [...new Set((await response.text()).match(/\bdpl_[A-Za-z0-9]+\b/g) || [])];
+  expect(ids, 'The actual root HTML must contain only the approved deployment ID.').toEqual([EXPECTED_DEPLOYMENT]);
+}
+async function stored(page: Page): Promise<WorkspaceState> {
+  const raw = await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY);
+  if (raw === null) throw new Error('The owned durable workspace is missing.');
+  const value: unknown = JSON.parse(raw);
+  if (!isWorkspace(value)) throw new Error('The actual durable workspace fails the model.');
+  return value;
+}
+async function expectStored(page: Page, expected: WorkspaceState): Promise<void> {
+  // Hash full JSON to keep a failed large-workspace assertion out of CI logs.
+  await expect.poll(async () => digest(await stored(page))).toBe(digest(expected));
+}
+async function profile(page: Page): Promise<void> {
+  await page.getByRole('button', { name: 'Your profile', exact: true }).click();
+  await expect(page.getByLabel('Your name', { exact: true })).toBeVisible();
+}
+async function expectProfile(page: Page, expected: WorkspaceState): Promise<void> {
+  await expect(page.getByLabel('Your name', { exact: true })).toHaveValue(expected.profile.name);
+  await expect(page.getByRole('combobox', { name: 'Choose your trip' })).toHaveValue(expected.selectedTripId);
+  await expectStored(page, expected);
+}
+async function budget(page: Page): Promise<void> {
+  await page.getByRole('button', { name: 'Trip budget', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'The whole picture.', exact: true })).toBeVisible();
+}
+async function expenses(page: Page, titles: string[]): Promise<void> {
+  await expect(page.locator('.expense-row')).toHaveCount(titles.length);
+  await expect(page.locator('.expense-row strong')).toHaveText(titles);
+}
+async function upload(page: Page, kind: 'csv' | 'backup', name: string, buffer: Buffer): Promise<void> {
+  const button = kind === 'csv' ? 'Import CSV' : 'Restore a Trippin backup';
+  const selector = kind === 'csv' ? csvInput : backupInput;
+  await expect(page.locator(selector)).toHaveCount(1);
+  const chooserReady = page.waitForEvent('filechooser');
+  await page.getByRole('button', { name: button, exact: true }).click();
+  const chooser = await chooserReady;
+  await chooser.setFiles({ name, mimeType: kind === 'csv' ? 'text/csv' : 'application/json', buffer });
+  await expect(page.locator(selector)).toHaveValue('');
+}
+
+test.beforeEach(async ({ page, authoredWorkspace, context }) => {
+  if (!guards.has(context)) throw new Error('The request guard must precede public navigation.');
+  await expectDeployment(await page.goto(ORIGIN, { waitUntil: 'domcontentloaded' }));
+  await expect(page.getByRole('combobox', { name: 'Choose your trip' })).toHaveValue(authoredWorkspace.selectedTripId);
+  await expectStored(page, authoredWorkspace);
+});
+
+test('EUR imports append once and explicit USD rejects without changing existing expenses', async ({ page, authoredWorkspace }) => {
+  await budget(page);
+  await expenses(page, ['Kept authored expense']);
+  await upload(page, 'csv', 'authored-eur.csv', Buffer.from(`title,amount,date,category,currency\nAuthored EUR coffee,5.25,${DATE},food, eUr \n`));
+  await expect(page.getByRole('status')).toContainText('1 expenses imported');
+  await expenses(page, ['Kept authored expense', 'Authored EUR coffee']);
+  await expect.poll(async () => (await stored(page)).trips[0].expenses.map(({ title, amount, date, category }) => ({ title, amount, date, category }))).toEqual([
+    { title: 'Kept authored expense', amount: 3.5, date: DATE, category: 'food' },
+    { title: 'Authored EUR coffee', amount: 5.25, date: DATE, category: 'food' },
+  ]);
+  const accepted = await stored(page), rows = accepted.trips[0].expenses;
+  expect(rows.slice(0, -1)).toEqual(authoredWorkspace.trips[0].expenses);
+  expect(rows.at(-1)).toMatchObject({ title: 'Authored EUR coffee', amount: 5.25, date: DATE, category: 'food' });
+  expect(rows.at(-1)!.id).toBeTruthy();
+  await upload(page, 'csv', 'authored-usd.csv', Buffer.from(`title,amount,date,category,currency\nMust not become EUR,7,${DATE},food,USD\n`));
+  await expect(page.getByRole('status')).toContainText(/only EUR/i);
+  await expenses(page, ['Kept authored expense', 'Authored EUR coffee']);
+  await expectStored(page, accepted);
+  await expectDeployment(await page.reload({ waitUntil: 'domcontentloaded' }));
+  await budget(page);
+  await expenses(page, ['Kept authored expense', 'Authored EUR coffee']);
+  await expectStored(page, accepted);
+});
+
+test('ambiguous duplicate and explicit blank currency both reject without losing expenses', async ({ page, authoredWorkspace }) => {
+  await budget(page);
+  const rejected = [
+    ['duplicate-currency.csv', `title,amount,date,category,currency,currency\nAmbiguous,7,${DATE},food,EUR,USD\n`, /one currency|currency column/i],
+    ['blank-currency.csv', `title,amount,date,category,currency\nBlank,7,${DATE},food,   \n`, /only EUR/i],
+  ] as const;
+  for (const [name, csv, message] of rejected) {
+    await upload(page, 'csv', name, Buffer.from(csv));
+    await expect(page.getByRole('status')).toContainText(message);
+    await expenses(page, ['Kept authored expense']);
+    await expectStored(page, authoredWorkspace);
+  }
+});
+
+test.describe('large UTF-8 round trip', () => {
+  test.use({ authoredWorkspace: largeWorkspace('漢') });
+  test('actual CJK download above two MB restores after a visible profile edit and survives reload', async ({ page, authoredWorkspace }) => {
+    await profile(page);
+    const ready = page.waitForEvent('download');
+    await page.getByRole('button', { name: 'Export backup', exact: true }).click();
+    const download = await ready;
+    expect(download.suggestedFilename()).toBe('trippin-backup.json');
+    expect(await download.failure()).toBeNull();
+    const stream = await download.createReadStream();
+    if (!stream) throw new Error('The actual browser download has no readable file.');
+    const chunks: Buffer[] = [];
+    let size = 0;
+    for await (const chunk of stream) {
+      const bytes = Buffer.from(chunk);
+      size += bytes.byteLength;
+      if (size > RAW_CAP) throw new Error('The authored download exceeded its bound.');
+      chunks.push(bytes);
+    }
+    const buffer = Buffer.concat(chunks);
+    expect(buffer.byteLength).toBeGreaterThan(2_000_000);
+    expect(buffer.byteLength).toBeLessThan(RAW_CAP);
+    const downloaded: unknown = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(buffer));
+    expect(isWorkspace(downloaded)).toBe(true);
+    expect(digest(downloaded)).toBe(digest(authoredWorkspace));
+    await page.getByLabel('Your name', { exact: true }).fill('Edited before backup restore');
+    await page.getByRole('button', { name: 'Save your profile', exact: true }).click();
+    await expect(page.getByRole('status')).toContainText('Profile updated.');
+    await expect.poll(async () => (await stored(page)).profile.name).toBe('Edited before backup restore');
+    await upload(page, 'backup', download.suggestedFilename(), buffer);
+    await expect(page.getByRole('status')).toContainText('Backup restored and saved in this browser.');
+    await expectProfile(page, authoredWorkspace);
+    await expectDeployment(await page.reload({ waitUntil: 'domcontentloaded' }));
+    await profile(page);
+    await expectProfile(page, authoredWorkspace);
+  });
+});
+
+test('legacy pretty backup above two MB restores and invalid UTF-8 cannot replace its UI or durable state', async ({ page }) => {
+  await profile(page);
+  const legacy = largeWorkspace('x'), pretty = Buffer.from(JSON.stringify(legacy, null, 2));
+  expect(pretty.byteLength).toBeGreaterThan(2_000_000);
+  expect(pretty.byteLength).toBeLessThan(RAW_CAP);
+  await upload(page, 'backup', 'authored-legacy-pretty.json', pretty);
+  await expect(page.getByRole('status')).toContainText('Backup restored and saved in this browser.');
+  await expectProfile(page, legacy);
+  const malformed = workspace();
+  malformed.profile.name = 'AUTHORED-UTF8-MARKER';
+  const invalidBytes = Buffer.from(JSON.stringify(malformed));
+  const offset = invalidBytes.indexOf('AUTHORED-UTF8-MARKER');
+  expect(offset).toBeGreaterThanOrEqual(0);
+  invalidBytes[offset] = 0xff;
+  // A permissive File.text decoder would yield model-valid replacement text.
+  expect(isWorkspace(JSON.parse(invalidBytes.toString('utf8')))).toBe(true);
+  await upload(page, 'backup', 'authored-invalid-utf8.json', invalidBytes);
+  await expect(page.getByRole('status')).toContainText(/not a valid UTF-8 Trippin backup/i);
+  await expectProfile(page, legacy);
+  await expectDeployment(await page.reload({ waitUntil: 'domcontentloaded' }));
+  await profile(page);
+  await expectProfile(page, legacy);
+});

@@ -1,0 +1,138 @@
+# INACTIVE. Explicit browser and temporary CI/tool approval is required.
+# After approval, copy to .github/workflows/csv-backup-browser.yml on main.
+# Dispatch manually once, inspect all eight outcomes, then remove that workflow.
+name: Temporary Trippin CSV and backup browser acceptance
+on:
+  workflow_dispatch:
+    inputs:
+      deployment_id:
+        description: 'READY production deployment ID currently served by the public alias'
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: trippin-csv-backup-browser
+  cancel-in-progress: false
+jobs:
+  browser:
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'alvarovillalbaa/trippin' && github.event.repository.private == false && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      CI: 'true'
+      TRIPPIN_EXPECTED_DEPLOYMENT: ${{ inputs.deployment_id }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 24.21.0
+          package-manager-cache: false
+      - name: Verify reviewed scope and log source identities
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          if (!/^dpl_[A-Za-z0-9]+$/.test(process.env.TRIPPIN_EXPECTED_DEPLOYMENT || '')) throw new Error('Provide the READY public alias deployment ID.');
+          if (process.version !== 'v24.21.0' || pkg.name !== 'trippin') throw new Error('Re-review changed runtime or repository.');
+          if (pkg.dependencies?.['@playwright/test'] || pkg.devDependencies?.['@playwright/test']) throw new Error('Re-review existing browser dependencies.');
+          const source = fs.readFileSync('docs/proposals/csv-backup-browser.spec.ts.example', 'utf8');
+          if ((source.match(/^\s*test\(/gm) || []).length !== 4) throw new Error('Expected four browser scenario definitions.');
+          for (const file of ['.csv-backup-ci.playwright.config.ts', 'tests/proposals/csv-backup-browser.spec.ts']) {
+            try { fs.lstatSync(file); throw new Error('Refusing to replace an existing runner file: ' + file); }
+            catch (error) { if (error.code !== 'ENOENT') throw error; }
+          }
+          NODE
+          git rev-parse HEAD
+          sha256sum package.json components/workspace.tsx lib/trip.ts lib/csv.ts lib/types.ts lib/data.ts docs/proposals/csv-backup-browser.spec.ts.example docs/proposals/csv-backup-ci.yml.example
+      - name: Allocate disposable runner-only paths
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          if (!process.env.RUNNER_TEMP || !process.env.GITHUB_ENV) throw new Error('Runner paths unavailable.');
+          const root = fs.mkdtempSync(path.join(process.env.RUNNER_TEMP, 'trippin-csv-backup-'));
+          fs.appendFileSync(process.env.GITHUB_ENV, [
+            'TRIPPIN_BROWSER_TOOL_PREFIX=' + path.join(root, 'tools'),
+            'PLAYWRIGHT_BROWSERS_PATH=' + path.join(root, 'browsers'),
+            'TRIPPIN_BROWSER_RESULTS=' + path.join(root, 'results'),
+            'TRIPPIN_BROWSER_REPORT=' + path.join(root, 'browser.json'),
+          ].join('\n') + '\n');
+          NODE
+      - name: Install the pinned browser tool without application dependencies or lifecycle scripts
+        run: |
+          npm install --prefix "$TRIPPIN_BROWSER_TOOL_PREFIX" --no-save --package-lock=false --ignore-scripts --no-audit --no-fund --registry=https://registry.npmjs.org @playwright/test@1.61.1
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const target = path.join(process.env.TRIPPIN_BROWSER_TOOL_PREFIX, 'node_modules', '@playwright', 'test');
+          const pkg = JSON.parse(fs.readFileSync(path.join(target, 'package.json'), 'utf8'));
+          if (pkg.version !== '1.61.1') throw new Error('Unexpected browser tool version.');
+          const link = path.join(process.cwd(), 'node_modules', '@playwright', 'test');
+          try { fs.lstatSync(link); throw new Error('Refusing to replace an existing browser tool path.'); }
+          catch (error) { if (error.code !== 'ENOENT') throw error; }
+          fs.mkdirSync(path.dirname(link), { recursive: true });
+          fs.symlinkSync(target, link, 'dir');
+          process.stdout.write('Runner-only @playwright/test ' + pkg.version + '\n');
+          NODE
+          git diff --exit-code -- package.json
+      - name: Install only Chromium and its Linux dependencies in the disposable runner
+        run: node "$TRIPPIN_BROWSER_TOOL_PREFIX/node_modules/@playwright/test/cli.js" install --with-deps chromium
+      - name: Copy the reviewed example and generate a focused runner configuration
+        run: |
+          mkdir -p tests/proposals
+          test ! -e tests/proposals/csv-backup-browser.spec.ts
+          test ! -e .csv-backup-ci.playwright.config.ts
+          cp docs/proposals/csv-backup-browser.spec.ts.example tests/proposals/csv-backup-browser.spec.ts
+          cat > .csv-backup-ci.playwright.config.ts <<'CONFIG'
+          import { defineConfig, devices } from '@playwright/test';
+          export default defineConfig({
+            testDir: './tests/proposals',
+            testMatch: 'csv-backup-browser.spec.ts',
+            forbidOnly: true,
+            fullyParallel: false,
+            workers: 1,
+            retries: 0,
+            timeout: 120_000,
+            globalTimeout: 480_000,
+            expect: { timeout: 15_000 },
+            reporter: [['line'], ['json', { outputFile: process.env.TRIPPIN_BROWSER_REPORT }]],
+            outputDir: process.env.TRIPPIN_BROWSER_RESULTS,
+            use: {
+              baseURL: 'https://trippin-theta.vercel.app',
+              acceptDownloads: true,
+              serviceWorkers: 'block',
+              reducedMotion: 'reduce',
+              trace: 'off', screenshot: 'off', video: 'off',
+            },
+            projects: [
+              { name: 'desktop-chromium', use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 1000 } } },
+              { name: 'mobile-chromium', use: { ...devices['Pixel 7'], viewport: { width: 390, height: 844 } } },
+            ],
+          });
+          CONFIG
+      - name: Run exactly four scenarios in each Chromium profile
+        run: |
+          node "$TRIPPIN_BROWSER_TOOL_PREFIX/node_modules/@playwright/test/cli.js" test --config .csv-backup-ci.playwright.config.ts
+          node <<'NODE'
+          const fs = require('node:fs');
+          const report = JSON.parse(fs.readFileSync(process.env.TRIPPIN_BROWSER_REPORT, 'utf8'));
+          const stats = report.stats || {};
+          if (stats.expected !== 8 || stats.unexpected !== 0 || stats.skipped !== 0 || stats.flaky !== 0) throw new Error('Expected exactly eight passing browser cases, without skips or retries.');
+          const counts = new Map([['desktop-chromium', 0], ['mobile-chromium', 0]]);
+          function visit(suite) {
+            for (const spec of suite.specs || []) for (const test of spec.tests || []) {
+              if (!counts.has(test.projectName) || test.results.length !== 1 || test.results[0].status !== 'passed') throw new Error('Unexpected project or execution count.');
+              counts.set(test.projectName, counts.get(test.projectName) + 1);
+            }
+            for (const child of suite.suites || []) visit(child);
+          }
+          for (const suite of report.suites || []) visit(suite);
+          if ([...counts.values()].some(value => value !== 4)) throw new Error('Expected four passing cases in each profile.');
+          process.stdout.write('Eight hosted browser cases passed with disposable local data. No authenticated provider or model was exercised.\n');
+          NODE
+      - name: Confirm the application manifest is unchanged
+        if: always()
+        run: git diff --exit-code -- package.json
