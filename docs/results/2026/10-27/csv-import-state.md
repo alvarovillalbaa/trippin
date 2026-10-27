@@ -1,6 +1,6 @@
 # CSV imports against current workspace state
 
-27 October 2026. Status: source repair and 86 focused frontend checks complete; publication readback is pending below. Browser acceptance remains separate. The multi-project goal is active.
+27 October 2026. Status: source repair published, 86 focused frontend checks passed, and hosted compilation/typecheck and public delivery verified. Browser acceptance remains separate. The multi-project goal is active.
 
 Baseline: [5c427bc13caa7bbf8ba5b47e722ee5908935ce95](https://github.com/alvarovillalbaa/trippin/commit/5c427bc13caa7bbf8ba5b47e722ee5908935ce95). The [owning audit](source-audit.md#separate-csv-follow-up) identified a race against the [product contract](../../../product.md): two 15-row reads begun at 980 expenses could append 1,010, and a read for a deleted trip could announce success without importing.
 
@@ -47,4 +47,6 @@ The [eight-case browser/temporary-CI proposal](../../../proposals/csv-backup-bro
 
 ## Final readback
 
-Baseline and static checks are complete. GitHub publication and exact-SHA hosted build/delivery verification are pending.
+Source [89b587fbc6dfb45fb12ba1addd80cbc2c33ec36d](https://github.com/alvarovillalbaa/trippin/commit/89b587fbc6dfb45fb12ba1addd80cbc2c33ec36d) was pushed to personal-repository `main`. An immutable connected GitHub read of `lib/workspace-state.ts` returned blob `f7134ab935c60b0dafb1f95c50d4e6e4a1a7d4f4`, equal to the local blob.
+
+Vercel production deployment `dpl_CWdk84gCNq7Ag8D2CvMLXPeWzk8d` reached `READY` at that exact SHA and included the canonical Trippin alias. Logs show successful compilation, completed TypeScript checking, build completion and deployment completion. A connected GET of [the public app](https://trippin-theta.vercel.app/) returned 200 and identified that exact deployment. These are hosted build/delivery results, with no browser or provider acceptance claim. A documentation-only follow-up retains the checked runtime and test bytes.
