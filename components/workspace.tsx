@@ -234,7 +234,7 @@ export default function Workspace(){
 <button className="icon-button bordered" aria-label="Share trip" onClick={()=>open('share')}>
 <Share2 size={17}/>
 </button>
-<button className="ai-button" onClick={()=>setAiOpen(true)}>
+<button className="ai-button" aria-label="Ask trippin" onClick={()=>setAiOpen(true)}>
 <Sparkles size={15}/>
 <span>Ask trippin</span>
 </button>
