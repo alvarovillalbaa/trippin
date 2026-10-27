@@ -4,7 +4,7 @@ import {useCallback,useEffect,useMemo,useRef,useState, type FormEvent} from 'rea
 import dynamic from 'next/dynamic';
 import {ArrowUpRight,ArrowLeft,ArrowRight,ArrowUp,ArrowDown,Plus,MapPin,CalendarDays,Compass,Wallet,Ticket,ChevronDown,ChevronRight,Check,CheckCircle2,Clock,Footprints,Plane,Building2,Coffee,Sun,CloudSun,Users,Share2,Sparkles,Settings2,Search,Heart,Leaf,Mountain,Music2,Utensils,Landmark,MoreHorizontal,Download,Upload,ExternalLink,Trash2,Map,LayoutList,Pencil,X,Globe,ShieldCheck,Route,BookOpen,Link as LinkIcon} from 'lucide-react';
 import {seedTrips,seedProfile,destinations} from '@/lib/data';
-import {formatMoney,formatDate,getTripCost,getTripDays,getWalkingRoute,getTravelBadges,getEventPreferences,isTrip,isWorkspace,makeId,publicTripSnapshot,restoreWorkspace,importSharedPlan,persistWorkspace} from '@/lib/trip';
+import {formatMoney,formatDate,getTripCost,getTripDays,getWalkingRoute,getTravelBadges,getEventPreferences,isTrip,makeId,publicTripSnapshot,restoreWorkspace,importSharedPlan,persistWorkspace,MAX_BACKUP_FILE_BYTES,exportWorkspaceBackup,parseWorkspaceBackup} from '@/lib/trip';
 import type {Trip,Activity,Booking,Expense,Profile,WorkspaceState} from '@/lib/types';
 import {parseExpenseCsv} from '@/lib/csv';
 import Dialog from './dialog';
@@ -64,6 +64,7 @@ export default function Workspace(){
   const [requests,setRequests]=useState<CommunityRequest[]|null>(null);
   const fileInput=useRef<HTMLInputElement>(null);
   const backupInput=useRef<HTMLInputElement>(null);
+  const backupReadGeneration=useRef(0);
   const initialized=useRef(false);
   const pendingPlan=useRef<{tripId:string;hash:string}|null>(null);
   const trip=state.trips.find(t=>t.id===state.selectedTripId)||state.trips[0];
@@ -613,12 +614,12 @@ export default function Workspace(){
 <strong>Your travels, in your hands.</strong>
 <p>Profiles, expenses, and reservations save in this browser. Export a backup to take them with you.</p>
 </div>
-<button className="secondary" onClick={()=>download('trippin-backup.json',JSON.stringify(state,null,2))}>
+<button className="secondary" onClick={()=>{try{const backup=exportWorkspaceBackup(state);download(backup.withinWorkspaceLimit?'trippin-backup.json':'trippin-recovery.json',backup.serialized);if(!backup.withinWorkspaceLimit)notify('Recovery archive prepared. Keep the file; it needs repair or a smaller workspace before restoring as a whole.')}catch(e){notify(e instanceof Error?e.message:'Could not export. Keep this tab open.')}}}>
 <Download size={15}/>Export backup</button>
 </div>
 <button className="text-button" onClick={()=>backupInput.current?.click()}>
 <Upload size={14}/>Restore a Trippin backup</button>
-<input ref={backupInput} type="file" accept="application/json,.json" hidden onChange={async e=>{const file=e.target.files?.[0];if(!file)return;if(file.size>2_000_000){notify('Backups must be smaller than 2 MB.');return}try{const raw=await file.text();const parsed:unknown=JSON.parse(raw);if(!isWorkspace(parsed))throw new Error();setState(parsed);setDayIndex(0);setSelected(null);notify('Backup restored in this browser.')}catch{notify('This is not a valid Trippin backup.')}}}/>
+<input ref={backupInput} type="file" accept="application/json,.json" hidden onChange={async e=>{const input=e.currentTarget,file=input.files?.[0],generation=++backupReadGeneration.current;if(!file)return;try{if(file.size>MAX_BACKUP_FILE_BYTES)throw new Error('Choose a backup of 16 MiB or smaller. Your current trips are unchanged.');const bytes=new Uint8Array(await file.arrayBuffer());if(generation!==backupReadGeneration.current)return;const restored=parseWorkspaceBackup(bytes);if(persistWorkspace(restored,serialized=>localStorage.setItem(storageKey,serialized))!=='saved')throw new Error('The backup could not be saved in this browser. Your current trips are unchanged; keep the backup file.');pendingPlan.current=null;setState(restored);setDayIndex(0);setSelected(null);notify('Backup restored and saved in this browser.')}catch(e){if(generation===backupReadGeneration.current)notify(e instanceof Error?e.message:'This is not a valid Trippin backup. Your current trips are unchanged.')}finally{if(generation===backupReadGeneration.current)input.value=''}}}/>
 </div>}
     </main>
     {view==='itinerary'&&<button className="mobile-map-toggle primary" onClick={()=>setMobileMap(!mobileMap)}>{mobileMap?<>

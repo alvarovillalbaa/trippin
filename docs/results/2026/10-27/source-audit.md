@@ -1,6 +1,6 @@
 # Source audit: expense imports and backup round trips
 
-27 October 2026. **Open findings; neither defect is fixed by this record.**
+27 October 2026. Historical findings: the two issues below were subsequently repaired; see the [repair receipt](csv-backup-repair.md) for implementation, checks and publication status. The separate asynchronous CSV follow-up below remains open.
 Inspected Git revision: `541646a83fcf79ebc4606060070d969cd0216e12`; checkout was clean before this documentation change.
 
 The [product contract](../../../product.md) requires accurate trip costs, CSV expenses without a bank provider, and saved edits between visits.
@@ -23,4 +23,8 @@ Proposed narrow remedy: share a bounded backup encode/decode contract that round
 ## Evidence boundary
 
 Read-only source inspection established these paths; no CSV import, backup round trip, tests, build, browser, model or provider operation ran for this audit. No production data was read or changed; provider/model cost was zero.
-Only this findings document was added. `git diff --check` and the untracked-file whitespace check passed; all seven local file links resolve. Implementation and focused regression checks remain future work.
+Only this findings document was added during the original audit. `git diff --check` and the untracked-file whitespace check passed; all seven original local file links resolved. The later repair has its own receipt.
+
+## Separate open CSV follow-up
+
+The repair preserves the existing live import API and its state application. A subsequent source review found that its 1,000-expense capacity check uses the render's captured trip before a functional append uses the newer trip. Two pending 15-row reads begun at 980 expenses can both pass their captured check and append 1,010 rows; the unchanged durable validator then refuses that oversized workspace. If the target trip is deleted during a read, its append can also do nothing while the UI announces success. These are source-derived schedules, not executed browser reproductions. Validate the target and capacity against the state actually committed, with accurate post-commit feedback. This follow-up is not fixed or accepted by the currency/backup repair.

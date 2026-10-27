@@ -16,6 +16,7 @@ const interestAliases: Record<string, string[]> = {
 };
 const dayMilliseconds = 86_400_000;
 const workspaceLengthLimit = 2_000_000;
+export const MAX_BACKUP_FILE_BYTES = 16 * 1024 * 1024;
 
 export function getEventPreferences(profile: Profile): ActivityCategory[] {
   if (profile.openToEvents !== undefined) return eventCategories.filter((category) => profile.openToEvents?.includes(category));
@@ -249,6 +250,7 @@ export function parseExpenseCsv(csv: string, defaultDate: string): Expense[] {
   const categoryIndex = header.indexOf("category");
   const dateIndex = header.indexOf("date");
   const currencyIndex = header.indexOf("currency");
+  if (currencyIndex !== header.lastIndexOf("currency")) throw new Error("Use only one currency column in the CSV header.");
   if (titleIndex < 0 || amountIndex < 0) throw new Error("CSV headers must include title (or description) and amount.");
   return rows.slice(1).map((values, index) => {
     const error = (message: string) => new Error(`CSV row ${index + 2}: ${message}`);
@@ -425,6 +427,25 @@ export function serializeWorkspace(state: WorkspaceState, indentation = 2): stri
   const serialized = JSON.stringify(state, null, indentation);
   if (serialized.length > workspaceLengthLimit) throw new Error("This workspace is too large to save. Export a backup before making room.");
   return serialized;
+}
+
+/** Archive even unsaved data; only supported compact workspaces can restore wholesale. */
+export function exportWorkspaceBackup(state: WorkspaceState): { serialized: string; withinWorkspaceLimit: boolean } {
+  const serialized = JSON.stringify(state);
+  if (typeof serialized !== "string") throw new Error("The workspace could not be exported. Keep this tab open.");
+  return { serialized, withinWorkspaceLimit: isWorkspace(state) && serialized.length <= workspaceLengthLimit };
+}
+
+/** File size and durable workspace size are different bounds; failure never returns sample data. */
+export function parseWorkspaceBackup(bytes: Uint8Array): WorkspaceState {
+  if (bytes.byteLength > MAX_BACKUP_FILE_BYTES) throw new Error("Choose a backup of 16 MiB or smaller. Your current trips are unchanged.");
+  let parsed: unknown;
+  try { parsed = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes)); }
+  catch { throw new Error("This is not a valid UTF-8 Trippin backup. Your current trips are unchanged."); }
+  if (!isWorkspace(parsed)) throw new Error("This backup contains invalid or unsupported workspace data. Your current trips are unchanged.");
+  try { serializeWorkspace(parsed, 0); }
+  catch { throw new Error("This archive is too large to restore as one browser workspace. Keep the file and reduce its contents before restoring."); }
+  return parsed;
 }
 
 /** Keep the last durable workspace when validation or storage fails. */
