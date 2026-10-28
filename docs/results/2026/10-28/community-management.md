@@ -1,8 +1,8 @@
 # Public-plan management preservation
 
-28 October 2026. Source repair prepared for publication. Hosted build/delivery
-will be recorded after release; browser and configured community acceptance
-remain separate requirements.
+28 October 2026. Source repair published, production build READY and delivered
+client inspected. Browser and configured community acceptance remain separate
+requirements.
 
 ## Failure and resulting behavior
 
@@ -116,3 +116,29 @@ does not serialize server POST/DELETE ordering, certify a current public state,
 provide account recovery, or prevent deliberate browser-data deletion. Configured
 Redis operations, native browser behavior and broader social-service acceptance
 remain open. This repair does not complete the wider all-project goal.
+
+## Source publication and hosted delivery
+
+Published [b7bde5f](https://github.com/alvarovillalbaa/trippin/commit/b7bde5feaf3c33f2d7a94a8689979d1736391c25)
+to the owner's personal repository. All fifteen changed files matched local Git
+blobs through immutable GitHub readback. Workspace blob:
+`c0739742a006994cc8075fd14376afe9f10c701f`; storage-adapter blob:
+`7820c36726e8440142bf9e49e8ff9d45a9ec6ce0`; actual-callback test blob:
+`35b58eb9d36e407601a5f6ce26352f4f09abb4e6`.
+
+Vercel deployment
+[dpl_ALfFLkCSkeE9ay2rzMDsvNaR4fWf](https://vercel.com/my-team-4f230354/trippin/ALfFLkCSkeE9ay2rzMDsvNaR4fWf)
+reached production READY at that exact source. Logs record successful compilation
+in 2.6 seconds, completed TypeScript checking in 3.0 seconds, EVE output creation
+and build/deployment completion (15 seconds). The canonical alias lookup resolved
+to this deployment. No new CI workflow or provider setup was required.
+
+The [public app](https://trippin-theta.vercel.app/) returned HTTP 200 and referenced
+that deployment. Its eight referenced script bodies returned 200. The management
+client `/_next/static/immutable/chunks/2-0_g_g6ot4b6.js` contains the profile
+management controls, separate attempt keys, exclusive owner initialization and
+post-await ownership guard. Its connector-returned UTF-8 body is 687,185 bytes,
+SHA256 `1df070bd85548ea7c941da7db309f42b970b413757072b924c5a2c812c22eaf3`;
+standalone module syntax checking passed. This is compiled-client delivery proof,
+not rendered UI or real transport/storage/Redis acceptance. A receipt-only
+follow-up preserves the checked runtime and test source.
