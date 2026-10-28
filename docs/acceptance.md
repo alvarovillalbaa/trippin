@@ -1,5 +1,7 @@
 # Delivery coverage
 
+Last updated: 2026-10-28
+
 This release builds the product with provider credentials deferred at Alvaro's request. Passing a build does not prove live provider behavior.
 
 | Brief | Implementation | Proof scope |
@@ -11,7 +13,7 @@ This release builds the product with provider credentials deferred at Alvaro's r
 | Center access/stay choice | Commute-aware stay calculator, nightly costs/fees/transit/time, optional value of time | Source/build; manually supplied estimates, no transit routing provider. |
 | Ticketing | Editable flight/stay/event wallet; external booking/checkout; FlightAware status; Ticketmaster discovery bounded by trip-local dates and optional country; explicit event-to-itinerary draft and linked cost | Source/build; unconfigured provider requests return503. Browser save flow, live date-range serialization, and live events remain unverified. No native purchase/ticket issuance. |
 | Airbnb, Meetup, Luma, Strava | Provider discovery links and manual capture, documented API constraints | Source/build and official documentation; no unauthorized provider imports. |
-| Open trips/join requests | Redis directory, publishing capability, request/contact privacy, accept/decline, unpublish | Source/build; unconfigured writes return503. Configured Redis operations not exercised. |
+| Open trips/join requests | Redis directory, publishing capability, request/contact privacy, accept/decline, unpublish; independent browser management entries survive workspace replacement | Source/build; unconfigured writes return503. The [management receipt](results/2026/10-28/community-management.md) records focused authored callback/storage checks. Configured Redis and new browser flows are not exercised. |
 | Personalization | Profile/interests, explicit event preferences consumed by discovery, daily spending, CSV expenses, optional Plaid Sandbox aggregate preview | Source/build; preferences stay local until explicitly shared with AI. Plaid missing-config refusal verified. Production bank linking not provided. |
 | Badges/social profile | Derived country/activity and individual-event badges, deduplicated by provider/event identity; downloadable travel story overlay | Source/build; completion is self-reported, not organizer or location verification. Browser interaction and download remain unverified. |
 | AI with EVE | Real agent, arithmetic/stay tools, streaming hook, consent for limited context, cancellation, explicit setup state | EVE build and health verified; disabled sessions return401. No live model/Workflow turn. |

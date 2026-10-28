@@ -4,10 +4,12 @@ import {useEffect,useMemo,useState,type FormEvent} from 'react';
 import {Check,Trash2} from 'lucide-react';
 import {getTripDays,isTrip,makeId} from '@/lib/trip';
 import type {Trip,TripDay} from '@/lib/types';
+import type {ManagedTrip} from '@/lib/community-management';
 
-type Props={trip:Trip;onSave:(trip:Trip)=>void;onDelete:()=>void;canDelete:boolean};
+type Props={trip:Trip;onSave:(trip:Trip)=>void;onDelete:()=>void;canDelete:boolean;publicationStatus?:ManagedTrip['status']};
 
-export default function TripSettings({trip,onSave,onDelete,canDelete}:Props){
+export default function TripSettings({trip,onSave,onDelete,canDelete,publicationStatus}:Props){
+  const published=trip.isPublic||publicationStatus==='published';
   const [title,setTitle]=useState(trip.title);
   const [startDate,setStartDate]=useState(trip.startDate);
   const [endDate,setEndDate]=useState(trip.endDate);
@@ -52,7 +54,7 @@ export default function TripSettings({trip,onSave,onDelete,canDelete}:Props){
 
   function remove(){
     setError('');
-    if(trip.isPublic){setError('Unpublish this trip before deleting it from this browser.');return}
+    if(published){setError('Unpublish this trip before deleting it from this browser.');return}
     if(!canDelete){setError('Keep at least one trip in your workspace. Create another trip before deleting this one.');return}
     if(!deleteConfirmed){setError('Confirm that you want to delete this trip from this browser.');return}
     try{onDelete()}catch(caught){setError(caught instanceof Error?caught.message:'This trip could not be deleted. Please try again.')}
@@ -77,21 +79,22 @@ export default function TripSettings({trip,onSave,onDelete,canDelete}:Props){
           <span>Remove these {removedDays.length} {removedDays.length===1?'day':'days'} and {removedActivityCount} {removedActivityCount===1?'activity':'activities'} when I save.</span>
         </label>}
       </div>}
-      {trip.isPublic&&<p className="form-note">These edits update your saved trip. Publish it again to update the public plan.</p>}
+      {published&&<p className="form-note">These edits update your saved trip. Publish it again to update the public plan.</p>}
       <button className="primary" type="submit">Save trip <Check size={16}/></button>
     </form>
     <section className="dialog-form" style={{borderTop:'1px solid #dfe5d6',paddingTop:20}} aria-label="Delete trip">
       <h3>Delete this trip</h3>
-      {trip.isPublic?<p className="form-note">Unpublish this trip before deleting it. This keeps its public plan and join requests from being left behind.</p>
+      {published?<p className="form-note">Unpublish this trip before deleting it. This keeps its public plan and join requests from being left behind.</p>
         :!canDelete?<p className="form-note">Keep at least one trip in your workspace. Create another trip before deleting this one.</p>
         :<>
           <p className="form-note">This removes its itinerary, reservations, and recorded expenses from this browser. Export a backup first if you want to keep a copy.</p>
+          {publicationStatus==='uncertain'&&<p className="form-note">A publication could not be confirmed. Deleting this private copy keeps its public-plan management entry in Your profile.</p>}
           <label style={{flexDirection:'row',alignItems:'flex-start'}}>
             <input type="checkbox" checked={deleteConfirmed} onChange={event=>setDeleteConfirmed(event.target.checked)} style={{width:'auto',marginTop:2}}/>
             <span>Delete this trip from this browser.</span>
           </label>
         </>}
-      <button type="button" className="secondary" style={{color:'#a34735',alignSelf:'flex-start'}} disabled={!canDelete||trip.isPublic||!deleteConfirmed} onClick={remove}><Trash2 size={15}/>Delete trip</button>
+      <button type="button" className="secondary" style={{color:'#a34735',alignSelf:'flex-start'}} disabled={!canDelete||published||!deleteConfirmed} onClick={remove}><Trash2 size={15}/>Delete trip</button>
     </section>
   </div>;
 }

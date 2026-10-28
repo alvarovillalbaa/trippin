@@ -1,5 +1,7 @@
 # Integration availability
 
+Last updated: 2026-10-28
+
 Verified against official provider documentation on 20 October 2026. Seed trips, events, people, reservations, and prices are sample data. No travel purchase is made by Trippin.
 
 | Surface | Implemented behavior | Live setup or restriction |
@@ -24,5 +26,21 @@ Verified against official provider documentation on 20 October 2026. Seed trips,
 Create an Upstash Redis database in your own account and set server-only `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` in Vercel. Redeploy. Public trip records deliberately omit expenses, booking references, companions, and saved booking URLs. Itinerary text is public when published; review it before publishing.
 
 Publishing creates an unguessable owner capability in localStorage; only its SHA-256 digest reaches Redis. The publishing browser can review requester contact information. It is not account authentication or identity verification. Clearing browser data loses host access; a general trip export does not preserve this capability. A production social network needs account recovery, reporting/moderation, stronger distributed abuse controls, and session-bound authorization before broader launch.
+
+Management labels and attempt outcomes use separate per-entry browser records;
+they contain no capability, expenses, bookings or requester contacts. Publication
+requires a saved recovery reference before POST. New attempts use distinct keys,
+and each acknowledgement updates only its own attempt. Unpublish cleanup captures
+confirmed records before DELETE and retains unknown or later attempts. Profile
+management works even when the private trip is absent from a restored workspace.
+Unknown outcomes may leave conservative management entries after an acknowledged
+unpublish; this does not prove a delayed server write cannot arrive later.
+
+First-use owner initialization uses an exclusive Web Lock around re-reading and
+writing the existing owner key. Browsers without that API cannot initialize fresh
+publishing access; an existing owner key continues to work. The lock is released
+before any network request. Capability format, API authorization and provider
+configuration are unchanged. Browser behavior and configured Redis acceptance
+remain unverified for this repair; see the [owning receipt](results/2026/10-28/community-management.md).
 
 Data expires after 90 days. Hosts can unpublish; the API deletes associated requests. Request contact information never appears in the public directory. Do not collect bank details, passports, payment cards, or sensitive personal data in introductions.

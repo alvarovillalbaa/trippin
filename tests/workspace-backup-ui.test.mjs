@@ -11,13 +11,20 @@ import vm from 'node:vm';
 const require = createRequire(import.meta.url);
 const ts = require(process.env.TRIPPIN_TYPESCRIPT_PATH || 'typescript');
 const tripModule = new URL('../lib/trip.ts', import.meta.url).href;
+const managementModule = new URL('../lib/community-management.ts', import.meta.url).href;
+const managementStorageModule = new URL('../lib/community-management-storage.ts', import.meta.url).href;
 registerHooks({
   resolve(specifier, context, nextResolve) {
+    if (context.parentURL === managementStorageModule && specifier === './community-management') {
+      return nextResolve(managementModule, context);
+    }
     return nextResolve(specifier === './data' && context.parentURL === tripModule
       ? new URL('../lib/data.ts', import.meta.url).href : specifier, context);
   },
 });
 const trip = await import(tripModule);
+const management = await import(managementModule);
+const managementStorage = await import(managementStorageModule);
 const sourcePath = process.env.TRIPPIN_WORKSPACE_SOURCE
   || fileURLToPath(new URL('../components/workspace.tsx', import.meta.url));
 const source = readFileSync(sourcePath, 'utf8');
@@ -43,8 +50,17 @@ function findCallbacks(node) {
   ts.forEachChild(node, findCallbacks);
 }
 findCallbacks(parsedSource);
+const component = parsedSource.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'Workspace');
+assert.ok(component?.body, 'Find the actual Workspace function.');
+const locals = new Map(component.body.statements.filter(ts.isVariableStatement).flatMap(statement =>
+  statement.declarationList.declarations.filter(item => ts.isIdentifier(item.name))
+    .map(item => [item.name.text, item.initializer])));
+for (const name of ['refreshManagement', 'preserveManagement']) {
+  // Immutable baseline callbacks predate the independent management journal.
+  if (locals.has(name)) callbacks[name] = [locals.get(name)];
+}
 const scripts = {};
-for (const name of ['restore', 'export']) {
+for (const name of Object.keys(callbacks)) {
   assert.equal(callbacks[name].length, 1, `Find one actual inline ${name} callback.`);
   assert.ok(ts.isArrowFunction(callbacks[name][0]), `${name} must remain an actual inline arrow callback.`);
   const compiled = ts.transpileModule(`module.exports = (${callbacks[name][0].getText(parsedSource)});`, {
@@ -123,7 +139,7 @@ function harness(initial = workspaceWith()) {
   const forbidden = () => { throw new Error('Unexpected browser, model, network or provider call in a pure backup UI test.'); };
   let context;
   const bindings = {
-    ...trip,
+    ...trip, ...management, ...managementStorage,
     // Missing codec exports stay undefined on the old source: its actual old
     // callbacks do not reference them. No replacement implementation is used.
     exportWorkspaceBackup: trip.exportWorkspaceBackup,
@@ -131,9 +147,16 @@ function harness(initial = workspaceWith()) {
     MAX_BACKUP_FILE_BYTES: trip.MAX_BACKUP_FILE_BYTES,
     state: current, backupInput: { current: input }, pendingPlan: { current: null }, storageKey,
     backupReadGeneration: { current: 0 },
+    workspaceRef: { current: { workspace: current } },
+    setManagedTrips() {}, setManagementError() {},
     Uint8Array, TextEncoder, TextDecoder, JSON, Error, fetch: forbidden,
     localStorage: {
-      getItem(key) { assert.equal(key, storageKey); return durable; },
+      length: 0,
+      key() { return null; },
+      getItem(key) {
+        if (key === management.COMMUNITY_MANAGEMENT_KEY) return null;
+        assert.equal(key, storageKey); return durable;
+      },
       setItem(key, value) {
         assert.equal(key, storageKey);
         assert.equal(typeof value, 'string');
@@ -155,6 +178,7 @@ function harness(initial = workspaceWith()) {
     setState(value) {
       current = plain(typeof value === 'function' ? value(current) : value);
       context.state = current;
+      context.workspaceRef.current = { workspace: current };
       calls.states.push(plain(current));
       calls.events.push('UI replaced');
     },
@@ -168,6 +192,9 @@ function harness(initial = workspaceWith()) {
     scripts[name].runInContext(context);
     assert.equal(typeof context.module.exports, 'function');
     return context.module.exports;
+  }
+  for (const name of ['refreshManagement', 'preserveManagement']) {
+    if (scripts[name]) context[name] = callback(name);
   }
   return {
     calls, input, original,

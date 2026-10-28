@@ -291,3 +291,132 @@ test('a functional no-op preserves exact editor identity and leaves a captured t
   assert.equal(accepted.csvNotice.accepted, true);
   assert.deepEqual(target(accepted).expenses.map(item => item.id), ['after-functional-noop']);
 });
+
+test('publication completion patches the latest target while preserving newer private edits, selection and CSV notice', () => {
+  const current = frozenEditor();
+  const pending = ticket(current, 'authored-trip-a', 121);
+  const edited = workspaceReducer(current, {
+    type: 'update',
+    update: workspace => ({
+      ...workspace, selectedTripId: 'authored-trip-c',
+      profile: { ...workspace.profile, bio: 'Private profile edited during publication.' },
+      trips: workspace.trips.map(trip => trip.id === pending.tripId ? {
+        ...trip, title: 'Latest private trip title', description: 'Newer private notes', budget: 731,
+      } : trip),
+    }),
+  });
+  const latest = workspaceReducer(edited, importAction(pending, [expense('private-during-publication')]));
+  deepFreeze(latest);
+  const action = deepFreeze({ type: 'publication-result', tripId: pending.tripId, identity: pending.identity, isPublic: true });
+  const published = workspaceReducer(latest, action);
+  assert.notStrictEqual(published.workspace, latest.workspace);
+  assert.deepEqual(target(published), { ...target(latest), isPublic: true });
+  assert.equal(target(published).title, 'Latest private trip title');
+  assert.equal(target(published).description, 'Newer private notes');
+  assert.equal(target(published).budget, 731);
+  assert.strictEqual(target(published).expenses, target(latest).expenses);
+  assert.strictEqual(target(published).days, target(latest).days);
+  assert.strictEqual(target(published).bookings, target(latest).bookings);
+  assert.strictEqual(target(published, 'authored-trip-b'), target(latest, 'authored-trip-b'));
+  assert.strictEqual(target(published, 'authored-trip-c'), target(latest, 'authored-trip-c'));
+  assert.strictEqual(published.workspace.profile, latest.workspace.profile);
+  assert.equal(published.workspace.selectedTripId, 'authored-trip-c');
+  assert.strictEqual(published.tripIdentities, latest.tripIdentities);
+  assert.equal(published.nextIdentity, latest.nextIdentity);
+  assert.strictEqual(published.csvNotice, latest.csvNotice);
+  assert.equal(target(latest).isPublic, false);
+  assert.deepEqual(workspaceReducer(latest, action), published, 'Frozen publication replay must be deterministic.');
+});
+
+test('unpublication preserves current private data and leaves a previously captured CSV ticket usable', () => {
+  const workspace = fixture();
+  workspace.trips[0].isPublic = true;
+  const current = frozenEditor(workspace);
+  const pending = ticket(current, 'authored-trip-a', 131);
+  const unpublished = workspaceReducer(current, {
+    type: 'publication-result', tripId: pending.tripId, identity: pending.identity, isPublic: false,
+  });
+  assert.deepEqual(target(unpublished), { ...target(current), isPublic: false });
+  assert.strictEqual(unpublished.tripIdentities, current.tripIdentities);
+  assert.strictEqual(unpublished.csvNotice, current.csvNotice);
+  const imported = workspaceReducer(unpublished, importAction(pending, [expense('after-unpublication')]));
+  assert.equal(target(imported).isPublic, false);
+  assert.equal(imported.csvNotice.accepted, true);
+  assert.deepEqual(target(imported).expenses.map(item => item.id), ['after-unpublication']);
+  assert.equal(target(current).isPublic, true);
+});
+
+test('publication results with an absent or stale identity retain the exact workspace and existing notice', () => {
+  const current = frozenEditor();
+  const primed = workspaceReducer(current, { type: 'csv-error', ticket: ticket(current), message: 'Current CSV notice' });
+  for (const captured of [
+    { tripId: 'authored-trip-a', identity: undefined },
+    { tripId: 'authored-trip-a', identity: 999 },
+    { tripId: 'authored-trip-a', identity: current.tripIdentities.get('authored-trip-b') },
+    { tripId: 'missing-authored-trip', identity: 1 },
+  ]) {
+    assert.strictEqual(workspaceReducer(primed, { type: 'publication-result', ...captured, isPublic: true }), primed);
+  }
+  const inconsistent = { ...primed, tripIdentities: new Map([...primed.tripIdentities, ['missing-authored-trip', 999]]) };
+  assert.strictEqual(workspaceReducer(inconsistent, {
+    type: 'publication-result', tripId: 'missing-authored-trip', identity: 999, isPublic: true,
+  }), inconsistent, 'An identity entry alone must never recreate an absent trip.');
+});
+
+test('a publication result for a deleted trip cannot recreate it or alter another trip', () => {
+  const current = frozenEditor();
+  const pending = ticket(current);
+  const deleted = workspaceReducer(current, {
+    type: 'update', update: workspace => ({ ...workspace, trips: workspace.trips.filter(trip => trip.id !== pending.tripId) }),
+  });
+  assert.strictEqual(workspaceReducer(deleted, {
+    type: 'publication-result', tripId: pending.tripId, identity: pending.identity, isPublic: true,
+  }), deleted);
+  assert.equal(deleted.workspace.trips.length, 2);
+  assert.equal(target(deleted), undefined);
+});
+
+test('deleting and recreating a trip with the same ID rejects the old publication incarnation', () => {
+  const current = frozenEditor();
+  const pending = ticket(current);
+  const deleted = workspaceReducer(current, {
+    type: 'update', update: workspace => ({ ...workspace, trips: workspace.trips.filter(trip => trip.id !== pending.tripId) }),
+  });
+  const recreated = workspaceReducer(deleted, {
+    type: 'update', update: workspace => ({ ...workspace, trips: [...workspace.trips, { ...target(current), title: 'New private incarnation' }] }),
+  });
+  assert.notEqual(recreated.tripIdentities.get(pending.tripId), pending.identity);
+  assert.strictEqual(workspaceReducer(recreated, {
+    type: 'publication-result', tripId: pending.tripId, identity: pending.identity, isPublic: true,
+  }), recreated);
+  const published = workspaceReducer(recreated, {
+    type: 'publication-result', tripId: pending.tripId, identity: recreated.tripIdentities.get(pending.tripId), isPublic: true,
+  });
+  assert.equal(target(published).isPublic, true);
+  assert.equal(target(published).title, 'New private incarnation');
+});
+
+test('restoring the same trip IDs invalidates old publication results without blocking a new one', () => {
+  const current = frozenEditor();
+  const pending = ticket(current);
+  const restored = restoreWorkspace(serializeWorkspace(current.workspace, 0));
+  const replaced = workspaceReducer(current, { type: 'update', update: restored });
+  assert.notEqual(replaced.tripIdentities.get(pending.tripId), pending.identity);
+  assert.strictEqual(workspaceReducer(replaced, {
+    type: 'publication-result', tripId: pending.tripId, identity: pending.identity, isPublic: true,
+  }), replaced);
+  const published = workspaceReducer(replaced, {
+    type: 'publication-result', tripId: pending.tripId, identity: replaced.tripIdentities.get(pending.tripId), isPublic: true,
+  });
+  assert.equal(target(published).isPublic, true);
+  assert.strictEqual(published.tripIdentities, replaced.tripIdentities);
+});
+
+test('an already matching publication state is an exact no-op and does not replace feedback or CSV identities', () => {
+  const current = frozenEditor();
+  const pending = ticket(current);
+  const primed = workspaceReducer(current, { type: 'csv-error', ticket: pending, message: 'Keep this CSV error' });
+  assert.strictEqual(workspaceReducer(primed, {
+    type: 'publication-result', tripId: pending.tripId, identity: pending.identity, isPublic: false,
+  }), primed);
+});

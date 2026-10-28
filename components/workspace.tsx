@@ -1,6 +1,6 @@
 'use client';
 
-import {useCallback,useEffect,useMemo,useReducer,useRef,useState, type FormEvent} from 'react';
+import {useCallback,useEffect,useLayoutEffect,useMemo,useReducer,useRef,useState, type FormEvent} from 'react';
 import dynamic from 'next/dynamic';
 import {ArrowUpRight,ArrowLeft,ArrowRight,ArrowUp,ArrowDown,Plus,MapPin,CalendarDays,Compass,Wallet,Ticket,ChevronDown,ChevronRight,Check,CheckCircle2,Clock,Footprints,Plane,Building2,Coffee,Sun,CloudSun,Users,Share2,Sparkles,Settings2,Search,Heart,Leaf,Mountain,Music2,Utensils,Landmark,MoreHorizontal,Download,Upload,ExternalLink,Trash2,Map,LayoutList,Pencil,X,Globe,ShieldCheck,Route,BookOpen,Link as LinkIcon} from 'lucide-react';
 import {seedTrips,seedProfile,destinations} from '@/lib/data';
@@ -8,6 +8,8 @@ import {formatMoney,formatDate,getTripCost,getTripDays,getWalkingRoute,getTravel
 import type {Trip,Activity,Booking,Expense,Profile,WorkspaceState} from '@/lib/types';
 import {parseExpenseCsv} from '@/lib/csv';
 import {createWorkspaceEditor,workspaceReducer,type WorkspaceUpdate,type CsvImportTicket} from '@/lib/workspace-state';
+import {COMMUNITY_MANAGEMENT_KEY,type ManagedTrip} from '@/lib/community-management';
+import {readManagedStorage,preserveManagedStorage,reserveManagedPublication,confirmManagedPublicationStorage,snapshotManagedUnpublish,confirmManagedUnpublishStorage} from '@/lib/community-management-storage';
 import Dialog from './dialog';
 import {AiChat} from './ai-chat';
 import StayComparison from './stay-comparison';
@@ -25,9 +27,11 @@ const TripMap=dynamic(()=>import('./trip-map'),{ssr:false,loading:()=> <div clas
 <span>Finding your bearings…</span>
 </div>});
 const storageKey='trippin.workspace.v1';
+const COMMUNITY_TIMEOUT_MS=20_000;
 type View='itinerary'|'discover'|'budget'|'bookings'|'profile';
 type Modal='trip'|'tripSettings'|'activity'|'event'|'expense'|'booking'|'share'|'settings'|'alternatives'|'join'|null;
 type CommunityRequest={id:string;name:string;message:string;contact:string;status:'pending'|'accepted'|'declined'};
+type CommunityOperation={action:'publish'|'unpublish'|'review'|'decision'|'join';tripId:string;identity:number|undefined;epoch:number;controller:AbortController;timer?:ReturnType<typeof setTimeout>};
 const categories=['culture','food','outdoors','nightlife','community','transport','stay','other'] as const;
 const categoryIcon={culture:Landmark,food:Utensils,outdoors:Leaf,nightlife:Music2,community:Users,transport:Plane,stay:Building2,other:Compass};
 const categoryLabel={culture:'Culture',food:'Food & drink',outdoors:'Outdoors',nightlife:'After hours',community:'Meet people',transport:'Transport',stay:'Accommodation',other:'Something else'};
@@ -65,30 +69,77 @@ export default function Workspace(){
   const [shareUrl,setShareUrl]=useState('');
   const [busy,setBusy]=useState(false);
   const [requests,setRequests]=useState<CommunityRequest[]|null>(null);
+  const [managedTrips,setManagedTrips]=useState<ManagedTrip[]>([]);
+  const [managementError,setManagementError]=useState('');
+  const [shareTripId,setShareTripId]=useState<string|null>(null);
   const fileInput=useRef<HTMLInputElement>(null);
   const csvReadGeneration=useRef(0);
   const backupInput=useRef<HTMLInputElement>(null);
   const backupReadGeneration=useRef(0);
   const initialized=useRef(false);
   const pendingPlan=useRef<{tripId:string;hash:string}|null>(null);
+  const workspaceRef=useRef(workspaceEdit);
+  const mountedRef=useRef(true);
+  const modalEpoch=useRef(0);
+  const communityRequestRef=useRef<CommunityOperation|null>(null);
   const trip=state.trips.find(t=>t.id===state.selectedTripId)||state.trips[0];
   const day=trip.days[Math.min(dayIndex,trip.days.length-1)];
   const activities=useMemo(()=>day?.activities.filter(a=>!a.alternativeFor)||[],[day]);
   const cost=getTripCost(trip,state.profile);
   const route=getWalkingRoute(activities);
+  const shareId=shareTripId??trip.id;
+  const shareTrip=state.trips.find(item=>item.id===shareId);
+  const managedTrip=managedTrips.find(item=>item.id===shareId);
   const notify=(message:string)=>{setToast(message)};
   const selectPlace=useCallback((id:string)=>setSelected(id),[]);
-  const close=()=>{setModal(null);setError('');setEditing(null);setEditingBooking(null);setEventDraft(null);setShareUrl('');setRequests(null)};
-  const open=(value:Modal)=>{setError('');setModal(value)};
+  const close=()=>{modalEpoch.current++;setModal(null);setError('');setEditing(null);setEditingBooking(null);setEventDraft(null);setShareUrl('');setRequests(null);setShareTripId(null)};
+  const open=(value:Modal,targetId?:string)=>{modalEpoch.current++;setError('');setShareUrl('');setRequests(null);setShareTripId(value==='share'?(targetId??trip.id):null);setModal(value)};
   const updateTrip=(updater:(value:Trip)=>Trip)=>setState(s=>({...s,trips:s.trips.map(t=>t.id===trip.id?updater(t):t)}));
   const updateActivity=(id:string,updater:(a:Activity)=>Activity)=>updateTrip(t=>({...t,days:t.days.map(d=>({...d,activities:d.activities.map(a=>a.id===id?updater(a):a)}))}));
-  const selectTrip=(id:string)=>{setState(s=>({...s,selectedTripId:id}));setDayIndex(0);setSelected(null);setView('itinerary');setMobileMap(false)};
+  const selectTrip=(id:string)=>{modalEpoch.current++;setState(s=>({...s,selectedTripId:id}));setDayIndex(0);setSelected(null);setView('itinerary');setMobileMap(false)};
+  const refreshManagement=(records:ManagedTrip[])=>{setManagedTrips(records);setManagementError('');return records};
+  const preserveManagement=(trips:Trip[])=>refreshManagement(preserveManagedStorage(localStorage,trips));
+  const beginCommunity=(action:CommunityOperation['action'],id:string)=>{
+    if(!mountedRef.current||!ready)return null;
+    if(communityRequestRef.current){setError('A community request is still being confirmed. Please wait.');return null}
+    const request:CommunityOperation={action,tripId:id,identity:workspaceRef.current.tripIdentities.get(id),epoch:modalEpoch.current,controller:new AbortController()};
+    communityRequestRef.current=request;setBusy(true);setError('');return request;
+  };
+  const ownsCommunity=(request:CommunityOperation)=>mountedRef.current&&communityRequestRef.current===request;
+  const ownsCommunityUi=(request:CommunityOperation)=>ownsCommunity(request)&&modalEpoch.current===request.epoch;
+  const ownerForPublication=(request:CommunityOperation)=>{
+    const existing=localStorage.getItem('trippin.owner');if(existing)return existing;
+    if(!navigator.locks)throw new Error('This browser cannot safely initialize publishing access. Try an up-to-date browser.');
+    return navigator.locks.request('trippin.owner.initialize',{signal:request.controller.signal},()=>{
+      const saved=localStorage.getItem('trippin.owner');if(saved)return saved;
+      const owner=crypto.randomUUID()+crypto.randomUUID();localStorage.setItem('trippin.owner',owner);return owner;
+    });
+  };
+  const finishCommunity=(request:CommunityOperation)=>{clearTimeout(request.timer);if(communityRequestRef.current===request){communityRequestRef.current=null;if(mountedRef.current)setBusy(false)}};
+  const communityDelivery=(request:CommunityOperation,url:string,init?:RequestInit)=>Promise.race([
+    fetch(url,{...init,signal:request.controller.signal}).then(async response=>({response,data:await response.json()})),
+    new Promise<never>((_,reject)=>{request.timer=setTimeout(()=>{request.controller.abort();reject(new Error('The community response timed out. Its outcome could not be confirmed.'))},COMMUNITY_TIMEOUT_MS)}),
+  ]);
+
+  useLayoutEffect(()=>{workspaceRef.current=workspaceEdit},[workspaceEdit]);
+  useEffect(()=>{
+    mountedRef.current=true;
+    return()=>{mountedRef.current=false;modalEpoch.current++;backupReadGeneration.current++;const request=communityRequestRef.current;communityRequestRef.current=null;clearTimeout(request?.timer);request?.controller.abort()};
+  },[]);
+  useEffect(()=>{
+    const refresh=(event:StorageEvent)=>{if(event.key===null||event.key.startsWith(COMMUNITY_MANAGEMENT_KEY+':')){
+      try{refreshManagement(readManagedStorage(localStorage).records)}catch{setManagementError('Management entries could not be read. Existing browser data has been kept.')}
+    }};
+    window.addEventListener('storage',refresh);
+    return()=>window.removeEventListener('storage',refresh);
+  },[]);
 
   useEffect(()=>{
     if(initialized.current)return;
     initialized.current=true;
     let restored=initial,notice='';
     try{restored=restoreWorkspace(localStorage.getItem(storageKey))}catch{notice='Browser storage is unavailable. Export a backup to keep your changes.'}
+    try{preserveManagement(restored.trips)}catch{setManagementError('Public-plan management entries could not be loaded or saved. Existing browser data has been kept; publishing is unavailable until it can be preserved.')}
     const sharedPlan=importSharedPlan(restored,window.location.href);
     setState(sharedPlan.workspace);
     if(sharedPlan.status==='imported'){
@@ -100,7 +151,8 @@ export default function Workspace(){
     setReady(true);
     void fetch('/api/community').then(r=>r.json()).then(data=>{setSocialReady(data.available===true);setPublicTrips(Array.isArray(data.trips)?data.trips.filter(isTrip):[])}).catch(()=>{});
     const shared=new URLSearchParams(window.location.search).get('trip');
-    if(shared&&/^[a-zA-Z0-9_-]{1,80}$/.test(shared))void fetch(`/api/community?id=${shared}`).then(r=>r.json()).then(data=>{if(isTrip(data.trip)){setJoining(data.trip);setModal('join')}}).catch(()=>setToast('This shared trip could not be loaded.'));
+    const epoch=modalEpoch.current;
+    if(shared&&/^[a-zA-Z0-9_-]{1,80}$/.test(shared))void fetch(`/api/community?id=${shared}`).then(r=>r.json()).then(data=>{if(mountedRef.current&&modalEpoch.current===epoch&&!communityRequestRef.current&&isTrip(data.trip)){setJoining(data.trip);modalEpoch.current++;setModal('join')}}).catch(()=>{if(mountedRef.current&&modalEpoch.current===epoch)setToast('This shared trip could not be loaded.')});
   },[]);
   // Save failures run after this notice so an import cannot hide an unsaved-data warning.
   useEffect(()=>{if(workspaceEdit.csvNotice)setToast(workspaceEdit.csvNotice.message)},[workspaceEdit.csvNotice]);
@@ -160,17 +212,83 @@ export default function Workspace(){
     updateTrip(t=>({...t,days:t.days.map(d=>d.activities.some(a=>a.id===original.id)?{...d,activities:d.activities.flatMap(item=>item.id===original.id?[replacement,{...item,status:'skipped' as const,alternativeFor:nextId}]:item.id===option.id&&option.alternativeFor===original.id?[]:[item.alternativeFor===original.id?{...item,alternativeFor:nextId}:item])}:d)}));
     setSelected(nextId);close();notify('A little change of plan. Your budget and map are updated.');
   };
-  const snapshot=()=>publicTripSnapshot(trip);
+  const snapshot=()=>{if(!shareTrip)throw new Error('Open the private trip before sharing its itinerary.');return publicTripSnapshot(shareTrip)};
   const removeBooking=(booking:Booking)=>updateTrip(t=>({...t,bookings:t.bookings.filter(b=>b.id!==booking.id),expenses:t.expenses.map(expense=>expense.bookingId===booking.id&&booking.activityId?{...expense,bookingId:undefined,activityId:booking.activityId}:expense)}));
-  const reviewRequests=async()=>{setBusy(true);setError('');try{const owner=localStorage.getItem('trippin.owner')||'';const response=await fetch(`/api/community?id=${trip.id}`,{headers:{'x-trip-owner':owner}});const data=await response.json();if(!response.ok)throw new Error(data.error);setRequests(data.requests||[])}catch(e){setError(e instanceof Error?e.message:'Could not load requests.')}finally{setBusy(false)}};
-  const decideRequest=async(id:string,status:'accepted'|'declined')=>{setBusy(true);setError('');try{const response=await fetch('/api/community',{method:'PATCH',headers:{'Content-Type':'application/json','x-trip-owner':localStorage.getItem('trippin.owner')||''},body:JSON.stringify({tripId:trip.id,requestId:id,action:status})});const data=await response.json();if(!response.ok)throw new Error(data.error);setRequests(list=>list?.map(item=>item.id===id?{...item,status}:item)||[]);notify(`Request ${status}. Contact the traveler directly to arrange details.`)}catch(e){setError(e instanceof Error?e.message:'Could not update request.')}finally{setBusy(false)}};
-  const unpublish=async()=>{setBusy(true);try{const response=await fetch(`/api/community?id=${trip.id}`,{method:'DELETE',headers:{'x-trip-owner':localStorage.getItem('trippin.owner')||''}});const data=await response.json();if(!response.ok)throw new Error(data.error);updateTrip(t=>({...t,isPublic:false}));setPublicTrips(list=>list.filter(t=>t.id!==trip.id));setRequests(null);notify('Trip unpublished and join requests removed.')}catch(e){setError(e instanceof Error?e.message:'Could not unpublish.')}finally{setBusy(false)}};
-  const shareSnapshot=async()=>{const value=window.location.origin+'/#plan='+btoa(unescape(encodeURIComponent(JSON.stringify(snapshot()))));if(value.length>24000){setError('This trip is too large for a link. Export a backup instead.');return}setShareUrl(value);try{await navigator.clipboard.writeText(value);notify('Itinerary link copied. Private booking details stay out.')}catch{notify('Your link is ready to copy below.')}};
-  const publish=async()=>{
-    setBusy(true);setError('');
-    try{let owner=localStorage.getItem('trippin.owner');if(!owner){owner=crypto.randomUUID()+crypto.randomUUID();localStorage.setItem('trippin.owner',owner)}const response=await fetch('/api/community',{method:'POST',headers:{'Content-Type':'application/json','x-trip-owner':owner},body:JSON.stringify({trip:snapshot(),host:state.profile.name})});const data=await response.json();if(!response.ok)throw new Error(data.error||'Could not publish this trip.');updateTrip(t=>({...t,isPublic:true}));const url=window.location.origin+'/?trip='+trip.id;setShareUrl(url);setPublicTrips(list=>[...list.filter(t=>t.id!==trip.id),{...snapshot(),isPublic:true}]);notify('Your trip is open for join requests.')}catch(e){setError(e instanceof Error?e.message:'Could not publish.')}finally{setBusy(false)}
+  const reviewRequests=async()=>{
+    const request=beginCommunity('review',shareId);if(!request)return;
+    try{
+      const {response,data}=await communityDelivery(request,`/api/community?id=${encodeURIComponent(request.tripId)}`,{headers:{'x-trip-owner':localStorage.getItem('trippin.owner')||''}});
+      if(!response.ok)throw new Error(data?.error||'Could not load requests.');
+      if(data?.available!==true||!isTrip(data.trip)||data.trip.id!==request.tripId||!Array.isArray(data.requests))throw new Error('The community service did not confirm this trip and its requests.');
+      if(ownsCommunityUi(request))setRequests(data.requests);
+    }catch(e){if(ownsCommunityUi(request))setError(e instanceof Error?e.message:'Could not load requests.')}
+    finally{finishCommunity(request)}
   };
-  const sendJoin=async(event:FormEvent<HTMLFormElement>)=>{event.preventDefault();if(!joining)return;setBusy(true);const form=new FormData(event.currentTarget);try{const response=await fetch('/api/community',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({tripId:joining.id,name:field(form,'name'),message:field(form,'message'),contact:field(form,'contact')})});const data=await response.json();if(!response.ok)throw new Error(data.error);close();notify('Join request sent. The host can review it in Trippin.')}catch(e){setError(e instanceof Error?e.message:'Could not send the request.')}finally{setBusy(false)}};
+  const decideRequest=async(id:string,status:'accepted'|'declined')=>{
+    const request=beginCommunity('decision',shareId);if(!request)return;
+    try{
+      const {response,data}=await communityDelivery(request,'/api/community',{method:'PATCH',headers:{'Content-Type':'application/json','x-trip-owner':localStorage.getItem('trippin.owner')||''},body:JSON.stringify({tripId:request.tripId,requestId:id,action:status})});
+      if(!response.ok||data?.updated!==true)throw new Error(data?.error||'The request decision could not be confirmed.');
+      if(ownsCommunityUi(request)){setRequests(list=>list?.map(item=>item.id===id?{...item,status}:item)||[]);notify(`Request ${status}. Contact the traveler directly to arrange details.`)}
+    }catch(e){if(ownsCommunityUi(request))setError(e instanceof Error?e.message:'Could not update request.')}
+    finally{finishCommunity(request)}
+  };
+  const unpublish=async()=>{
+    const request=beginCommunity('unpublish',shareId);if(!request)return;
+    try{
+      const records=preserveManagement(workspaceRef.current.workspace.trips);
+      if(!records.some(item=>item.id===request.tripId))throw new Error('No saved management entry was found for this public plan.');
+      const captured=snapshotManagedUnpublish(localStorage,request.tripId);
+      const {response,data}=await communityDelivery(request,`/api/community?id=${encodeURIComponent(request.tripId)}`,{method:'DELETE',headers:{'x-trip-owner':localStorage.getItem('trippin.owner')||''}});
+      if(!response.ok||data?.deleted!==true)throw new Error(data?.error||'Unpublishing could not be confirmed.');
+      if(!ownsCommunity(request))return;
+      const remaining=refreshManagement(confirmManagedUnpublishStorage(localStorage,request.tripId,captured));
+      dispatchWorkspace({type:'publication-result',tripId:request.tripId,identity:request.identity,isPublic:false});
+      setPublicTrips(list=>list.filter(item=>item.id!==request.tripId));
+      if(ownsCommunityUi(request)){
+        setRequests(null);
+        notify(remaining.some(item=>item.id===request.tripId)
+          ?'Unpublish acknowledged. Another publication entry is still kept for this plan; review it before deleting.'
+          :'Trip unpublished and join requests removed.');
+      }
+    }catch(e){if(ownsCommunityUi(request))setError(`${e instanceof Error?e.message:'Could not confirm unpublishing.'} Its management entry has been kept.`)}
+    finally{finishCommunity(request)}
+  };
+  const shareSnapshot=async()=>{if(!shareTrip)return;const epoch=modalEpoch.current,value=window.location.origin+'/#plan='+btoa(unescape(encodeURIComponent(JSON.stringify(snapshot()))));if(value.length>24000){setError('This trip is too large for a link. Export a backup instead.');return}setShareUrl(value);try{await navigator.clipboard.writeText(value);if(mountedRef.current&&modalEpoch.current===epoch)notify('Itinerary link copied. Private booking details stay out.')}catch{if(mountedRef.current&&modalEpoch.current===epoch)notify('Your link is ready to copy below.')}};
+  const publish=async()=>{
+    if(!shareTrip){setError('Open the private trip before publishing its current plan.');return}
+    const request=beginCommunity('publish',shareTrip.id);if(!request)return;
+    let sent=false;
+    try{
+      const publicPlan=snapshot(),body=JSON.stringify({trip:publicPlan,host:state.profile.name});
+      const ownership=ownerForPublication(request),owner=typeof ownership==='string'?ownership:await ownership;
+      if(!ownsCommunity(request))return;
+      preserveManagement(workspaceRef.current.workspace.trips);
+      const reservation=reserveManagedPublication(localStorage,publicPlan,crypto.randomUUID());
+      refreshManagement(reservation.records);
+      sent=true;
+      const {response,data}=await communityDelivery(request,'/api/community',{method:'POST',headers:{'Content-Type':'application/json','x-trip-owner':owner},body});
+      if(!response.ok||data?.published!==true||data.id!==request.tripId)throw new Error(data?.error||'The community service did not confirm publication.');
+      if(!ownsCommunity(request))return;
+      refreshManagement(confirmManagedPublicationStorage(localStorage,reservation));
+      dispatchWorkspace({type:'publication-result',tripId:request.tripId,identity:request.identity,isPublic:true});
+      setPublicTrips(list=>[...list.filter(item=>item.id!==request.tripId),{...publicPlan,isPublic:true}]);
+      if(ownsCommunityUi(request)){setShareUrl(window.location.origin+'/?trip='+request.tripId);notify('Your trip is open for join requests.')}
+    }catch(e){if(ownsCommunityUi(request))setError(sent
+      ?'Publication could not be fully confirmed. Its management entry is kept in Your profile; check it before publishing again.'
+      :`${e instanceof Error?e.message:'Could not preserve the management entry.'} Nothing was sent.`)}
+    finally{finishCommunity(request)}
+  };
+  const sendJoin=async(event:FormEvent<HTMLFormElement>)=>{event.preventDefault();if(!joining)return;const request=beginCommunity('join',joining.id);if(!request)return;const form=new FormData(event.currentTarget);try{const {response,data}=await communityDelivery(request,'/api/community',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({tripId:request.tripId,name:field(form,'name'),message:field(form,'message'),contact:field(form,'contact')})});if(!response.ok||data?.sent!==true)throw new Error(data?.error||'Sending the join request could not be confirmed.');if(ownsCommunityUi(request)){close();notify('Join request sent. The host can review it in Trippin.')}}catch(e){if(ownsCommunityUi(request))setError(e instanceof Error?e.message:'Could not confirm the request. Check before sending it again.')}finally{finishCommunity(request)}};
+  const deleteTrip=()=>{
+    const current=workspaceRef.current,target=current.workspace.trips.find(item=>item.id===trip.id);
+    if(!target||current.tripIdentities.get(trip.id)!==workspaceEdit.tripIdentities.get(trip.id))throw new Error('This trip changed. Reopen its details before deleting it.');
+    const records=preserveManagement(current.workspace.trips);
+    if(target.isPublic||records.find(item=>item.id===target.id)?.status==='published')throw new Error('Unpublish this trip before deleting it from this browser.');
+    if(current.workspace.trips.length<=1)throw new Error('Keep at least one trip in your workspace.');
+    setState(s=>{const remaining=s.trips.filter(item=>item.id!==target.id);return{...s,trips:remaining,selectedTripId:remaining[0].id}});
+    setDayIndex(0);setSelected(null);close();notify(records.some(item=>item.id===target.id)?'Private trip deleted. Its public-plan management entry stays in Your profile.':'Trip deleted from this browser.');
+  };
   const importCsv=async(file?:File)=>{if(!file)return;const input=fileInput.current,requestId=++csvReadGeneration.current,ticket:CsvImportTicket={tripId:trip.id,identity:workspaceEdit.tripIdentities.get(trip.id),requestId};try{const rows=parseExpenseCsv(await file.text());const expenses=rows.map(row=>({...row,id:makeId('expense'),category:(categories as readonly string[]).includes(row.category)?row.category as Expense['category']:'other' as const}));dispatchWorkspace({type:'csv-import',ticket,expenses})}catch(e){dispatchWorkspace({type:'csv-error',ticket,message:e instanceof Error?e.message:'Could not import CSV.'})}finally{if(input&&fileInput.current===input&&csvReadGeneration.current===requestId)input.value=''}};
   const budgetPercent=trip.budget>0?Math.min(100,Math.round(cost.total/trip.budget*100)):cost.total>0?100:0;
   const aiContext=JSON.stringify({city:trip.city,country:trip.country,startDate:trip.startDate,endDate:trip.endDate,budget:trip.budget,interests:state.profile.interests,openToEvents:getEventPreferences(state.profile),days:trip.days.map(d=>({date:d.date,activities:d.activities.filter(a=>!a.alternativeFor).map(a=>({title:a.title,time:a.time,cost:a.cost,status:a.status}))}))});
@@ -209,6 +327,7 @@ export default function Workspace(){
 </span>
 <Settings2 size={17}/>
 </button>
+{(managedTrips.length>0||managementError)&&<button className="text-button" onClick={()=>setView('profile')}><ShieldCheck size={15}/>Manage public plans{managedTrips.length?` (${managedTrips.length})`:''}</button>}
 </div>
     </aside>
     <main className={`main-area ${view==='itinerary'?'with-map':''}`} id="main-content">
@@ -614,6 +733,18 @@ export default function Workspace(){
 </div>
 <div className="badges">{getTravelBadges(state.trips).map(badge=><div key={badge.id} className={badge.earned?'':'locked'}><span>{badge.icon==='flag'?'◎':badge.icon==='users'?'✳':badge.icon==='ticket'?<Ticket size={32}/>:'✺'}</span><strong>{badge.title}</strong><small>{badge.description}</small></div>)}</div>
 <TripRecap trip={trip} profile={state.profile}/>
+<section className="dialog-form" aria-label="Public plans you manage">
+<h3>Public plans you manage</h3>
+<p className="form-note">These management entries stay in this browser when you restore a workspace or remove a private trip. Publishing access is not included in workspace backups; clearing browser data loses it.</p>
+{managementError&&<p role="alert" className="form-error">{managementError}</p>}
+<button className="text-button" onClick={()=>{try{preserveManagement(workspaceRef.current.workspace.trips)}catch{setManagementError('Management entries could not be loaded or saved. Existing browser data has been kept.')}}}>Reload management entries</button>
+{managedTrips.length===0&&!managementError?<p>No public plans are managed in this browser yet.</p>:<div className="join-requests">{managedTrips.map(item=><article key={item.id}>
+<strong>{item.title}<small>{item.city}</small></strong>
+<p>{item.status==='published'?'Marked public in this browser.':'Publication needs checking. An earlier request may have reached the service.'}</p>
+{!state.trips.some(local=>local.id===item.id)&&<p>The private copy is not in this workspace. Its public plan can still be managed here.</p>}
+<button className="secondary" onClick={()=>open('share',item.id)}>Manage public plan</button>
+</article>)}</div>}
+</section>
 <div className="integration-notice">
 <ShieldCheck size={21}/>
 <div>
@@ -625,7 +756,7 @@ export default function Workspace(){
 </div>
 <button className="text-button" onClick={()=>backupInput.current?.click()}>
 <Upload size={14}/>Restore a Trippin backup</button>
-<input ref={backupInput} type="file" accept="application/json,.json" hidden onChange={async e=>{const input=e.currentTarget,file=input.files?.[0],generation=++backupReadGeneration.current;if(!file)return;try{if(file.size>MAX_BACKUP_FILE_BYTES)throw new Error('Choose a backup of 16 MiB or smaller. Your current trips are unchanged.');const bytes=new Uint8Array(await file.arrayBuffer());if(generation!==backupReadGeneration.current)return;const restored=parseWorkspaceBackup(bytes);if(persistWorkspace(restored,serialized=>localStorage.setItem(storageKey,serialized))!=='saved')throw new Error('The backup could not be saved in this browser. Your current trips are unchanged; keep the backup file.');pendingPlan.current=null;setState(restored);setDayIndex(0);setSelected(null);notify('Backup restored and saved in this browser.')}catch(e){if(generation===backupReadGeneration.current)notify(e instanceof Error?e.message:'This is not a valid Trippin backup. Your current trips are unchanged.')}finally{if(generation===backupReadGeneration.current)input.value=''}}}/>
+<input ref={backupInput} type="file" accept="application/json,.json" hidden onChange={async e=>{const input=e.currentTarget,file=input.files?.[0],generation=++backupReadGeneration.current;if(!file)return;try{if(file.size>MAX_BACKUP_FILE_BYTES)throw new Error('Choose a backup of 16 MiB or smaller. Your current trips are unchanged.');const bytes=new Uint8Array(await file.arrayBuffer());if(generation!==backupReadGeneration.current)return;const restored=parseWorkspaceBackup(bytes);preserveManagement([...workspaceRef.current.workspace.trips,...restored.trips]);if(persistWorkspace(restored,serialized=>localStorage.setItem(storageKey,serialized))!=='saved')throw new Error('The backup could not be saved in this browser. Your current trips are unchanged; keep the backup file.');pendingPlan.current=null;setState(restored);setDayIndex(0);setSelected(null);notify('Backup restored and saved in this browser. Public-plan management entries are kept in Your profile.')}catch(e){if(generation===backupReadGeneration.current)notify(e instanceof Error?e.message:'This is not a valid Trippin backup. Your current trips are unchanged.')}finally{if(generation===backupReadGeneration.current)input.value=''}}}/>
 </div>}
     </main>
     {view==='itinerary'&&<button className="mobile-map-toggle primary" onClick={()=>setMobileMap(!mobileMap)}>{mobileMap?<>
@@ -640,7 +771,7 @@ export default function Workspace(){
       {error&&<div role="alert" className="form-error">{error}</div>}
       {modal==='trip'&&<NewTripForm onCreate={addTrip} initialCity={newTripCity}/>}
       {modal==='event'&&eventDraft&&<EventPlanForm draft={eventDraft} trip={trip} onSave={saveEvent}/>}
-      {modal==='tripSettings'&&<TripSettings trip={trip} canDelete={state.trips.length>1} onSave={updated=>{updateTrip(()=>updated);setDayIndex(0);setSelected(null);close();notify('Trip details updated. Your agenda is ready to keep moving.')}} onDelete={()=>{setState(s=>{const remaining=s.trips.filter(t=>t.id!==trip.id);return{...s,trips:remaining,selectedTripId:remaining[0].id}});setDayIndex(0);setSelected(null);close();notify('Trip deleted from this browser.')}}/>}
+      {modal==='tripSettings'&&<TripSettings trip={trip} canDelete={state.trips.length>1} publicationStatus={managedTrips.find(item=>item.id===trip.id)?.status} onSave={updated=>{if(workspaceRef.current.tripIdentities.get(trip.id)!==workspaceEdit.tripIdentities.get(trip.id))throw new Error('This trip was replaced. Reopen its details before saving.');updateTrip(current=>({...updated,isPublic:current.isPublic}));setDayIndex(0);setSelected(null);close();notify('Trip details updated. Your agenda is ready to keep moving.')}} onDelete={deleteTrip}/>}
       {modal==='activity'&&<form className="dialog-form" onSubmit={submitActivity}>
 <label>What’s the plan?<input name="title" defaultValue={editing?.title} required maxLength={140} placeholder="Coffee, then see where we end up"/>
 </label>
@@ -729,8 +860,11 @@ export default function Workspace(){
 </button>
 </form>}
       {modal==='share'&&<div className="dialog-form">
+<h3>{shareTrip?.title??managedTrip?.title??'Saved public plan'}</h3>
 <p>Share the places and plans. Booking references and expenses stay private.</p>
-<button className="share-choice" onClick={()=>void shareSnapshot()}>
+{managedTrip?.status==='uncertain'&&<p role="status" className="form-note">A publication could not be confirmed. Its management entry stays here even after an unpublish acknowledgement, because an earlier request may still arrive.</p>}
+{!shareTrip&&<p className="form-note">This private copy is not in your workspace. Review or unpublish its public plan below.</p>}
+<button className="share-choice" disabled={!shareTrip} onClick={()=>void shareSnapshot()}>
 <LinkIcon size={22}/>
 <span>
 <strong>Share an itinerary link</strong>
@@ -738,7 +872,7 @@ export default function Workspace(){
 </span>
 <ArrowUpRight size={18}/>
 </button>
-<button className="share-choice" disabled={!socialReady||busy} onClick={()=>void publish()}>
+<button className="share-choice" disabled={!shareTrip||!socialReady||busy||!ready||Boolean(managementError)} onClick={()=>void publish()}>
 <Users size={22}/>
 <span>
 <strong>{busy?'Opening your trip…':'Open your trip to new people'}</strong>
@@ -746,9 +880,9 @@ export default function Workspace(){
 </span>
 <ArrowUpRight size={18}/>
 </button>{shareUrl&&<label>Your share link<input readOnly value={shareUrl} onFocus={e=>e.target.select()}/>
-</label>}{trip.isPublic&&<div className="host-actions"><button className="secondary" disabled={busy} onClick={()=>void reviewRequests()}>Review join requests</button><button className="text-button" disabled={busy} onClick={()=>void unpublish()}>Unpublish trip</button></div>}
+</label>}{(shareTrip?.isPublic||managedTrip)&&<div className="host-actions"><button className="secondary" disabled={busy} onClick={()=>void reviewRequests()}>Review join requests</button><button className="text-button" disabled={busy} onClick={()=>void unpublish()}>Unpublish trip</button></div>}
 {requests&&<div className="join-requests">{requests.length===0?<p>No requests yet. Your next travel friend might be on their way.</p>:requests.map(request=><article key={request.id}><strong>{request.name}<small>{request.status}</small></strong><p>{request.message}</p><span>{request.contact}</span>{request.status==='pending'&&<div className="button-row"><button className="primary" disabled={busy} onClick={()=>void decideRequest(request.id,'accepted')}>Accept</button><button className="secondary" disabled={busy} onClick={()=>void decideRequest(request.id,'declined')}>Decline</button></div>}</article>)}</div>}
-<button className="text-button" onClick={()=>download(`${trip.city.toLowerCase()}-trip.json`,JSON.stringify(snapshot(),null,2))}>
+<button className="text-button" disabled={!shareTrip} onClick={()=>{if(shareTrip)download(`${shareTrip.city.toLowerCase()}-trip.json`,JSON.stringify(snapshot(),null,2))}}>
 <Download size={15}/>Download a private-details-free plan</button>
 </div>}
       {modal==='alternatives'&&<div className="dialog-form">

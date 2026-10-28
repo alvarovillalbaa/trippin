@@ -24,6 +24,7 @@ export interface WorkspaceEditorState {
 export type WorkspaceUpdate = WorkspaceState | ((current: WorkspaceState) => WorkspaceState);
 export type WorkspaceAction =
   | { type: 'update'; update: WorkspaceUpdate }
+  | { type: 'publication-result'; tripId: string; identity: number | undefined; isPublic: boolean }
   | { type: 'csv-import'; ticket: CsvImportTicket; expenses: Expense[] }
   | { type: 'csv-error'; ticket: CsvImportTicket; message: string };
 
@@ -48,6 +49,19 @@ export function workspaceReducer(current: WorkspaceEditorState, action: Workspac
       tripIdentities.set(trip.id, previous ?? nextIdentity++);
     }
     return { workspace, tripIdentities, nextIdentity, csvNotice: replacing ? null : current.csvNotice };
+  }
+
+  if (action.type === 'publication-result') {
+    if (action.identity === undefined || current.tripIdentities.get(action.tripId) !== action.identity) return current;
+    const target = current.workspace.trips.find(trip => trip.id === action.tripId);
+    if (!target || target.isPublic === action.isPublic) return current;
+    return {
+      ...current,
+      workspace: {
+        ...current.workspace,
+        trips: current.workspace.trips.map(trip => trip.id === target.id ? { ...trip, isPublic: action.isPublic } : trip),
+      },
+    };
   }
 
   const { ticket } = action;

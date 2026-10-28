@@ -12,8 +12,13 @@ const require = createRequire(import.meta.url);
 const ts = require(process.env.TRIPPIN_TYPESCRIPT_PATH || 'typescript');
 const tripModule = new URL('../lib/trip.ts', import.meta.url).href;
 const editorModule = new URL('../lib/workspace-state.ts', import.meta.url).href;
+const managementModule = new URL('../lib/community-management.ts', import.meta.url).href;
+const managementStorageModule = new URL('../lib/community-management-storage.ts', import.meta.url).href;
 registerHooks({
   resolve(specifier, context, nextResolve) {
+    if (context.parentURL === managementStorageModule && specifier === './community-management') {
+      return nextResolve(managementModule, context);
+    }
     if (context.parentURL === tripModule && specifier === './data') {
       return nextResolve(new URL('../lib/data.ts', import.meta.url).href, context);
     }
@@ -25,6 +30,8 @@ registerHooks({
 });
 const tripApi = await import(tripModule);
 const csvApi = await import(new URL('../lib/csv.ts', import.meta.url));
+const managementApi = await import(managementModule);
+const managementStorageApi = await import(managementStorageModule);
 const sourcePath = process.env.TRIPPIN_WORKSPACE_SOURCE
   || fileURLToPath(new URL('../components/workspace.tsx', import.meta.url));
 const source = readFileSync(sourcePath, 'utf8');
@@ -85,6 +92,7 @@ const factorySource = `module.exports = (state, workspaceEdit) => {
   const categories = ${moduleVariables.get('categories').getText(ast)};
   const notify = ${arrow('notify')};
   const setState = ${reducerMode ? arrow('setState') : 'baselineStateSetter'};
+  ${['refreshManagement', 'preserveManagement'].filter(name => local.has(name)).map(name => `const ${name} = ${arrow(name)};`).join('\n  ')}
   const updateTrip = ${arrow('updateTrip')};
   const importCsv = ${arrow('importCsv')};
   return { importCsv, updateTrip, setState,
@@ -179,15 +187,22 @@ function harness(initial = workspace()) {
   const forbidden = () => { throw new Error('A browser, provider, model or network boundary was called.'); };
   const setToast = message => { toast = String(message); calls.notices.push(toast); };
   const context = vm.createContext({
-    ...tripApi, ...editorApi, parseExpenseCsv: csvApi.parseExpenseCsv,
+    ...tripApi, ...editorApi, ...managementApi, ...managementStorageApi, parseExpenseCsv: csvApi.parseExpenseCsv,
     baselineStateSetter: update => queue.push({ kind: 'update', update }),
     dispatchWorkspace: action => queue.push({ kind: 'action', action }),
     setToast, fileInput: { current: input }, csvReadGeneration: { current: 0 },
     backupInput: { current: backup }, backupReadGeneration: { current: 0 }, pendingPlan: { current: null },
+    workspaceRef: { current: editor },
+    setManagedTrips() {}, setManagementError() {},
     ready: true, storageKey: key, Uint8Array, TextEncoder, TextDecoder, Error, JSON,
     setDayIndex() {}, setSelected() {}, fetch: forbidden,
     localStorage: {
-      getItem(storageKey) { assert.equal(storageKey, key); return durable; },
+      length: 0,
+      key() { return null; },
+      getItem(storageKey) {
+        if (storageKey === managementApi.COMMUNITY_MANAGEMENT_KEY) return null;
+        assert.equal(storageKey, key); return durable;
+      },
       setItem(storageKey, serialized) {
         assert.equal(storageKey, key);
         calls.writes.push(serialized);
@@ -200,7 +215,10 @@ function harness(initial = workspace()) {
   });
   context.module = { exports: {} };
   factoryScript.runInContext(context);
-  const render = () => context.module.exports(editor.workspace, editor);
+  const render = () => {
+    context.workspaceRef.current = editor;
+    return context.module.exports(editor.workspace, editor);
+  };
   function apply(before, entry) {
     if (reducerMode) return editorApi.workspaceReducer(before, entry.action);
     assert.equal(entry.kind, 'update');
