@@ -293,7 +293,7 @@ export default function Workspace(){
   const budgetPercent=trip.budget>0?Math.min(100,Math.round(cost.total/trip.budget*100)):cost.total>0?100:0;
   const aiContext=JSON.stringify({city:trip.city,country:trip.country,startDate:trip.startDate,endDate:trip.endDate,budget:trip.budget,interests:state.profile.interests,openToEvents:getEventPreferences(state.profile),days:trip.days.map(d=>({date:d.date,activities:d.activities.filter(a=>!a.alternativeFor).map(a=>({title:a.title,time:a.time,cost:a.cost,status:a.status}))}))});
 
-  return <div className="app-shell">
+  return <div className="app-shell" inert={!ready} aria-busy={!ready}>
     <a href="#main-content" className="skip-link">Skip to trip</a>
     <aside className="sidebar">
 <a className="brand" href="/" aria-label="Trippin home">trippin<span>✳</span>

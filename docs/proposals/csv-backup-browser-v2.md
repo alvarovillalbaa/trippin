@@ -1,12 +1,16 @@
 # Hosted CSV and backup browser packet v2
 
-5 November 2026. **First run failed; retained before repair.** See the
+5 November 2026. **First run failed; changed candidate prepared.** See the
 [actual first outcome](../results/2026/11-05/csv-backup-attempt-1.md).
 The owner's standing approval to
 continue and complete the personal-project work covers this focused temporary
 public CI packet. The [historical proposal](csv-backup-browser.md) remains an
-unexecuted source record. This packet changes no application dependency or
-behavior and does not repeat the separate unit checks.
+unexecuted source record. The changed candidate gates workspace interaction
+with the existing restoration-ready state, preventing early SSR controls from
+accepting lost clicks. This is supported by
+[Playwright's hydration guidance](https://playwright.dev/docs/navigations#hydration),
+but the prior desktop timeout's exact cause remains unproved. No application
+dependency changes or repeated unit suites are included.
 
 ## Exact acceptance
 
@@ -22,11 +26,22 @@ retained. This is browser-client evidence, not a physical system-picker test.
 
 Each case owns a fresh private browser context and only authored workspace
 data. Normal same-origin root/static GETs remain real. API reads, weather and
-map tiles are blocked as out-of-scope; mutations, unexpected external requests,
+map tiles and the stylesheet's known Google Fonts requests are blocked and
+counted as out-of-scope; no font request is allowed through. Mutations, unexpected external requests,
 WebSockets and page errors fail the case. Each root navigation/reload must
 observe only the configured deployment ID in the actual HTML. No production
 account, personal data, API mutation, booking, EVE/model/provider call or public
 publication is exercised. Allowed hosted reads may create ordinary hosting logs.
+
+The first run did not retain actual unexpected URLs or uncaught-error text.
+Its Google Fonts interpretation remains source-supported inference. The next
+candidate records the first four authored-fixture page errors with 64-byte
+names, 384-byte URL-query/fragment-redacted messages and original fingerprints.
+Any page error still fails; no error is ignored to pass CJK restoration. All
+four original scenario bodies and their assertions remain unchanged. Failed
+cases may expose only contained `error-context` file metadata alongside their
+boundary receipt; its Markdown contents are not read. Passing cases still
+allow no additional attachment.
 
 ## Immutable preparation and one QA run
 

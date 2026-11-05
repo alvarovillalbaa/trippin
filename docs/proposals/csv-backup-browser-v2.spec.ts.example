@@ -75,10 +75,25 @@ type DeploymentObservation = {
 };
 type Guard = {
   unexpected: string[]; blockedApi: number; blockedWeather: number; blockedTiles: number;
+  blockedFonts: number;
   allowedAppReads: number; blockedMutations: number; blockedUnexpectedReads: number;
   blockedWebSockets: number; pageErrorCount: number; pageErrorFingerprints: string[];
+  pageErrorDiagnostics: { name: string; message: string; sha256: string }[];
   rootNavigations: DeploymentObservation[];
 };
+function diagnosticText(value: string, maximumBytes: number): string {
+  const redacted = value.replace(/https?:\/\/[^\s"'<>]+/g, raw => {
+    try { const url = new URL(raw); return url.origin + url.pathname; }
+    catch { return '[url]'; }
+  }).replace(/(?:data|blob):[^\s"'<>]+/g, '[url]').replace(/[\u0000-\u001f\u007f]/g, ' ');
+  let end = 0, bytes = 0;
+  for (const character of redacted) {
+    const size = Buffer.byteLength(character);
+    if (bytes + size > maximumBytes) break;
+    end += character.length; bytes += size;
+  }
+  return redacted.slice(0, end);
+}
 type Fixtures = { authoredWorkspace: WorkspaceState; networkGuard: Guard };
 const guards = new WeakMap<BrowserContext, Guard>();
 const test = base.extend<Fixtures>({
@@ -94,9 +109,9 @@ const test = base.extend<Fixtures>({
   },
   networkGuard: [async ({ context }, use, testInfo) => {
     const guard: Guard = {
-      unexpected: [], blockedApi: 0, blockedWeather: 0, blockedTiles: 0,
+      unexpected: [], blockedApi: 0, blockedWeather: 0, blockedTiles: 0, blockedFonts: 0,
       allowedAppReads: 0, blockedMutations: 0, blockedUnexpectedReads: 0,
-      blockedWebSockets: 0, pageErrorCount: 0, pageErrorFingerprints: [], rootNavigations: [],
+      blockedWebSockets: 0, pageErrorCount: 0, pageErrorFingerprints: [], pageErrorDiagnostics: [], rootNavigations: [],
     };
     const unexpected = (kind: string) => {
       if (guard.unexpected.length < 20) guard.unexpected.push(kind);
@@ -105,7 +120,11 @@ const test = base.extend<Fixtures>({
       guard.pageErrorCount++;
       if (guard.pageErrorFingerprints.length < 8) {
         const error = event.error();
-        guard.pageErrorFingerprints.push(createHash('sha256').update(error.name + '\n' + error.message).digest('hex'));
+        const sha256 = createHash('sha256').update(error.name + '\n' + error.message).digest('hex');
+        guard.pageErrorFingerprints.push(sha256);
+        if (guard.pageErrorDiagnostics.length < 4) {
+          guard.pageErrorDiagnostics.push({ name: diagnosticText(error.name, 64), message: diagnosticText(error.message, 384), sha256 });
+        }
       }
     };
     guards.set(context, guard);
@@ -127,6 +146,10 @@ const test = base.extend<Fixtures>({
           || url.pathname.startsWith('/images/') || ['/icon.svg', '/favicon.ico'].includes(url.pathname))) {
           guard.allowedAppReads++;
           await route.continue();
+        } else if ((url.origin === 'https://fonts.googleapis.com' && url.pathname === '/css2')
+          || (url.origin === 'https://fonts.gstatic.com' && url.pathname.startsWith('/s/') && /\.(?:woff2?|ttf|otf)$/.test(url.pathname))) {
+          guard.blockedFonts++;
+          await route.abort('blockedbyclient');
         } else if (url.origin === 'https://api.open-meteo.com' && url.pathname === '/v1/forecast') {
           guard.blockedWeather++;
           await route.abort('blockedbyclient');
@@ -144,17 +167,19 @@ const test = base.extend<Fixtures>({
         const body = Buffer.from(JSON.stringify({
           schemaVersion: 1, kind: 'trippin-browser-boundary',
           blockedApi: guard.blockedApi, blockedWeather: guard.blockedWeather, blockedTiles: guard.blockedTiles,
+          blockedFonts: guard.blockedFonts,
           allowedAppReads: guard.allowedAppReads, blockedMutations: guard.blockedMutations,
           blockedUnexpectedReads: guard.blockedUnexpectedReads, blockedWebSockets: guard.blockedWebSockets,
           unexpectedCount: guard.blockedMutations + guard.blockedUnexpectedReads + guard.blockedWebSockets,
           pageErrorCount: guard.pageErrorCount, pageErrorFingerprints: guard.pageErrorFingerprints,
+          pageErrorDiagnostics: guard.pageErrorDiagnostics,
           rootNavigations: guard.rootNavigations,
         }));
         if (body.byteLength > 8192) throw new Error('The boundary attachment exceeded its fixed bound.');
         await testInfo.attach('trippin-browser-boundary', { body, contentType: 'application/json' });
         expect(guard.unexpected, 'No cross-origin request or app-origin mutation may escape the guard.').toEqual([]);
         expect(guard.pageErrorCount, 'Uncaught page errors must fail the browser case.').toBe(0);
-        console.log(`Out-of-scope reads blocked: api=${guard.blockedApi}, weather=${guard.blockedWeather}, tiles=${guard.blockedTiles}; pageErrors=${guard.pageErrorCount}`);
+        console.log(`Out-of-scope reads blocked: api=${guard.blockedApi}, weather=${guard.blockedWeather}, tiles=${guard.blockedTiles}, fonts=${guard.blockedFonts}; pageErrors=${guard.pageErrorCount}`);
       } finally {
         context.off('weberror', onWebError);
         guards.delete(context);

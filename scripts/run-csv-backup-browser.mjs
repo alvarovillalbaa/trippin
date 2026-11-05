@@ -10,8 +10,8 @@ const REPOSITORY = 'alvarovillalbaa/trippin';
 const BRANCH = 'refs/heads/qa/trippin-portability-20261105';
 const ACTIVE = '.github/workflows/csv-backup-browser-v2.yml';
 const SPEC = 'docs/proposals/csv-backup-browser-v2.spec.ts.example';
-const SPEC_SHA = '6eb6938320f339a74d11d71bc101537a0e14651585219b87c0ad94797665b3f4';
-const CANONICAL_SPEC_SHA = '7df44078fb62fc735c16e1f5a90bab46bb8bed6b2e7b52fff0cc0ace6582b1c7';
+const SPEC_SHA = '961da2939c53693e18c5ea00d54e1199aa50f455a89505daeb9eee273329281d';
+const CANONICAL_SPEC_SHA = '41f60d9626acf0185c053c20201402b37d39fa51766f7c583beb956d9135a271';
 const ORIGIN = 'https://trippin-theta.vercel.app';
 const TITLES = [
   'EUR imports append once and explicit USD rejects without changing existing expenses',
@@ -119,7 +119,7 @@ function proc(pid) {
   const owned = args.some(arg => arg === root || arg.startsWith(root + '/') || arg.includes('=' + root + '/'))
     || browserProcesses.has(pid + ':' + fields[19]);
   return { pid, ppid: Number(fields[1]), pgid: Number(fields[2]), session: Number(fields[3]), state: fields[0],
-    starttime: fields[19], owned, executable: args.length ? path.basename(args[0]).slice(0, 80) : '' };
+    starttime: fields[19], owned, executable: args.length ? path.basename(args[0].trim().split(/\s+/)[0]).slice(0, 80) : '' };
 }
 function readProc(file, maximum) {
   const fd = fs.openSync(file, 'r');
@@ -269,14 +269,18 @@ async function guard(label, cleanup = false, postScratch = false) {
   Object.assign(result, { passed: true, trackedFiles: vector.length, sourceBytes: vector.reduce((sum, file) => sum + file.bytes, 0),
     vectorSha256: sha(JSON.stringify(vector)), fullHeadIndexModesAndBytes: true, noUntrackedOrIgnoredOutput: true });
 }
-function outputFile(file, maximum) {
+function outputFileMetadata(file, maximum) {
   owner(); const parentItem = fs.lstatSync(outputParent);
   need(parentItem.isDirectory() && !parentItem.isSymbolicLink() && parentItem.dev === outputIdentity.dev && parentItem.ino === outputIdentity.ino, 'output_parent_changed');
   const resolved = path.resolve(file); need(resolved.startsWith(outputDirectory + path.sep), 'attachment_outside_output');
   for (let current = path.dirname(resolved); current !== outputParent; current = path.dirname(current)) {
     const item = fs.lstatSync(current); need(item.isDirectory() && !item.isSymbolicLink(), 'attachment_ancestor_changed');
   }
-  return read(resolved, maximum);
+  const item = fs.lstatSync(resolved); need(item.isFile() && !item.isSymbolicLink() && item.size <= maximum, 'attachment_file_type_or_bound');
+  return { file: resolved, bytes: item.size };
+}
+function outputFile(file, maximum) {
+  return read(outputFileMetadata(file, maximum).file, maximum);
 }
 function attachmentBytes(item) {
   need(item?.name === 'trippin-browser-boundary' && item.contentType === 'application/json', 'unexpected_browser_attachment');
@@ -311,20 +315,37 @@ function browserResults() {
         valid &&= spec.ok === true && test.expectedStatus === 'passed' && test.status === 'expected' && actual.status === 'passed'
           && actual.retry === 0 && Array.isArray(actual.errors) && actual.errors.length === 0;
         try {
-          need(Array.isArray(actual.attachments) && actual.attachments.length === 1, 'boundary_attachment_count');
-          const raw = attachmentBytes(actual.attachments[0]), boundary = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(raw));
+          need(Array.isArray(actual.attachments), 'boundary_attachment_shape');
+          const boundaries = actual.attachments.filter(item => item.name === 'trippin-browser-boundary');
+          need(boundaries.length === 1, 'boundary_attachment_count');
+          const raw = attachmentBytes(boundaries[0]), boundary = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(raw));
           row.boundary = boundary; row.boundaryBytes = raw.length; row.boundarySha256 = sha(raw);
           need(boundary.schemaVersion === 1 && boundary.kind === 'trippin-browser-boundary', 'boundary_schema');
-          for (const field of ['blockedApi', 'blockedWeather', 'blockedTiles', 'allowedAppReads', 'blockedMutations', 'blockedUnexpectedReads', 'blockedWebSockets', 'unexpectedCount', 'pageErrorCount'])
+          for (const field of ['blockedApi', 'blockedWeather', 'blockedTiles', 'blockedFonts', 'allowedAppReads', 'blockedMutations', 'blockedUnexpectedReads', 'blockedWebSockets', 'unexpectedCount', 'pageErrorCount'])
             need(Number.isSafeInteger(boundary[field]) && boundary[field] >= 0 && boundary[field] <= 100000, 'boundary_counter');
-          need(Array.isArray(boundary.pageErrorFingerprints) && boundary.pageErrorFingerprints.length <= 8
+          need(Array.isArray(boundary.pageErrorFingerprints) && boundary.pageErrorFingerprints.length === Math.min(boundary.pageErrorCount, 8)
             && boundary.pageErrorFingerprints.every(item => typeof item === 'string' && /^[a-f0-9]{64}$/.test(item)), 'boundary_error_fingerprints');
+          need(Array.isArray(boundary.pageErrorDiagnostics) && boundary.pageErrorDiagnostics.length === Math.min(boundary.pageErrorCount, 4)
+            && boundary.pageErrorDiagnostics.every((item, index) => item && typeof item.name === 'string' && Buffer.byteLength(item.name) <= 64
+              && typeof item.message === 'string' && Buffer.byteLength(item.message) <= 384 && !/[\x00-\x1f\x7f]/.test(item.name + item.message)
+              && item.sha256 === boundary.pageErrorFingerprints[index]), 'boundary_error_diagnostics');
           need(Array.isArray(boundary.rootNavigations) && boundary.rootNavigations.length <= 8, 'boundary_navigation_shape');
           valid &&= boundary.blockedMutations === 0 && boundary.blockedUnexpectedReads === 0 && boundary.blockedWebSockets === 0
-            && boundary.unexpectedCount === 0 && boundary.pageErrorCount === 0 && boundary.pageErrorFingerprints.length === 0
+            && boundary.unexpectedCount === 0 && boundary.pageErrorCount === 0 && boundary.pageErrorFingerprints.length === 0 && boundary.pageErrorDiagnostics.length === 0
             && boundary.allowedAppReads > 0 && boundary.rootNavigations.length === [2, 1, 2, 2][TITLES.indexOf(spec.title)]
             && boundary.rootNavigations.every(nav => nav.status === 200 && nav.sameOrigin === true && nav.rootPath === true && nav.deploymentIdCount === 1 && nav.matchesExpected === true);
         } catch (error) { row.boundaryError = finite(error); valid = false; }
+        try {
+          need(Array.isArray(actual.attachments) && actual.attachments.length <= 2, 'browser_attachment_shape');
+          const extras = actual.attachments.filter(item => item.name !== 'trippin-browser-boundary');
+          need(extras.length === 0 || ['failed', 'timedOut', 'interrupted'].includes(actual.status), 'passed_case_extra_attachment');
+          row.diagnosticAttachments = extras.map(item => {
+            need(item.name === 'error-context' && item.contentType === 'text/markdown' && typeof item.path === 'string'
+              && path.basename(item.path) === 'error-context.md' && item.body === undefined, 'unexpected_browser_diagnostic');
+            const metadata = outputFileMetadata(item.path, 1048576);
+            return { name: item.name, contentType: item.contentType, fileName: 'error-context.md', bytes: metadata.bytes, contentsRetained: false };
+          });
+        } catch (error) { row.attachmentError = finite(error); valid = false; }
       }
     }
     for (const child of suite.suites ?? []) walk(child);
