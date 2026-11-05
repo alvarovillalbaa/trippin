@@ -1,6 +1,8 @@
 # Hosted CSV and backup browser packet v2
 
-5 November 2026. **Prepared, not executed.** The owner's standing approval to
+5 November 2026. **First run failed; retained before repair.** See the
+[actual first outcome](../results/2026/11-05/csv-backup-attempt-1.md).
+The owner's standing approval to
 continue and complete the personal-project work covers this focused temporary
 public CI packet. The [historical proposal](csv-backup-browser.md) remains an
 unexecuted source record. This packet changes no application dependency or

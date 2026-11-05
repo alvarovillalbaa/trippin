@@ -1,0 +1,3611 @@
+{
+  "schemaVersion": "trippin.csv-backup-result.v1",
+  "attempt": 1,
+  "recordedAtUtc": "2026-11-05T03:30:49Z",
+  "sourceTree": "b07a868a44a55d47a6b97bf89994c80490a1c9a1",
+  "activationCommit": "bcdaece3597b3ea141be2f0b49d9d9c3eb8a441a",
+  "deploymentMetadata": {
+    "id": "dpl_G7sgQFFuK3SKay39ZDYQgjPh6voC",
+    "name": "trippin",
+    "url": "trippin-q4ok5i4oa-my-team-4f230354.vercel.app",
+    "type": "LAMBDAS",
+    "state": "READY",
+    "createdAt": 1793848716119,
+    "creator": {
+      "uid": "zsxQcbiAfBXuwfpA5YtTh7Nm",
+      "username": "alvipedev"
+    },
+    "project": {
+      "id": "prj_xuwm0LbMAUFWKzYZv7IzHshOqoh8",
+      "name": "trippin",
+      "framework": "nextjs"
+    },
+    "meta": {
+      "githubCommitRef": "main",
+      "githubCommitSha": "ce2d5ce323637ea8ec1a9b0bc47050d74a130551",
+      "githubCommitMessage": "Prepare bounded hosted CSV and backup portability acceptance",
+      "githubRepo": "trippin",
+      "githubOrg": "alvarovillalbaa"
+    },
+    "alias": [
+      "trippin-theta.vercel.app",
+      "trippin-my-team-4f230354.vercel.app",
+      "trippin-git-main-my-team-4f230354.vercel.app"
+    ],
+    "target": "production",
+    "regions": [
+      "iad1"
+    ],
+    "buildingAt": 1793848717155,
+    "ready": 1793848737548,
+    "readyState": "READY",
+    "source": "git",
+    "aliasError": null
+  },
+  "run": {
+    "id": 41961025343,
+    "url": "https://github.com/alvarovillalbaa/trippin/actions/runs/41961025343",
+    "status": "completed",
+    "conclusion": "failure",
+    "headSha": "bcdaece3597b3ea141be2f0b49d9d9c3eb8a441a",
+    "event": "push",
+    "runAttempt": 1,
+    "createdAt": "2026-11-05T03:20:56Z",
+    "updatedAt": "2026-11-05T03:22:34Z"
+  },
+  "job": {
+    "id": 127027148636,
+    "run_id": 41961025343,
+    "workflow_name": "Temporary Trippin CSV and backup browser v2",
+    "head_branch": "qa/trippin-portability-20261105",
+    "run_url": "https://api.github.com/repos/alvarovillalbaa/trippin/actions/runs/41961025343",
+    "run_attempt": 1,
+    "node_id": "CR_kwDOVQjfcM8AAAAdk2h3XA",
+    "head_sha": "bcdaece3597b3ea141be2f0b49d9d9c3eb8a441a",
+    "url": "https://api.github.com/repos/alvarovillalbaa/trippin/actions/jobs/127027148636",
+    "html_url": "https://github.com/alvarovillalbaa/trippin/actions/runs/41961025343/job/127027148636",
+    "status": "completed",
+    "conclusion": "failure",
+    "created_at": "2026-11-05T03:20:57Z",
+    "started_at": "2026-11-05T03:20:59Z",
+    "completed_at": "2026-11-05T03:22:33Z",
+    "name": "browser",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-11-05T03:21:00Z",
+        "completed_at": "2026-11-05T03:21:03Z"
+      },
+      {
+        "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2,
+        "started_at": "2026-11-05T03:21:03Z",
+        "completed_at": "2026-11-05T03:21:04Z"
+      },
+      {
+        "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-11-05T03:21:04Z",
+        "completed_at": "2026-11-05T03:21:08Z"
+      },
+      {
+        "name": "Run only the pinned hosted portability packet",
+        "status": "completed",
+        "conclusion": "failure",
+        "number": 4,
+        "started_at": "2026-11-05T03:21:08Z",
+        "completed_at": "2026-11-05T03:22:32Z"
+      },
+      {
+        "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 7,
+        "started_at": "2026-11-05T03:22:32Z",
+        "completed_at": "2026-11-05T03:22:32Z"
+      },
+      {
+        "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-11-05T03:22:32Z",
+        "completed_at": "2026-11-05T03:22:32Z"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-11-05T03:22:32Z",
+        "completed_at": "2026-11-05T03:22:32Z"
+      }
+    ],
+    "check_run_url": "https://api.github.com/repos/alvarovillalbaa/trippin/check-runs/127027148636",
+    "labels": [
+      "ubuntu-24.04"
+    ],
+    "runner_id": 1000005376,
+    "runner_name": "GitHub Actions 1000005376",
+    "runner_group_id": 0,
+    "runner_group_name": "GitHub Actions"
+  },
+  "observation": {
+    "acceptedCases": 0,
+    "frameworkStats": {
+      "startTime": "2026-11-05T03:21:52.262Z",
+      "duration": 39520.276999999995,
+      "expected": 0,
+      "skipped": 0,
+      "unexpected": 8,
+      "flaky": 0
+    },
+    "globalErrors": [],
+    "actualCaseBoundaries": [
+      {
+        "title": "EUR imports append once and explicit USD rejects without changing existing expenses",
+        "project": "desktop-chromium",
+        "status": "failed",
+        "retry": 0,
+        "attachmentNames": [
+          "trippin-browser-boundary",
+          "error-context"
+        ],
+        "boundary": {
+          "schemaVersion": 1,
+          "kind": "trippin-browser-boundary",
+          "blockedApi": 4,
+          "blockedWeather": 4,
+          "blockedTiles": 0,
+          "allowedAppReads": 27,
+          "blockedMutations": 0,
+          "blockedUnexpectedReads": 2,
+          "blockedWebSockets": 0,
+          "unexpectedCount": 2,
+          "pageErrorCount": 0,
+          "pageErrorFingerprints": [],
+          "rootNavigations": [
+            {
+              "status": 200,
+              "sameOrigin": true,
+              "rootPath": true,
+              "deploymentIdCount": 1,
+              "matchesExpected": true
+            },
+            {
+              "status": 200,
+              "sameOrigin": true,
+              "rootPath": true,
+              "deploymentIdCount": 1,
+              "matchesExpected": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "EUR imports append once and explicit USD rejects without changing existing expenses",
+        "project": "mobile-chromium",
+        "status": "failed",
+        "retry": 0,
+        "attachmentNames": [
+          "trippin-browser-boundary",
+          "error-context"
+        ],
+        "boundary": {
+          "schemaVersion": 1,
+          "kind": "trippin-browser-boundary",
+          "blockedApi": 4,
+          "blockedWeather": 4,
+          "blockedTiles": 0,
+          "allowedAppReads": 23,
+          "blockedMutations": 0,
+          "blockedUnexpectedReads": 2,
+          "blockedWebSockets": 0,
+          "unexpectedCount": 2,
+          "pageErrorCount": 0,
+          "pageErrorFingerprints": [],
+          "rootNavigations": [
+            {
+              "status": 200,
+              "sameOrigin": true,
+              "rootPath": true,
+              "deploymentIdCount": 1,
+              "matchesExpected": true
+            },
+            {
+              "status": 200,
+              "sameOrigin": true,
+              "rootPath": true,
+              "deploymentIdCount": 1,
+              "matchesExpected": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "ambiguous duplicate and explicit blank currency both reject without losing expenses",
+        "project": "desktop-chromium",
+        "status": "failed",
+        "retry": 0,
+        "attachmentNames": [
+          "trippin-browser-boundary",
+          "error-context"
+        ],
+        "boundary": {
+          "schemaVersion": 1,
+          "kind": "trippin-browser-boundary",
+          "blockedApi": 2,
+          "blockedWeather": 2,
+          "blockedTiles": 15,
+          "allowedAppReads": 14,
+          "blockedMutations": 0,
+          "blockedUnexpectedReads": 1,
+          "blockedWebSockets": 0,
+          "unexpectedCount": 1,
+          "pageErrorCount": 0,
+          "pageErrorFingerprints": [],
+          "rootNavigations": [
+            {
+              "status": 200,
+              "sameOrigin": true,
+              "rootPath": true,
+              "deploymentIdCount": 1,
+              "matchesExpected": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "ambiguous duplicate and explicit blank currency both reject without losing expenses",
+        "project": "mobile-chromium",
+        "status": "failed",
+        "retry": 0,
+        "attachmentNames": [
+          "trippin-browser-boundary",
+          "error-context"
+        ],
+        "boundary": {
+          "schemaVersion": 1,
+          "kind": "trippin-browser-boundary",
+          "blockedApi": 2,
+          "blockedWeather": 2,
+          "blockedTiles": 1,
+          "allowedAppReads": 12,
+          "blockedMutations": 0,
+          "blockedUnexpectedReads": 1,
+          "blockedWebSockets": 0,
+          "unexpectedCount": 1,
+          "pageErrorCount": 0,
+          "pageErrorFingerprints": [],
+          "rootNavigations": [
+            {
+              "status": 200,
+              "sameOrigin": true,
+              "rootPath": true,
+              "deploymentIdCount": 1,
+              "matchesExpected": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "legacy pretty backup above two MB restores and invalid UTF-8 cannot replace its UI or durable state",
+        "project": "desktop-chromium",
+        "status": "failed",
+        "retry": 0,
+        "attachmentNames": [
+          "trippin-browser-boundary",
+          "error-context"
+        ],
+        "boundary": {
+          "schemaVersion": 1,
+          "kind": "trippin-browser-boundary",
+          "blockedApi": 2,
+          "blockedWeather": 4,
+          "blockedTiles": 30,
+          "allowedAppReads": 27,
+          "blockedMutations": 0,
+          "blockedUnexpectedReads": 2,
+          "blockedWebSockets": 0,
+          "unexpectedCount": 2,
+          "pageErrorCount": 0,
+          "pageErrorFingerprints": [],
+          "rootNavigations": [
+            {
+              "status": 200,
+              "sameOrigin": true,
+              "rootPath": true,
+              "deploymentIdCount": 1,
+              "matchesExpected": true
+            },
+            {
+              "status": 200,
+              "sameOrigin": true,
+              "rootPath": true,
+              "deploymentIdCount": 1,
+              "matchesExpected": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "legacy pretty backup above two MB restores and invalid UTF-8 cannot replace its UI or durable state",
+        "project": "mobile-chromium",
+        "status": "failed",
+        "retry": 0,
+        "attachmentNames": [
+          "trippin-browser-boundary",
+          "error-context"
+        ],
+        "boundary": {
+          "schemaVersion": 1,
+          "kind": "trippin-browser-boundary",
+          "blockedApi": 2,
+          "blockedWeather": 4,
+          "blockedTiles": 2,
+          "allowedAppReads": 23,
+          "blockedMutations": 0,
+          "blockedUnexpectedReads": 2,
+          "blockedWebSockets": 0,
+          "unexpectedCount": 2,
+          "pageErrorCount": 0,
+          "pageErrorFingerprints": [],
+          "rootNavigations": [
+            {
+              "status": 200,
+              "sameOrigin": true,
+              "rootPath": true,
+              "deploymentIdCount": 1,
+              "matchesExpected": true
+            },
+            {
+              "status": 200,
+              "sameOrigin": true,
+              "rootPath": true,
+              "deploymentIdCount": 1,
+              "matchesExpected": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "actual CJK download above two MB restores after a visible profile edit and survives reload",
+        "project": "desktop-chromium",
+        "status": "failed",
+        "retry": 0,
+        "attachmentNames": [
+          "trippin-browser-boundary",
+          "error-context"
+        ],
+        "boundary": {
+          "schemaVersion": 1,
+          "kind": "trippin-browser-boundary",
+          "blockedApi": 2,
+          "blockedWeather": 4,
+          "blockedTiles": 4,
+          "allowedAppReads": 27,
+          "blockedMutations": 0,
+          "blockedUnexpectedReads": 2,
+          "blockedWebSockets": 0,
+          "unexpectedCount": 2,
+          "pageErrorCount": 1,
+          "pageErrorFingerprints": [
+            "048d1ae1e64ba5aee7ce9b53ee4fbf27b5bb948f22858c4c1275edf8c818d878"
+          ],
+          "rootNavigations": [
+            {
+              "status": 200,
+              "sameOrigin": true,
+              "rootPath": true,
+              "deploymentIdCount": 1,
+              "matchesExpected": true
+            },
+            {
+              "status": 200,
+              "sameOrigin": true,
+              "rootPath": true,
+              "deploymentIdCount": 1,
+              "matchesExpected": true
+            }
+          ]
+        }
+      },
+      {
+        "title": "actual CJK download above two MB restores after a visible profile edit and survives reload",
+        "project": "mobile-chromium",
+        "status": "failed",
+        "retry": 0,
+        "attachmentNames": [
+          "trippin-browser-boundary",
+          "error-context"
+        ],
+        "boundary": {
+          "schemaVersion": 1,
+          "kind": "trippin-browser-boundary",
+          "blockedApi": 2,
+          "blockedWeather": 4,
+          "blockedTiles": 3,
+          "allowedAppReads": 24,
+          "blockedMutations": 0,
+          "blockedUnexpectedReads": 2,
+          "blockedWebSockets": 0,
+          "unexpectedCount": 2,
+          "pageErrorCount": 1,
+          "pageErrorFingerprints": [
+            "048d1ae1e64ba5aee7ce9b53ee4fbf27b5bb948f22858c4c1275edf8c818d878"
+          ],
+          "rootNavigations": [
+            {
+              "status": 200,
+              "sameOrigin": true,
+              "rootPath": true,
+              "deploymentIdCount": 1,
+              "matchesExpected": true
+            },
+            {
+              "status": 200,
+              "sameOrigin": true,
+              "rootPath": true,
+              "deploymentIdCount": 1,
+              "matchesExpected": true
+            }
+          ]
+        }
+      }
+    ],
+    "failure": "All eight cases failed the unexpected-read boundary; desktop legacy additionally timed out showing Profile after reload. Both CJK cases recorded one uncaught error fingerprint.",
+    "uncertainty": "The first guard logged request kinds and page-error fingerprints only, so the exact blocked URL and uncaught error messages are unobserved. Google Fonts are a source-supported candidate, not established by this run.",
+    "harnessIssue": "Playwright added its default error-context Markdown metadata to each failed case, so the controller rejected the boundary attachment count. The inline boundary bodies are preserved in the raw JSON and extracted here; error-context file contents were not retained.",
+    "processLabelQualification": "The historical process executable field can contain a bounded Chromium process-title prefix with role flags; it is not a full argv or environment capture."
+  },
+  "report": {
+    "schemaVersion": "trippin.csv-backup-browser.v2",
+    "sourceCommit": "ce2d5ce323637ea8ec1a9b0bc47050d74a130551",
+    "expectedDeployment": "dpl_G7sgQFFuK3SKay39ZDYQgjPh6voC",
+    "origin": "https://trippin-theta.vercel.app",
+    "status": "failed",
+    "startedAtUtc": "2026-11-05T03:21:08.420Z",
+    "runtime": {
+      "node": "v24.21.0",
+      "platform": "linux",
+      "architecture": "x64",
+      "nodeSha256": "7fde7b8afa198da66257f42ee2001d874c7355631e6d1579a5fb5ef1f246df4c",
+      "npmCliSha256": "8e5f6f3429f8cdbe693cdc29904e9d5a7b127a494bd15c804bd54c7403bfcbe7",
+      "npm": "11.19.0",
+      "toolPackages": [
+        {
+          "name": "@playwright/test",
+          "version": "1.61.1",
+          "packageJsonSha256": "9d8556509e073169efec663b7f71c13f17d7002b307d00d48bf88ee91c387f3e"
+        },
+        {
+          "name": "playwright",
+          "version": "1.61.1",
+          "packageJsonSha256": "6b840268612656f0639fb7d68782e8353bdf11518589d30ddf66f283c2670ed5"
+        },
+        {
+          "name": "playwright-core",
+          "version": "1.61.1",
+          "packageJsonSha256": "759e376f995bf39edd4810d699b99469bab1d7428b6fbc78d41912f367df7ba9"
+        }
+      ],
+      "playwright": "1.61.1",
+      "playwrightCliSha256": "79e23e6a249176295b8490567daa7717448a75866d6ea6f6b296ff3d23305c69"
+    },
+    "scope": {
+      "scenarios": [
+        "EUR imports append once and explicit USD rejects without changing existing expenses",
+        "ambiguous duplicate and explicit blank currency both reject without losing expenses",
+        "actual CJK download above two MB restores after a visible profile edit and survives reload",
+        "legacy pretty backup above two MB restores and invalid UTF-8 cannot replace its UI or durable state"
+      ],
+      "profiles": [
+        "desktop-chromium",
+        "mobile-chromium"
+      ],
+      "cases": 8,
+      "workers": 1,
+      "retries": 0,
+      "appBuild": false,
+      "appDependencies": false,
+      "accounts": false,
+      "serverWrites": false,
+      "providers": false,
+      "models": false,
+      "screenshots": false,
+      "traces": false,
+      "videos": false
+    },
+    "limits": {
+      "workSeconds": 720,
+      "cleanupSeconds": 90,
+      "browserGlobalSeconds": 480,
+      "jobMinutes": 15,
+      "finalStdoutSeconds": 2,
+      "streamBytes": 524288,
+      "streamGzipBytes": 131072,
+      "allStreamsGzipBytes": 524288,
+      "browserJsonBytes": 2097152,
+      "browserJsonGzipBytes": 262144,
+      "reportBytes": 1048576,
+      "termToKillSeconds": 3,
+      "drainSeconds": 3
+    },
+    "commands": [
+      {
+        "label": "before_head",
+        "args": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 28,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 41,
+            "observedSha256": "7109ccfbe690f013d128ef11fe4f71a1f8838d9798d43833adeb66eda7fcdaf7",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 41,
+              "sha256": "7109ccfbe690f013d128ef11fe4f71a1f8838d9798d43833adeb66eda7fcdaf7",
+              "compressedBytes": 59,
+              "data": "H4sIAAAAAAAAAwXBQQEAIAgDwL9pBgPROID0r+Bdjz7voXIzJs+05C1UW8DxwlIId1kfRTHBhikAAAA="
+            },
+            "head": "ce2d5ce323637ea8ec1a9b0bc47050d74a130551\n",
+            "tail": "ce2d5ce323637ea8ec1a9b0bc47050d74a130551\n"
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "before_tree",
+        "args": [
+          "git",
+          "ls-tree",
+          "-r",
+          "-z",
+          "HEAD"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 26,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 6893,
+            "observedSha256": "af79b22da424b5543fa541196b4274702aaf691fd7a9185860804f3d8adce97e",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 6893,
+              "sha256": "af79b22da424b5543fa541196b4274702aaf691fd7a9185860804f3d8adce97e",
+              "compressedBytes": 2890,
+              "data": "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"
+            },
+            "head": "100644 blob dfb78682c58275b8008cfddb5616383ffab06c08\t.env.example100644 blob c140486e15ee21364f6c38f622a1cc41fc16a118\t.gitignore100644 blob a45fd52cc5891570d6299fab38643103c3955474\t.nvmrc100644 blob 38b6155235969d07afe6ab44b8d68e4fa16e3cdc\tAGENTS.md100644 blob 37582af573e9c976e7fcddcb868699916ea46b04\tREADME.md100644 blob 230a8f4642db7b9727240fd031da412f908535f5\tagent/agent.ts100644 blob b0c6f85a53a410c8916bfb7185f2f60d4c5b9852\tagent/channels/eve.ts100644 blob 395034bd056d065c7f9bf3ad518d0871b08c",
+            "tail": "e6\ttests/community-management-ui.test.mjs100644 blob 93f5e5daafc13f56372f8499a5dcd3118dbed0b7\ttests/community-management.test.mjs100644 blob 368f9c9949ae19cccd2eed790bab1081685840e9\ttests/csv-import-state.test.mjs100644 blob 491bf1b6c628d008d9fe0211be1f7f89e463bda4\ttests/expense-csv.test.mjs100644 blob 49f498bce3de8362b3842f1cbc8474b9609a46e0\ttests/shared-plan.test.mjs100644 blob 78448ce7ca15c091053f92226d7d0c7106000e55\ttests/workspace-backup-ui.test.mjs100644 blob 199ace2d4c9b12fc1d2eddfa895fca21ab5d408c\ttests/workspace-backup.test.mjs100644 blob 98f0c0ef94a68c8fd7bc3ed93f890578d2498987\ttests/workspace-state.test.mjs100644 blob dec34e704bd3b2e2cf87438df43d4fdd33646e05\ttsconfig.json"
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "before_index",
+        "args": [
+          "git",
+          "ls-files",
+          "--stage",
+          "-z"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 26,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 6635,
+            "observedSha256": "87c3bf84502eaade248a55d60babb03ed2a9367c6c62957664c1b5aff2ef3334",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 6635,
+              "sha256": "87c3bf84502eaade248a55d60babb03ed2a9367c6c62957664c1b5aff2ef3334",
+              "compressedBytes": 2899,
+              "data": "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"
+            },
+            "head": "100644 dfb78682c58275b8008cfddb5616383ffab06c08 0\t.env.example100644 c140486e15ee21364f6c38f622a1cc41fc16a118 0\t.gitignore100644 a45fd52cc5891570d6299fab38643103c3955474 0\t.nvmrc100644 38b6155235969d07afe6ab44b8d68e4fa16e3cdc 0\tAGENTS.md100644 37582af573e9c976e7fcddcb868699916ea46b04 0\tREADME.md100644 230a8f4642db7b9727240fd031da412f908535f5 0\tagent/agent.ts100644 b0c6f85a53a410c8916bfb7185f2f60d4c5b9852 0\tagent/channels/eve.ts100644 395034bd056d065c7f9bf3ad518d0871b08cb36c 0\tagent/instructions.",
+            "tail": "01a5f6ce26352f4f09abb4e6 0\ttests/community-management-ui.test.mjs100644 93f5e5daafc13f56372f8499a5dcd3118dbed0b7 0\ttests/community-management.test.mjs100644 368f9c9949ae19cccd2eed790bab1081685840e9 0\ttests/csv-import-state.test.mjs100644 491bf1b6c628d008d9fe0211be1f7f89e463bda4 0\ttests/expense-csv.test.mjs100644 49f498bce3de8362b3842f1cbc8474b9609a46e0 0\ttests/shared-plan.test.mjs100644 78448ce7ca15c091053f92226d7d0c7106000e55 0\ttests/workspace-backup-ui.test.mjs100644 199ace2d4c9b12fc1d2eddfa895fca21ab5d408c 0\ttests/workspace-backup.test.mjs100644 98f0c0ef94a68c8fd7bc3ed93f890578d2498987 0\ttests/workspace-state.test.mjs100644 dec34e704bd3b2e2cf87438df43d4fdd33646e05 0\ttsconfig.json"
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "before_status",
+        "args": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "-z",
+          "--untracked-files=all"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 26,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "before_diff",
+        "args": [
+          "git",
+          "-c",
+          "core.filemode=true",
+          "diff",
+          "--no-ext-diff",
+          "--no-textconv",
+          "--quiet",
+          "--exit-code",
+          "HEAD",
+          "--"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 26,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "before_ignored",
+        "args": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "-z",
+          "--ignored=matching",
+          "--untracked-files=normal"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 25,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "npm_version",
+        "args": [
+          "[node]",
+          "/opt/hostedtoolcache/node/24.21.0/x64/lib/node_modules/npm/bin/npm-cli.js",
+          "--version"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 80,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 8,
+            "observedSha256": "005206ab803f8881d8227540b7980b37e723b69a8849edb31734a90b7e7964e2",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 8,
+              "sha256": "005206ab803f8881d8227540b7980b37e723b69a8849edb31734a90b7e7964e2",
+              "compressedBytes": 28,
+              "data": "H4sIAAAAAAAAAzM01DO01DPgAgAw1NUDCAAAAA=="
+            },
+            "head": "11.19.0\n",
+            "tail": "11.19.0\n"
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "install_playwright",
+        "args": [
+          "[node]",
+          "/opt/hostedtoolcache/node/24.21.0/x64/lib/node_modules/npm/bin/npm-cli.js",
+          "install",
+          "--prefix",
+          "[scratch]/tools",
+          "--no-save",
+          "--package-lock=false",
+          "--ignore-scripts",
+          "--no-audit",
+          "--no-fund",
+          "--registry=https://registry.npmjs.org",
+          "@playwright/test@1.61.1"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 1593,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 24,
+            "observedSha256": "c59541a7d8bfc9987c0aa47adf2cdd2858be8b66de5abc0331d5a6484ae63ab6",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 24,
+              "sha256": "c59541a7d8bfc9987c0aa47adf2cdd2858be8b66de5abc0331d5a6484ae63ab6",
+              "compressedBytes": 44,
+              "data": "H4sIAAAAAAAAA+NKTElJTVEwVihITM5OTE8tVsjMUzAq5gIALDITMxgAAAA="
+            },
+            "head": "\nadded 3 packages in 2s\n",
+            "tail": "\nadded 3 packages in 2s\n"
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "install_chromium_and_runner_libraries",
+        "args": [
+          "[node]",
+          "[scratch]/tools/node_modules/@playwright/test/cli.js",
+          "install",
+          "--with-deps",
+          "chromium"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 41375,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 19069,
+            "observedSha256": "f5cff330c1ba1099463d521ea40fa9333ce6418c6df5a940918ca311d0b1c7d9",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 19069,
+              "sha256": "f5cff330c1ba1099463d521ea40fa9333ce6418c6df5a940918ca311d0b1c7d9",
+              "compressedBytes": 2950,
+              "data": "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"
+            },
+            "head": "Installing dependencies...\nSwitching to root user to install dependencies...\nGet:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [152 B]\nGet:5 http://security.ubuntu.com/ubuntu noble-security InRelease [126 kB]\nGet:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]\nGet:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [663 kB]\nHit:2 http://us-east-2.ec2.archive.ubuntu.com/ubuntu noble InRelease\nGet:8 https://packages.microsoft.com/ubuntu/24.04/prod ",
+            "tail": "f 114.2 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 114.2 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 114.2 MiB\nChrome Headless Shell 149.0.7827.55 (playwright chromium-headless-shell v1228) downloaded to [scratch]/browsers/chromium_headless_shell-1228\n"
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 454,
+            "observedSha256": "493daa67db762022974b7906d93e2e10b9a6989430f2c7a9fef8b71a551a231e",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 454,
+              "sha256": "493daa67db762022974b7906d93e2e10b9a6989430f2c7a9fef8b71a551a231e",
+              "compressedBytes": 253,
+              "data": "H4sIAAAAAAAAA3WQsW7DMAxEd30Fx3awhmYp+g/pkALdZeliC7Yph6Ra5O8LN2qSIR15fEcezh0qc+aBJghjJgUWJSvUg+raWelSMHjnDlALYhuqkK8cod57R3pWwxJtJrkQlOXUhzlwhG8krSFOYcCU7SaN66vfdcd1uUllvidqyjrpy9/s3EdbtEdKPbY4CUeIIL09CrMvCcs+cBgg10sPOIZ9F5lSl7KuweJ4h7v3QrGwhcwQJQZSa6i5kfwvVBVCCtVcWCkISFq7pdrWY6I+c5AMvRg+9zRUqP0Dj+d1i6BF6OmEpT5f7VSYbMxKY1Hz7gdnNwBvxgEAAA=="
+            },
+            "head": "\nRunning kernel seems to be up-to-date.\n\nRestarting services...\n systemctl restart irqbalance.service packagekit.service php8.3-fpm.service polkit.service udisks2.service\n\nService restarts being deferred:\n systemctl restart ModemManager.service\n systemctl restart networkd-dispatcher.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n",
+            "tail": "\nRunning kernel seems to be up-to-date.\n\nRestarting services...\n systemctl restart irqbalance.service packagekit.service php8.3-fpm.service polkit.service udisks2.service\n\nService restarts being deferred:\n systemctl restart ModemManager.service\n systemctl restart networkd-dispatcher.service\n\nNo containers need to be restarted.\n\nNo user sessions are running outdated binaries.\n\nNo VM guests are running outdated hypervisor (qemu) binaries on this host.\n"
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "before_browser_head",
+        "args": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 30,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 41,
+            "observedSha256": "7109ccfbe690f013d128ef11fe4f71a1f8838d9798d43833adeb66eda7fcdaf7",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 41,
+              "sha256": "7109ccfbe690f013d128ef11fe4f71a1f8838d9798d43833adeb66eda7fcdaf7",
+              "compressedBytes": 59,
+              "data": "H4sIAAAAAAAAAwXBQQEAIAgDwL9pBgPROID0r+Bdjz7voXIzJs+05C1UW8DxwlIId1kfRTHBhikAAAA="
+            },
+            "head": "ce2d5ce323637ea8ec1a9b0bc47050d74a130551\n",
+            "tail": "ce2d5ce323637ea8ec1a9b0bc47050d74a130551\n"
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "before_browser_tree",
+        "args": [
+          "git",
+          "ls-tree",
+          "-r",
+          "-z",
+          "HEAD"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 28,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 6893,
+            "observedSha256": "af79b22da424b5543fa541196b4274702aaf691fd7a9185860804f3d8adce97e",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 6893,
+              "sha256": "af79b22da424b5543fa541196b4274702aaf691fd7a9185860804f3d8adce97e",
+              "compressedBytes": 2890,
+              "data": "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"
+            },
+            "head": "100644 blob dfb78682c58275b8008cfddb5616383ffab06c08\t.env.example100644 blob c140486e15ee21364f6c38f622a1cc41fc16a118\t.gitignore100644 blob a45fd52cc5891570d6299fab38643103c3955474\t.nvmrc100644 blob 38b6155235969d07afe6ab44b8d68e4fa16e3cdc\tAGENTS.md100644 blob 37582af573e9c976e7fcddcb868699916ea46b04\tREADME.md100644 blob 230a8f4642db7b9727240fd031da412f908535f5\tagent/agent.ts100644 blob b0c6f85a53a410c8916bfb7185f2f60d4c5b9852\tagent/channels/eve.ts100644 blob 395034bd056d065c7f9bf3ad518d0871b08c",
+            "tail": "e6\ttests/community-management-ui.test.mjs100644 blob 93f5e5daafc13f56372f8499a5dcd3118dbed0b7\ttests/community-management.test.mjs100644 blob 368f9c9949ae19cccd2eed790bab1081685840e9\ttests/csv-import-state.test.mjs100644 blob 491bf1b6c628d008d9fe0211be1f7f89e463bda4\ttests/expense-csv.test.mjs100644 blob 49f498bce3de8362b3842f1cbc8474b9609a46e0\ttests/shared-plan.test.mjs100644 blob 78448ce7ca15c091053f92226d7d0c7106000e55\ttests/workspace-backup-ui.test.mjs100644 blob 199ace2d4c9b12fc1d2eddfa895fca21ab5d408c\ttests/workspace-backup.test.mjs100644 blob 98f0c0ef94a68c8fd7bc3ed93f890578d2498987\ttests/workspace-state.test.mjs100644 blob dec34e704bd3b2e2cf87438df43d4fdd33646e05\ttsconfig.json"
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "before_browser_index",
+        "args": [
+          "git",
+          "ls-files",
+          "--stage",
+          "-z"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 29,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 6635,
+            "observedSha256": "87c3bf84502eaade248a55d60babb03ed2a9367c6c62957664c1b5aff2ef3334",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 6635,
+              "sha256": "87c3bf84502eaade248a55d60babb03ed2a9367c6c62957664c1b5aff2ef3334",
+              "compressedBytes": 2899,
+              "data": "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"
+            },
+            "head": "100644 dfb78682c58275b8008cfddb5616383ffab06c08 0\t.env.example100644 c140486e15ee21364f6c38f622a1cc41fc16a118 0\t.gitignore100644 a45fd52cc5891570d6299fab38643103c3955474 0\t.nvmrc100644 38b6155235969d07afe6ab44b8d68e4fa16e3cdc 0\tAGENTS.md100644 37582af573e9c976e7fcddcb868699916ea46b04 0\tREADME.md100644 230a8f4642db7b9727240fd031da412f908535f5 0\tagent/agent.ts100644 b0c6f85a53a410c8916bfb7185f2f60d4c5b9852 0\tagent/channels/eve.ts100644 395034bd056d065c7f9bf3ad518d0871b08cb36c 0\tagent/instructions.",
+            "tail": "01a5f6ce26352f4f09abb4e6 0\ttests/community-management-ui.test.mjs100644 93f5e5daafc13f56372f8499a5dcd3118dbed0b7 0\ttests/community-management.test.mjs100644 368f9c9949ae19cccd2eed790bab1081685840e9 0\ttests/csv-import-state.test.mjs100644 491bf1b6c628d008d9fe0211be1f7f89e463bda4 0\ttests/expense-csv.test.mjs100644 49f498bce3de8362b3842f1cbc8474b9609a46e0 0\ttests/shared-plan.test.mjs100644 78448ce7ca15c091053f92226d7d0c7106000e55 0\ttests/workspace-backup-ui.test.mjs100644 199ace2d4c9b12fc1d2eddfa895fca21ab5d408c 0\ttests/workspace-backup.test.mjs100644 98f0c0ef94a68c8fd7bc3ed93f890578d2498987 0\ttests/workspace-state.test.mjs100644 dec34e704bd3b2e2cf87438df43d4fdd33646e05 0\ttsconfig.json"
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "before_browser_status",
+        "args": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "-z",
+          "--untracked-files=all"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 28,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "before_browser_diff",
+        "args": [
+          "git",
+          "-c",
+          "core.filemode=true",
+          "diff",
+          "--no-ext-diff",
+          "--no-textconv",
+          "--quiet",
+          "--exit-code",
+          "HEAD",
+          "--"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 28,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "before_browser_ignored",
+        "args": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "-z",
+          "--ignored=matching",
+          "--untracked-files=normal"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 27,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "browser_cases",
+        "args": [
+          "[node]",
+          "[scratch]/tools/node_modules/@playwright/test/cli.js",
+          "test",
+          "--config",
+          "[scratch]/tools/playwright.config.ts"
+        ],
+        "exitCode": 1,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 39873,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 15568,
+            "observedSha256": "53c297b1dfbb0db01d8151739a4135278e86ccf0a68545988c8182e4e159e182",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 15568,
+              "sha256": "53c297b1dfbb0db01d8151739a4135278e86ccf0a68545988c8182e4e159e182",
+              "compressedBytes": 1598,
+              "data": "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"
+            },
+            "head": "\nRunning 8 tests using 1 worker\n\n\n\n[1/8] [desktop-chromium] › csv-backup.spec.ts:232:1 › EUR imports append once and explicit USD rejects without changing existing expenses\n  1) [desktop-chromium] › csv-backup.spec.ts:232:1 › EUR imports append once and explicit USD rejects without changing existing expenses \n\n    Error: No cross-origin request or app-origin mutation may escape the guard.\n\n    expect(received).toEqual(expected) // deep equality\n\n    - Expected  - 1\n    + Received  + 4\n\n ",
+            "tail": "ty backup above two MB restores and invalid UTF-8 cannot replace its UI or durable state \n    [mobile-chromium] › csv-backup.spec.ts:232:1 › EUR imports append once and explicit USD rejects without changing existing expenses \n    [mobile-chromium] › csv-backup.spec.ts:256:1 › ambiguous duplicate and explicit blank currency both reject without losing expenses \n    [mobile-chromium] › csv-backup.spec.ts:272:3 › large UTF-8 round trip › actual CJK download above two MB restores after a visible profile edit and survives reload \n    [mobile-chromium] › csv-backup.spec.ts:308:1 › legacy pretty backup above two MB restores and invalid UTF-8 cannot replace its UI or durable state \n"
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 1304,
+            "observedSha256": "f62890d1f68560fcc3a59f6979651ffa8afed68cfd71ca50a677aa466722295d",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 1304,
+              "sha256": "f62890d1f68560fcc3a59f6979651ffa8afed68cfd71ca50a677aa466722295d",
+              "compressedBytes": 186,
+              "data": "H4sIAAAAAAAAA82TsQ6CMBRFd77ibsAAAYoNYSU6GUmIxlEqvECXNmmr/X2DOPgJnd/NeScv7yZKz9Sygpcp7sIoqZYW15UQX/pH15/7IQapN6SFXJQ2NGN+EZyG20KnfuiO/7knSbXAksuj5GYJ48ZHljkjJsr8vsEiz/Nxg9hVe/iVDH15vzm8sJgMCUdzGiW7Ysma0BWrqghdkRUseMWGh65Y8+CveKiD/0VehtvoD4Wut8QYBQAA"
+            },
+            "head": "(node:3061) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:3138) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:3220) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:3303)",
+            "tail": "ngs ...` to show where the warning was created)\n(node:3386) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:3463) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:3540) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:3618) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "after_head",
+        "args": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 29,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 41,
+            "observedSha256": "7109ccfbe690f013d128ef11fe4f71a1f8838d9798d43833adeb66eda7fcdaf7",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 41,
+              "sha256": "7109ccfbe690f013d128ef11fe4f71a1f8838d9798d43833adeb66eda7fcdaf7",
+              "compressedBytes": 59,
+              "data": "H4sIAAAAAAAAAwXBQQEAIAgDwL9pBgPROID0r+Bdjz7voXIzJs+05C1UW8DxwlIId1kfRTHBhikAAAA="
+            },
+            "head": "ce2d5ce323637ea8ec1a9b0bc47050d74a130551\n",
+            "tail": "ce2d5ce323637ea8ec1a9b0bc47050d74a130551\n"
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "after_tree",
+        "args": [
+          "git",
+          "ls-tree",
+          "-r",
+          "-z",
+          "HEAD"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 28,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 6893,
+            "observedSha256": "af79b22da424b5543fa541196b4274702aaf691fd7a9185860804f3d8adce97e",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 6893,
+              "sha256": "af79b22da424b5543fa541196b4274702aaf691fd7a9185860804f3d8adce97e",
+              "compressedBytes": 2890,
+              "data": "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"
+            },
+            "head": "100644 blob dfb78682c58275b8008cfddb5616383ffab06c08\t.env.example100644 blob c140486e15ee21364f6c38f622a1cc41fc16a118\t.gitignore100644 blob a45fd52cc5891570d6299fab38643103c3955474\t.nvmrc100644 blob 38b6155235969d07afe6ab44b8d68e4fa16e3cdc\tAGENTS.md100644 blob 37582af573e9c976e7fcddcb868699916ea46b04\tREADME.md100644 blob 230a8f4642db7b9727240fd031da412f908535f5\tagent/agent.ts100644 blob b0c6f85a53a410c8916bfb7185f2f60d4c5b9852\tagent/channels/eve.ts100644 blob 395034bd056d065c7f9bf3ad518d0871b08c",
+            "tail": "e6\ttests/community-management-ui.test.mjs100644 blob 93f5e5daafc13f56372f8499a5dcd3118dbed0b7\ttests/community-management.test.mjs100644 blob 368f9c9949ae19cccd2eed790bab1081685840e9\ttests/csv-import-state.test.mjs100644 blob 491bf1b6c628d008d9fe0211be1f7f89e463bda4\ttests/expense-csv.test.mjs100644 blob 49f498bce3de8362b3842f1cbc8474b9609a46e0\ttests/shared-plan.test.mjs100644 blob 78448ce7ca15c091053f92226d7d0c7106000e55\ttests/workspace-backup-ui.test.mjs100644 blob 199ace2d4c9b12fc1d2eddfa895fca21ab5d408c\ttests/workspace-backup.test.mjs100644 blob 98f0c0ef94a68c8fd7bc3ed93f890578d2498987\ttests/workspace-state.test.mjs100644 blob dec34e704bd3b2e2cf87438df43d4fdd33646e05\ttsconfig.json"
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "after_index",
+        "args": [
+          "git",
+          "ls-files",
+          "--stage",
+          "-z"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 28,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 6635,
+            "observedSha256": "87c3bf84502eaade248a55d60babb03ed2a9367c6c62957664c1b5aff2ef3334",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 6635,
+              "sha256": "87c3bf84502eaade248a55d60babb03ed2a9367c6c62957664c1b5aff2ef3334",
+              "compressedBytes": 2899,
+              "data": "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"
+            },
+            "head": "100644 dfb78682c58275b8008cfddb5616383ffab06c08 0\t.env.example100644 c140486e15ee21364f6c38f622a1cc41fc16a118 0\t.gitignore100644 a45fd52cc5891570d6299fab38643103c3955474 0\t.nvmrc100644 38b6155235969d07afe6ab44b8d68e4fa16e3cdc 0\tAGENTS.md100644 37582af573e9c976e7fcddcb868699916ea46b04 0\tREADME.md100644 230a8f4642db7b9727240fd031da412f908535f5 0\tagent/agent.ts100644 b0c6f85a53a410c8916bfb7185f2f60d4c5b9852 0\tagent/channels/eve.ts100644 395034bd056d065c7f9bf3ad518d0871b08cb36c 0\tagent/instructions.",
+            "tail": "01a5f6ce26352f4f09abb4e6 0\ttests/community-management-ui.test.mjs100644 93f5e5daafc13f56372f8499a5dcd3118dbed0b7 0\ttests/community-management.test.mjs100644 368f9c9949ae19cccd2eed790bab1081685840e9 0\ttests/csv-import-state.test.mjs100644 491bf1b6c628d008d9fe0211be1f7f89e463bda4 0\ttests/expense-csv.test.mjs100644 49f498bce3de8362b3842f1cbc8474b9609a46e0 0\ttests/shared-plan.test.mjs100644 78448ce7ca15c091053f92226d7d0c7106000e55 0\ttests/workspace-backup-ui.test.mjs100644 199ace2d4c9b12fc1d2eddfa895fca21ab5d408c 0\ttests/workspace-backup.test.mjs100644 98f0c0ef94a68c8fd7bc3ed93f890578d2498987 0\ttests/workspace-state.test.mjs100644 dec34e704bd3b2e2cf87438df43d4fdd33646e05 0\ttsconfig.json"
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "after_status",
+        "args": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "-z",
+          "--untracked-files=all"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 28,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "after_diff",
+        "args": [
+          "git",
+          "-c",
+          "core.filemode=true",
+          "diff",
+          "--no-ext-diff",
+          "--no-textconv",
+          "--quiet",
+          "--exit-code",
+          "HEAD",
+          "--"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 29,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "after_ignored",
+        "args": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "-z",
+          "--ignored=matching",
+          "--untracked-files=normal"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 29,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "after_cleanup_head",
+        "args": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 30,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 41,
+            "observedSha256": "7109ccfbe690f013d128ef11fe4f71a1f8838d9798d43833adeb66eda7fcdaf7",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 41,
+              "sha256": "7109ccfbe690f013d128ef11fe4f71a1f8838d9798d43833adeb66eda7fcdaf7",
+              "compressedBytes": 59,
+              "data": "H4sIAAAAAAAAAwXBQQEAIAgDwL9pBgPROID0r+Bdjz7voXIzJs+05C1UW8DxwlIId1kfRTHBhikAAAA="
+            },
+            "head": "ce2d5ce323637ea8ec1a9b0bc47050d74a130551\n",
+            "tail": "ce2d5ce323637ea8ec1a9b0bc47050d74a130551\n"
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "after_cleanup_tree",
+        "args": [
+          "git",
+          "ls-tree",
+          "-r",
+          "-z",
+          "HEAD"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 29,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 6893,
+            "observedSha256": "af79b22da424b5543fa541196b4274702aaf691fd7a9185860804f3d8adce97e",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 6893,
+              "sha256": "af79b22da424b5543fa541196b4274702aaf691fd7a9185860804f3d8adce97e",
+              "compressedBytes": 2890,
+              "data": "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"
+            },
+            "head": "100644 blob dfb78682c58275b8008cfddb5616383ffab06c08\t.env.example100644 blob c140486e15ee21364f6c38f622a1cc41fc16a118\t.gitignore100644 blob a45fd52cc5891570d6299fab38643103c3955474\t.nvmrc100644 blob 38b6155235969d07afe6ab44b8d68e4fa16e3cdc\tAGENTS.md100644 blob 37582af573e9c976e7fcddcb868699916ea46b04\tREADME.md100644 blob 230a8f4642db7b9727240fd031da412f908535f5\tagent/agent.ts100644 blob b0c6f85a53a410c8916bfb7185f2f60d4c5b9852\tagent/channels/eve.ts100644 blob 395034bd056d065c7f9bf3ad518d0871b08c",
+            "tail": "e6\ttests/community-management-ui.test.mjs100644 blob 93f5e5daafc13f56372f8499a5dcd3118dbed0b7\ttests/community-management.test.mjs100644 blob 368f9c9949ae19cccd2eed790bab1081685840e9\ttests/csv-import-state.test.mjs100644 blob 491bf1b6c628d008d9fe0211be1f7f89e463bda4\ttests/expense-csv.test.mjs100644 blob 49f498bce3de8362b3842f1cbc8474b9609a46e0\ttests/shared-plan.test.mjs100644 blob 78448ce7ca15c091053f92226d7d0c7106000e55\ttests/workspace-backup-ui.test.mjs100644 blob 199ace2d4c9b12fc1d2eddfa895fca21ab5d408c\ttests/workspace-backup.test.mjs100644 blob 98f0c0ef94a68c8fd7bc3ed93f890578d2498987\ttests/workspace-state.test.mjs100644 blob dec34e704bd3b2e2cf87438df43d4fdd33646e05\ttsconfig.json"
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "after_cleanup_index",
+        "args": [
+          "git",
+          "ls-files",
+          "--stage",
+          "-z"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 29,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 6635,
+            "observedSha256": "87c3bf84502eaade248a55d60babb03ed2a9367c6c62957664c1b5aff2ef3334",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 6635,
+              "sha256": "87c3bf84502eaade248a55d60babb03ed2a9367c6c62957664c1b5aff2ef3334",
+              "compressedBytes": 2899,
+              "data": "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"
+            },
+            "head": "100644 dfb78682c58275b8008cfddb5616383ffab06c08 0\t.env.example100644 c140486e15ee21364f6c38f622a1cc41fc16a118 0\t.gitignore100644 a45fd52cc5891570d6299fab38643103c3955474 0\t.nvmrc100644 38b6155235969d07afe6ab44b8d68e4fa16e3cdc 0\tAGENTS.md100644 37582af573e9c976e7fcddcb868699916ea46b04 0\tREADME.md100644 230a8f4642db7b9727240fd031da412f908535f5 0\tagent/agent.ts100644 b0c6f85a53a410c8916bfb7185f2f60d4c5b9852 0\tagent/channels/eve.ts100644 395034bd056d065c7f9bf3ad518d0871b08cb36c 0\tagent/instructions.",
+            "tail": "01a5f6ce26352f4f09abb4e6 0\ttests/community-management-ui.test.mjs100644 93f5e5daafc13f56372f8499a5dcd3118dbed0b7 0\ttests/community-management.test.mjs100644 368f9c9949ae19cccd2eed790bab1081685840e9 0\ttests/csv-import-state.test.mjs100644 491bf1b6c628d008d9fe0211be1f7f89e463bda4 0\ttests/expense-csv.test.mjs100644 49f498bce3de8362b3842f1cbc8474b9609a46e0 0\ttests/shared-plan.test.mjs100644 78448ce7ca15c091053f92226d7d0c7106000e55 0\ttests/workspace-backup-ui.test.mjs100644 199ace2d4c9b12fc1d2eddfa895fca21ab5d408c 0\ttests/workspace-backup.test.mjs100644 98f0c0ef94a68c8fd7bc3ed93f890578d2498987 0\ttests/workspace-state.test.mjs100644 dec34e704bd3b2e2cf87438df43d4fdd33646e05 0\ttsconfig.json"
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "after_cleanup_status",
+        "args": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "-z",
+          "--untracked-files=all"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 29,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "after_cleanup_diff",
+        "args": [
+          "git",
+          "-c",
+          "core.filemode=true",
+          "diff",
+          "--no-ext-diff",
+          "--no-textconv",
+          "--quiet",
+          "--exit-code",
+          "HEAD",
+          "--"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 28,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      },
+      {
+        "label": "after_cleanup_ignored",
+        "args": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "-z",
+          "--ignored=matching",
+          "--untracked-files=normal"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stopReason": null,
+        "exitObservedAndReaped": true,
+        "closeObserved": true,
+        "pipesEOF": [
+          true,
+          true
+        ],
+        "forcedDrain": false,
+        "originalProcessGroupAbsent": true,
+        "termSent": false,
+        "killSent": false,
+        "durationMs": 29,
+        "streams": [
+          {
+            "name": "stdout",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          },
+          {
+            "name": "stderr",
+            "observedBytes": 0,
+            "observedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "complete": true,
+            "raw": {
+              "encoding": "gzip-base64",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "compressedBytes": 20,
+              "data": "H4sIAAAAAAAAAwMAAAAAAAAAAAA="
+            },
+            "head": "",
+            "tail": ""
+          }
+        ],
+        "released": true
+      }
+    ],
+    "guards": [
+      {
+        "label": "before",
+        "passed": true,
+        "trackedFiles": 86,
+        "sourceBytes": 2509306,
+        "vectorSha256": "2b6332dc570ea5c2031ab71faa90fc20c9aa28a6012cf8208ecdce56c498e703",
+        "fullHeadIndexModesAndBytes": true,
+        "noUntrackedOrIgnoredOutput": true
+      },
+      {
+        "label": "before_browser",
+        "passed": true,
+        "trackedFiles": 86,
+        "sourceBytes": 2509306,
+        "vectorSha256": "2b6332dc570ea5c2031ab71faa90fc20c9aa28a6012cf8208ecdce56c498e703",
+        "fullHeadIndexModesAndBytes": true,
+        "noUntrackedOrIgnoredOutput": true
+      },
+      {
+        "label": "after",
+        "passed": true,
+        "trackedFiles": 86,
+        "sourceBytes": 2509306,
+        "vectorSha256": "2b6332dc570ea5c2031ab71faa90fc20c9aa28a6012cf8208ecdce56c498e703",
+        "fullHeadIndexModesAndBytes": true,
+        "noUntrackedOrIgnoredOutput": true
+      },
+      {
+        "label": "after_cleanup",
+        "passed": true,
+        "trackedFiles": 86,
+        "sourceBytes": 2509306,
+        "vectorSha256": "2b6332dc570ea5c2031ab71faa90fc20c9aa28a6012cf8208ecdce56c498e703",
+        "fullHeadIndexModesAndBytes": true,
+        "noUntrackedOrIgnoredOutput": true
+      }
+    ],
+    "errors": [
+      "browser_stats"
+    ],
+    "sourceFiles": [
+      {
+        "path": ".env.example",
+        "mode": "100644",
+        "gitBlob": "dfb78682c58275b8008cfddb5616383ffab06c08",
+        "bytes": 564,
+        "sha256": "5743126ed0e5646ac40a962065bfa59a0078c37bd6cf29a15b9420b10af38e51"
+      },
+      {
+        "path": ".gitignore",
+        "mode": "100644",
+        "gitBlob": "c140486e15ee21364f6c38f622a1cc41fc16a118",
+        "bytes": 80,
+        "sha256": "1b1c59841092dbc4a66a26b98d121aa4672c52f5396fb995902be782caee7dfd"
+      },
+      {
+        "path": ".nvmrc",
+        "mode": "100644",
+        "gitBlob": "a45fd52cc5891570d6299fab38643103c3955474",
+        "bytes": 3,
+        "sha256": "68ca3fba3b7e864770cb61aeb306d4bd4354b68ab4dd38450860c5d823e42a53"
+      },
+      {
+        "path": "AGENTS.md",
+        "mode": "100644",
+        "gitBlob": "38b6155235969d07afe6ab44b8d68e4fa16e3cdc",
+        "bytes": 1769,
+        "sha256": "1ca92a796f19bdd5e6d8e64575765a11c2f1d928c4d94423365ad48de81d8d71"
+      },
+      {
+        "path": "README.md",
+        "mode": "100644",
+        "gitBlob": "37582af573e9c976e7fcddcb868699916ea46b04",
+        "bytes": 2831,
+        "sha256": "4a36341cb13272e21d79451f85928abbe8cc3e4ee8465fa6ca0b99e1dc4281ef"
+      },
+      {
+        "path": "agent/agent.ts",
+        "mode": "100644",
+        "gitBlob": "230a8f4642db7b9727240fd031da412f908535f5",
+        "bytes": 370,
+        "sha256": "64a2aa4f750ef23847cc57d49aef10a7585f44ca56d99b9d46645dfa31fca191"
+      },
+      {
+        "path": "agent/channels/eve.ts",
+        "mode": "100644",
+        "gitBlob": "b0c6f85a53a410c8916bfb7185f2f60d4c5b9852",
+        "bytes": 621,
+        "sha256": "ae5bfd80ec781dc0772766a93b086450019a40b46561924ab8c5146be234e454"
+      },
+      {
+        "path": "agent/instructions.md",
+        "mode": "100644",
+        "gitBlob": "395034bd056d065c7f9bf3ad518d0871b08cb36c",
+        "bytes": 2424,
+        "sha256": "d5c740f7350f0a4f90b833b1a5184207a61e859d3901f50907014091c4f2131a"
+      },
+      {
+        "path": "agent/lib/readiness.ts",
+        "mode": "100644",
+        "gitBlob": "19d00b139af7a99a4fcf01a8a8b0a6f8a41b4291",
+        "bytes": 589,
+        "sha256": "047e9da5d740cd4a0c167583b8b42865d38bac7352a8ce91786646304847a01f"
+      },
+      {
+        "path": "agent/tools/calculate_trip_cost.ts",
+        "mode": "100644",
+        "gitBlob": "495b6b1c40435608f99b5e7212b5c36d7919e73a",
+        "bytes": 2163,
+        "sha256": "0f01f93c5cfd38685b8cea8059d93f9f200ecf25dc86c711acfb59bb0e2c88eb"
+      },
+      {
+        "path": "agent/tools/compare_stays.ts",
+        "mode": "100644",
+        "gitBlob": "80930a1164aa007b889bda03727f8f8fd18457e2",
+        "bytes": 2308,
+        "sha256": "03541c41f3208db05deff615393230894822df32abe1d3436a42f01d134f2266"
+      },
+      {
+        "path": "app/api/assistant-config/route.ts",
+        "mode": "100644",
+        "gitBlob": "efdee84ab9c0e7d9f46806feca0c297d5893880f",
+        "bytes": 275,
+        "sha256": "16be2d3f093b4e09cfd8e2a9082497d2001b8733578f37d073b3906c04dcae65"
+      },
+      {
+        "path": "app/api/bank/route.ts",
+        "mode": "100644",
+        "gitBlob": "0d846720afa692c385e0d85c28ac177adda18121",
+        "bytes": 2683,
+        "sha256": "5b0eb45f134b76551df556ea014554c3410d448cccce001152c261c1669b7233"
+      },
+      {
+        "path": "app/api/community/route.ts",
+        "mode": "100644",
+        "gitBlob": "7570481a2f765d3a4e6f375b4e1c9228544f0f0c",
+        "bytes": 15330,
+        "sha256": "6305eecf28d44c0f25b2f1870546e211ca833bddcaf89b423ab365a930b5bdbb"
+      },
+      {
+        "path": "app/api/health/route.ts",
+        "mode": "100644",
+        "gitBlob": "ace5f31775631817c5af2638d1d96b07cc16483f",
+        "bytes": 268,
+        "sha256": "2e50129ee635d730f5a174e1d11968db87a07090e78116eee370a651f7a881d9"
+      },
+      {
+        "path": "app/api/providers/route.ts",
+        "mode": "100644",
+        "gitBlob": "963a66977aca5e524615d8473dcd8a8cd47ae347",
+        "bytes": 2589,
+        "sha256": "d08a1a270e0fc918b098b55b2156a5ef6d8150f6b2f0919e6298dc27b96f2d57"
+      },
+      {
+        "path": "app/globals.css",
+        "mode": "100644",
+        "gitBlob": "9af79ec3c455c4b964b10e707262f172125998dd",
+        "bytes": 49557,
+        "sha256": "a3000927fd7fc54307ba16e494b47990b7059311c5237a660b7b0eaff224dac9"
+      },
+      {
+        "path": "app/layout.tsx",
+        "mode": "100644",
+        "gitBlob": "ca48d224a193441ce4c2a651b45d1f32202773e5",
+        "bytes": 640,
+        "sha256": "e673015eae0e18cf3a46e3d034243495438bc032d588e584a3d1deb8bc28ee7b"
+      },
+      {
+        "path": "app/page.tsx",
+        "mode": "100644",
+        "gitBlob": "d999dfd91d9265e605e605e61b128457ef8736de",
+        "bytes": 106,
+        "sha256": "35903694acda04e70e80e10e446dd24c03fd0fa7ec67e87e984e9ab65b533554"
+      },
+      {
+        "path": "components/ai-chat.tsx",
+        "mode": "100644",
+        "gitBlob": "98289b9098fa95e529b8f11c0c44b4f2ad6a83c0",
+        "bytes": 13608,
+        "sha256": "9ee7960228a1d3453468219cb1c18c7f335daad722268e88eaf8982dae2ce04c"
+      },
+      {
+        "path": "components/bank-preferences.tsx",
+        "mode": "100644",
+        "gitBlob": "4bfa8865346027b2616fbdff9a877cc179e3402f",
+        "bytes": 8835,
+        "sha256": "4d96a531cde093da1629e1263a7df5ee7f4f0651519ff21a39fd87647424867c"
+      },
+      {
+        "path": "components/dialog.tsx",
+        "mode": "100644",
+        "gitBlob": "f56ccbcf0dfce3db5107d7e4777a6c560b3da909",
+        "bytes": 831,
+        "sha256": "7b236f937ac24d357217622e2d9035d91bf563145d2a8b8730a2ea2bd368b5f1"
+      },
+      {
+        "path": "components/event-ideas.tsx",
+        "mode": "100644",
+        "gitBlob": "e7cd0c10fb37d32b5d03580e1cae06e08787d335",
+        "bytes": 2038,
+        "sha256": "51a0323127533c8516e0d6dac605bcf89dfeae703e47d5923f81027b76a0b338"
+      },
+      {
+        "path": "components/event-plan-form.tsx",
+        "mode": "100644",
+        "gitBlob": "52ad8d3d6b7f2abc4d0898c48a69f36403d9dd6d",
+        "bytes": 5606,
+        "sha256": "d0413e4ab3ee0b78652d7b9d6d2d8acb61286d2a32bb445ccc09625f5a151ebb"
+      },
+      {
+        "path": "components/new-trip-form.tsx",
+        "mode": "100644",
+        "gitBlob": "7718fd7f9c875cba81f4a7abbc588f2d279151d3",
+        "bytes": 10094,
+        "sha256": "b066b7c8ea7e947bbb4c1c33fd87ff92e7a8b02eabf1d69cf19b473f65fd6df4"
+      },
+      {
+        "path": "components/provider-panel.tsx",
+        "mode": "100644",
+        "gitBlob": "9e205fd79e4628bc74112f555ac6c45fa673ecf9",
+        "bytes": 7822,
+        "sha256": "6b9af873ee7d03c96363c2232d2b9f8fc9e26423c46f17665e6c93c4bddb377b"
+      },
+      {
+        "path": "components/stay-comparison.tsx",
+        "mode": "100644",
+        "gitBlob": "6da9660f3197f1f640f4012539c18850735185f9",
+        "bytes": 2316,
+        "sha256": "ae40ad9b6f2d3bccb3eca1cb47a8f8a017ec064c87b6ea0fb916f52a3b2e41ec"
+      },
+      {
+        "path": "components/trip-map.tsx",
+        "mode": "100644",
+        "gitBlob": "a9ef9402dfd7b462a96f6b0ebd3d1b72094674ff",
+        "bytes": 3973,
+        "sha256": "881f3a1a97a728b6289ff5697e48e4318661040c9378e738db89fed63d370f8e"
+      },
+      {
+        "path": "components/trip-recap.tsx",
+        "mode": "100644",
+        "gitBlob": "6b4bdd04d33a184498a2da9a336299d3ebce0d33",
+        "bytes": 4224,
+        "sha256": "577a865759f2edd2d71c8d227e24001201d7812023f6478eb3847bd13a75a0fb"
+      },
+      {
+        "path": "components/trip-settings.tsx",
+        "mode": "100644",
+        "gitBlob": "9f41eab8060cc9b83c5ac1473316b3b1dec30caf",
+        "bytes": 7205,
+        "sha256": "f091a32932d49ab1694adc383fe10ad0b216da2418f515de98eb1958ab491da9"
+      },
+      {
+        "path": "components/workspace.tsx",
+        "mode": "100644",
+        "gitBlob": "c0739742a006994cc8075fd14376afe9f10c701f",
+        "bytes": 70493,
+        "sha256": "c8c2b0b032450bfc98726b0d07b59c85deec8d201002d90ad14e6eb5c2fd0e33"
+      },
+      {
+        "path": "docs/acceptance.md",
+        "mode": "100644",
+        "gitBlob": "5af8192fdd3061ff1e71f44d912fd449d0f1a5bd",
+        "bytes": 4711,
+        "sha256": "defd97ee327b3faff9aff39b0cee4b05b88a145b833e389a098b7fa50b1a7cf8"
+      },
+      {
+        "path": "docs/bank.md",
+        "mode": "100644",
+        "gitBlob": "c22de1a533598911e5880d458c707a557215377f",
+        "bytes": 3833,
+        "sha256": "e4c113a1afaf471f2abd9092be0c2859c57273e0168dd00274279be4e6dd48e9"
+      },
+      {
+        "path": "docs/credits.md",
+        "mode": "100644",
+        "gitBlob": "dac7b58ad0fef68ecb3f8a7518db933b0d338f8e",
+        "bytes": 665,
+        "sha256": "f9ab3f3561e79d28b2b7cb304d909dc80ae9029f8faa950bd0e593e6ff0ef6fa"
+      },
+      {
+        "path": "docs/deployment-verification.json",
+        "mode": "100644",
+        "gitBlob": "7c42b415583cce82470cb8a4bd15e79b479edc0c",
+        "bytes": 6094,
+        "sha256": "524387ee3ffb2592223a4cdd63ff502b566d4962490395b30f787941688db24a"
+      },
+      {
+        "path": "docs/deployment.md",
+        "mode": "100644",
+        "gitBlob": "e059b82afee5e98af7584545e80b470ac6fc5307",
+        "bytes": 2581,
+        "sha256": "810594952bedb6439caa37bcb4dc85d7ac12e39d3e8495c8824bc3262ae4904a"
+      },
+      {
+        "path": "docs/eve.md",
+        "mode": "100644",
+        "gitBlob": "05eeac00b74de212eb69e2738153e86ff1839a7e",
+        "bytes": 4783,
+        "sha256": "9cef7d40fa66598e50f900e4814131670957b6717d0c9409f1e21613c57d9ee2"
+      },
+      {
+        "path": "docs/integrations.md",
+        "mode": "100644",
+        "gitBlob": "e49afc9fee672829f71b41071ab221e413e09c1c",
+        "bytes": 6022,
+        "sha256": "e9f52dad0bf5ef136dc775d0f72e28813a7bc577383b4a715b0c3269ce6126b6"
+      },
+      {
+        "path": "docs/product.md",
+        "mode": "100644",
+        "gitBlob": "475d3977962feaa485e0fc1be0fab56fa5e0e16e",
+        "bytes": 2966,
+        "sha256": "19110b9f5a16fdc6267e4fea154b8cb82b737168eede1a2e3ce37748bc9f0e7f"
+      },
+      {
+        "path": "docs/proposals/csv-backup-browser-v2.md",
+        "mode": "100644",
+        "gitBlob": "ca8a0345083758a9d2db11b856280293eb5adb64",
+        "bytes": 6099,
+        "sha256": "65a3c9cca200041700f404b8d655795a9e7742fcd45ef6c877b917ee06a8ce9d"
+      },
+      {
+        "path": "docs/proposals/csv-backup-browser-v2.spec.ts.example",
+        "mode": "100644",
+        "gitBlob": "331dda6ceafca721fcad69ab4d5810cf3f3a897a",
+        "bytes": 18208,
+        "sha256": "6eb6938320f339a74d11d71bc101537a0e14651585219b87c0ad94797665b3f4"
+      },
+      {
+        "path": "docs/proposals/csv-backup-browser-v2.workflow.yml.example",
+        "mode": "100644",
+        "gitBlob": "d4562367a31810c617e1e1c258569358cfbc40d4",
+        "bytes": 1566,
+        "sha256": "7e2eafe287f70c993f7ac58b4441830e78b9c552d4fd09562438827cd2952d4b"
+      },
+      {
+        "path": "docs/proposals/csv-backup-browser.md",
+        "mode": "100644",
+        "gitBlob": "3929fa2048b709e058d3a5db94f4a90047ba6598",
+        "bytes": 10603,
+        "sha256": "e0a57b8f084d95f9074dfcee82f2ea18644d604d7a645f0ec91bd04f1e775622"
+      },
+      {
+        "path": "docs/proposals/csv-backup-browser.spec.ts.example",
+        "mode": "100644",
+        "gitBlob": "ae75059a023f145fa6b419b61c81317ce4b4daa9",
+        "bytes": 15044,
+        "sha256": "e478fd27fbcbb1886a85b2c8784742eb96272b39dea9f88fb22d0378bea365ad"
+      },
+      {
+        "path": "docs/proposals/csv-backup-ci.yml.example",
+        "mode": "100644",
+        "gitBlob": "2bfdb3ef68471853af6ffb025447aff1014350b9",
+        "bytes": 8130,
+        "sha256": "9480abb4c13ab825d3e3b8074d4f16b7f29fbcdf72c549570357f7d3ee129cb3"
+      },
+      {
+        "path": "docs/providers.md",
+        "mode": "100644",
+        "gitBlob": "54350c4b94052d4b02c691f3ef0de3bdda3b195b",
+        "bytes": 5528,
+        "sha256": "ce103bd8d3a8a433018d3314b3a961c6f5b73a77fcc18af4cb913665e1a1f963"
+      },
+      {
+        "path": "docs/results/2026/10-26/shared-plan-import.md",
+        "mode": "100644",
+        "gitBlob": "fede02711f6fd95e000fde82d9e9ff50c0c38974",
+        "bytes": 3186,
+        "sha256": "81104e1ee23b3ce1b76e94716cfcafda2034bb830b146ba5793ea45f2695419e"
+      },
+      {
+        "path": "docs/results/2026/10-27/csv-backup-repair.md",
+        "mode": "100644",
+        "gitBlob": "eaa21ae8039e981b651672f85d622c462c45d7eb",
+        "bytes": 7334,
+        "sha256": "4b3382ff5e43c9451f84a58c608842c8f510f1f13af8a6405dbb4d3c83542b73"
+      },
+      {
+        "path": "docs/results/2026/10-27/csv-import-state.md",
+        "mode": "100644",
+        "gitBlob": "254963ade4d57a1199bd0c82aa3bf8232bd20d3a",
+        "bytes": 7029,
+        "sha256": "2989728dbe81b64ffdddb7737872091feb12dc129e06770afa8b730a8bfba0ab"
+      },
+      {
+        "path": "docs/results/2026/10-27/shared-plan-browser.json",
+        "mode": "100644",
+        "gitBlob": "b7f0b543247aca83e98ae45a61630a397df27571",
+        "bytes": 3010,
+        "sha256": "3d85e46585fc7cd3f4869b58f54f7812c7f9541190a95608a59c5c8726bfb24d"
+      },
+      {
+        "path": "docs/results/2026/10-27/shared-plan-browser.md",
+        "mode": "100644",
+        "gitBlob": "6fe249cee399a7a60b02211b505b58cca943d794",
+        "bytes": 4827,
+        "sha256": "37c9a97ac5a0275e47b655d34fa35b193b06e1121e92349e03e7e08f75a79c6c"
+      },
+      {
+        "path": "docs/results/2026/10-27/shared-plan-desktop.png",
+        "mode": "100644",
+        "gitBlob": "35a7743d1a2536065508d4b45963ae0636aad8ea",
+        "bytes": 130246,
+        "sha256": "ad7aac6aa86a15409ca5d8409ba07d2b818faff2a9179b3e1dfc0762b07e1bb3"
+      },
+      {
+        "path": "docs/results/2026/10-27/shared-plan-mobile-map.png",
+        "mode": "100644",
+        "gitBlob": "3e44f763e43057fa79834e5ea113ebdf57310530",
+        "bytes": 68200,
+        "sha256": "7cc31caaa8df8edd1f91e897614bca7b3e3810bbddef6f7a4b5d3721062b0c51"
+      },
+      {
+        "path": "docs/results/2026/10-27/shared-plan-mobile.png",
+        "mode": "100644",
+        "gitBlob": "188e9afe24afa5d93cb7084c863c3bc3ab45d21c",
+        "bytes": 60703,
+        "sha256": "d5acd4edbef94c6393daa10cabfc22c0d214f5a74ede78a8f52ddf447f435142"
+      },
+      {
+        "path": "docs/results/2026/10-27/source-audit.md",
+        "mode": "100644",
+        "gitBlob": "4dc2863fffa2205ca694ba76e178f6d9d701b4ab",
+        "bytes": 3748,
+        "sha256": "52db9bc529356b6912500e6c676ad942ba5ab0fb9be0c4fc536ddfa8250b7ae1"
+      },
+      {
+        "path": "docs/results/2026/10-28/community-management.md",
+        "mode": "100644",
+        "gitBlob": "b5482a8b0d6e43afa077d5115cab42dcd595d3e1",
+        "bytes": 8972,
+        "sha256": "5d5fffaff570195f65ae7b6445727d9d846710e5117435fdcad966cc103defbb"
+      },
+      {
+        "path": "lib/bank.ts",
+        "mode": "100644",
+        "gitBlob": "e1ece0d4364dc9a558efec1ac7deb4199a3e41e9",
+        "bytes": 8463,
+        "sha256": "d6c87272ab2a70844c5018b7c0d9851d6692f1d1c7b7dd902f244baa35b5dea1"
+      },
+      {
+        "path": "lib/community-management-storage.ts",
+        "mode": "100644",
+        "gitBlob": "7820c36726e8440142bf9e49e8ff9d45a9ec6ce0",
+        "bytes": 6223,
+        "sha256": "a4c933789508255bec22d3ff71c10e91af65f687d30e869c00a0cedfa3f83424"
+      },
+      {
+        "path": "lib/community-management.ts",
+        "mode": "100644",
+        "gitBlob": "6c163a06394325cc186c6c54a43017ee0d60b6d8",
+        "bytes": 3291,
+        "sha256": "3ba270904aa249b0f22954f5385d33347955858fa0573c9512af26e6b60d8b6d"
+      },
+      {
+        "path": "lib/csv.ts",
+        "mode": "100644",
+        "gitBlob": "5890729f2d7627e56f6f9ad71ffad57756649ae3",
+        "bytes": 2117,
+        "sha256": "5e2dc41fdab2c7799ae851f4d2ad8f633bf089801c7d0897ff157edb60fe5811"
+      },
+      {
+        "path": "lib/data.ts",
+        "mode": "100644",
+        "gitBlob": "5be6f013c9a373f2f18973349403c87c750e4b32",
+        "bytes": 18954,
+        "sha256": "a66f5746471a7db67512a62f53de1a327ea97799fcdabe5442196038d6c63c6b"
+      },
+      {
+        "path": "lib/events.ts",
+        "mode": "100644",
+        "gitBlob": "9d26693fd25ecc94ba562e43c52b432edb9a2aab",
+        "bytes": 829,
+        "sha256": "b85c6f6640c423719889c29eabdb4fc9d3c4eb6ab786908ac4d59750a9b99cdd"
+      },
+      {
+        "path": "lib/providers.ts",
+        "mode": "100644",
+        "gitBlob": "db1b923cb8bd72a16de29b73983fd7c9957dd6e9",
+        "bytes": 13148,
+        "sha256": "7492e04283b34d2b804f570a8d182516b32330160410a498b1a0e67ba66edfd6"
+      },
+      {
+        "path": "lib/trip.ts",
+        "mode": "100644",
+        "gitBlob": "d4210075abdccc7dd7cafbcc30dbd4d4f1dc0bb1",
+        "bytes": 28167,
+        "sha256": "8d3e1f160d28d5edbc01f631c057cecd4518581a2ed6d32636fd6ea484861c31"
+      },
+      {
+        "path": "lib/types.ts",
+        "mode": "100644",
+        "gitBlob": "5f70e00554cf3782c14a0e69cbfbd06472876c22",
+        "bytes": 3543,
+        "sha256": "89bbda2e213edd085091e3d7c51f566bb5249641004147caada2fb6ec215cd34"
+      },
+      {
+        "path": "lib/workspace-state.ts",
+        "mode": "100644",
+        "gitBlob": "e3e8fa4addd51369379f73092d9b4b032c0daca9",
+        "bytes": 3894,
+        "sha256": "3a0f70697d241a8341cf72f7d9807115e036d63d486be81ac0db88d5e31059b3"
+      },
+      {
+        "path": "next-env.d.ts",
+        "mode": "100644",
+        "gitBlob": "6080addc2d9595896fa4440b16cf51a41bfcfef8",
+        "bytes": 81,
+        "sha256": "879741880b6ab48da99dcc06dcc674d381c9826137b0496bf7bb368f302de9fc"
+      },
+      {
+        "path": "next.config.ts",
+        "mode": "100644",
+        "gitBlob": "258c853833e829f1492a80f2ff1e2df100292bdf",
+        "bytes": 176,
+        "sha256": "a6428d7696daa5ae2717bcc076dec98d557ae3b85d1198ce69f145781a85ccec"
+      },
+      {
+        "path": "package.json",
+        "mode": "100644",
+        "gitBlob": "2d59eaf05ce7b28e1ae586a920ac09bfae3d2a72",
+        "bytes": 678,
+        "sha256": "65a789e1badf5ad0a5f268df6bef9153cdda032ca7c03a00fc40b6db34b17144"
+      },
+      {
+        "path": "public/icon.svg",
+        "mode": "100644",
+        "gitBlob": "ba82436eb1f547c2c21d9f3f9f4087f8cfd83113",
+        "bytes": 279,
+        "sha256": "c4d13bb7f4534fbecf91a4d26a98e6b718fcb3962b11f782a7e780cb551310f3"
+      },
+      {
+        "path": "public/images/barcelona.jpg",
+        "mode": "100644",
+        "gitBlob": "e29f3dab86b5a9ec6e45a42290515961529df357",
+        "bytes": 228256,
+        "sha256": "83cc58615c9d5ea01627080215e161303dc452b63695f85a763ec4a0521251b3"
+      },
+      {
+        "path": "public/images/copenhagen.jpg",
+        "mode": "100644",
+        "gitBlob": "10dee001d5a99e8695897ad648c95966a7326bec",
+        "bytes": 399864,
+        "sha256": "c69400b5d548412786eef4d4e2a488c3850f84824e7ef04f552c7118a7dd0456"
+      },
+      {
+        "path": "public/images/lisbon.jpg",
+        "mode": "100644",
+        "gitBlob": "711fef3daf4d96e131841029436a0723ca72cdd7",
+        "bytes": 412590,
+        "sha256": "a49ff7d209c67d6a34168b28d5fa04976302105b8d9bfdc5741e9ec9a281bb63"
+      },
+      {
+        "path": "public/images/munich.jpg",
+        "mode": "100644",
+        "gitBlob": "9cc3662128477358a1865a0bf8366442dd509ad2",
+        "bytes": 570901,
+        "sha256": "ee5d3596b79714fc2beb156603e45bf1c751679c3f12decea84763eb675b8181"
+      },
+      {
+        "path": "public/images/world.svg",
+        "mode": "100644",
+        "gitBlob": "ffd7b249ccfc6ebeaafd8fd119d68efd3e8f4150",
+        "bytes": 1315,
+        "sha256": "71b53c50e0a1d463383eae68863fd62f6b6fc6dc56a9970b34437edc32071f5a"
+      },
+      {
+        "path": "scripts/run-csv-backup-browser.mjs",
+        "mode": "100644",
+        "gitBlob": "198fe3c8472bf630f56f8b65db7e27fee75fd5cc",
+        "bytes": 32507,
+        "sha256": "3766a7839c56221df53bea80e740132adc2701f02d637d1ffc6861fbb7255695"
+      },
+      {
+        "path": "tests/community-management-storage.test.mjs",
+        "mode": "100644",
+        "gitBlob": "d33bec4cff482d27cb2030ffc62f35322f5ff747",
+        "bytes": 18444,
+        "sha256": "11633c140c169d0522c20c510f37514bbdb9436f83c8b283690bade485c856f6"
+      },
+      {
+        "path": "tests/community-management-ui.test.mjs",
+        "mode": "100644",
+        "gitBlob": "35b58eb9d36e407601a5f6ce26352f4f09abb4e6",
+        "bytes": 35179,
+        "sha256": "ae14d2545f13260b02f9184c95fae856ec7153bc90874c593050c8d837ec6a7e"
+      },
+      {
+        "path": "tests/community-management.test.mjs",
+        "mode": "100644",
+        "gitBlob": "93f5e5daafc13f56372f8499a5dcd3118dbed0b7",
+        "bytes": 8118,
+        "sha256": "964bfebd9671860174cc4d99dc3018c1fee7764e4ca807ec559204139ac960d5"
+      },
+      {
+        "path": "tests/csv-import-state.test.mjs",
+        "mode": "100644",
+        "gitBlob": "368f9c9949ae19cccd2eed790bab1081685840e9",
+        "bytes": 25506,
+        "sha256": "d29c0b0dd8785cfbd0a0a57ffb135869225263467e868644f176fd9843039ba9"
+      },
+      {
+        "path": "tests/expense-csv.test.mjs",
+        "mode": "100644",
+        "gitBlob": "491bf1b6c628d008d9fe0211be1f7f89e463bda4",
+        "bytes": 6985,
+        "sha256": "50966989a42d5fdb7d7349b7629ad3402b9637a0a625e381d4a0803bc554fa0e"
+      },
+      {
+        "path": "tests/shared-plan.test.mjs",
+        "mode": "100644",
+        "gitBlob": "49f498bce3de8362b3842f1cbc8474b9609a46e0",
+        "bytes": 10913,
+        "sha256": "c264f50151a7faab388bf2feb05514156794da90111078dbc352990f94b82127"
+      },
+      {
+        "path": "tests/workspace-backup-ui.test.mjs",
+        "mode": "100644",
+        "gitBlob": "78448ce7ca15c091053f92226d7d0c7106000e55",
+        "bytes": 18769,
+        "sha256": "4781c1332841fd61df5e7e2bdf2ecc428b57a09004a97a0bee1c4bfd5e987bdc"
+      },
+      {
+        "path": "tests/workspace-backup.test.mjs",
+        "mode": "100644",
+        "gitBlob": "199ace2d4c9b12fc1d2eddfa895fca21ab5d408c",
+        "bytes": 9836,
+        "sha256": "7171ecaab4c5d01c09ce46d2ee199fd6739d0b2f38a83f168a9f0b37dcfba256"
+      },
+      {
+        "path": "tests/workspace-state.test.mjs",
+        "mode": "100644",
+        "gitBlob": "98f0c0ef94a68c8fd7bc3ed93f890578d2498987",
+        "bytes": 23387,
+        "sha256": "9a469d1788f20ab90215e1b2ed36627bed0a358a63013aeb2c48bd9a1381395f"
+      },
+      {
+        "path": "tsconfig.json",
+        "mode": "100644",
+        "gitBlob": "dec34e704bd3b2e2cf87438df43d4fdd33646e05",
+        "bytes": 590,
+        "sha256": "755b218fee1c0c9f6e73ac3ee731b6c72d39b7ff2e8980f06ff02f6c3cfa1d64"
+      }
+    ],
+    "proofLimits": [
+      "Eight private authored-browser scenarios exercise the actual public deployment, not existing user data, API writes, providers or a full product acceptance.",
+      "The only installed JavaScript tool is Playwright 1.61.1 in owned external runner storage. Chromium Linux system packages are installed on the disposable runner and are not independently uninstalled.",
+      "Direct child exit/close/EOF and original groups are checked. Same-UID Linux browser processes are additionally attributed by the unique owned binary/profile/cache path and kernel starttime; unreadable or uncertain attribution prevents owned-root deletion. This is not a host-wide process inventory.",
+      "Registry/browser downloads and allowed public hosted GETs are setup/acceptance network traffic, not a network sandbox. Userspace deadlines cannot interrupt blocked kernel filesystem calls."
+    ],
+    "generated": {
+      "sourceSpec": "docs/proposals/csv-backup-browser-v2.spec.ts.example",
+      "sourceSha256": "6eb6938320f339a74d11d71bc101537a0e14651585219b87c0ad94797665b3f4",
+      "canonicalTransformSha256": "7df44078fb62fc735c16e1f5a90bab46bb8bed6b2e7b52fff0cc0ace6582b1c7",
+      "actualGeneratedSha256": "d3487d2e43f5d607ea09f0e5ecf347c3e0b1f5ee0a0de3c4e2ecbf199596fa7b",
+      "onlyTwoImportSpecifierReplacements": true,
+      "configSha256": "6139457dc2b389e2471662704b3db748027d6efb417ecd7ecdd8b734243cea5a"
+    },
+    "browser": {
+      "raw": {
+        "encoding": "gzip-base64",
+        "bytes": 55541,
+        "sha256": "edf477e51f914934740bb9b11ffea75eee4cbcb2454c9901985546b13a089039",
+        "compressedBytes": 4240,
+        "data": "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"
+      },
+      "accepted": false,
+      "cases": [
+        {
+          "title": "EUR imports append once and explicit USD rejects without changing existing expenses",
+          "project": "desktop-chromium",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "actualStatus": "failed",
+          "retry": 0,
+          "durationMs": 1098,
+          "errors": [
+            "Error: No cross-origin request or app-origin mutation may escape the guard.\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 4\n\n- Array []\n+ Array [\n+   \"unexpected-read\",\n+   \"unexpected-read\",\n+ ]\n\n  153 |         if (body.byteLength > 8192) throw new Error('The boundary attachment exceeded its fixed bound.');\n  154 |         await testInfo.attach('trippin-browser-boundary', { body, contentType: 'application/json' });\n> 155 |         expect(guard.unexpected, 'No cross-origin request or app-origin mutation may escape the guard.').toEqual([]);\n      |                                                                                                          ^\n  156 |         expect(guard.pageErrorCount, 'Uncaught page errors must fail the browser case.').toBe(0);\n  157 |         console.log(`Out-of-scope reads blocked: api=${guard.blockedApi}, weather=${guard.blockedWeather}, tiles=${guard.blockedTiles}; pageErrors=${guard.pageErrorCount}`);\n  158 |       } finally {\n    at Object._test.test.extend.networkGuard.auto ([scratch]/tools/csv-backup.spec.ts:155:106)"
+          ],
+          "boundaryError": "boundary_attachment_count"
+        },
+        {
+          "title": "EUR imports append once and explicit USD rejects without changing existing expenses",
+          "project": "mobile-chromium",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "actualStatus": "failed",
+          "retry": 0,
+          "durationMs": 782,
+          "errors": [
+            "Error: No cross-origin request or app-origin mutation may escape the guard.\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 4\n\n- Array []\n+ Array [\n+   \"unexpected-read\",\n+   \"unexpected-read\",\n+ ]\n\n  153 |         if (body.byteLength > 8192) throw new Error('The boundary attachment exceeded its fixed bound.');\n  154 |         await testInfo.attach('trippin-browser-boundary', { body, contentType: 'application/json' });\n> 155 |         expect(guard.unexpected, 'No cross-origin request or app-origin mutation may escape the guard.').toEqual([]);\n      |                                                                                                          ^\n  156 |         expect(guard.pageErrorCount, 'Uncaught page errors must fail the browser case.').toBe(0);\n  157 |         console.log(`Out-of-scope reads blocked: api=${guard.blockedApi}, weather=${guard.blockedWeather}, tiles=${guard.blockedTiles}; pageErrors=${guard.pageErrorCount}`);\n  158 |       } finally {\n    at Object._test.test.extend.networkGuard.auto ([scratch]/tools/csv-backup.spec.ts:155:106)"
+          ],
+          "boundaryError": "boundary_attachment_count"
+        },
+        {
+          "title": "ambiguous duplicate and explicit blank currency both reject without losing expenses",
+          "project": "desktop-chromium",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "actualStatus": "failed",
+          "retry": 0,
+          "durationMs": 688,
+          "errors": [
+            "Error: No cross-origin request or app-origin mutation may escape the guard.\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 3\n\n- Array []\n+ Array [\n+   \"unexpected-read\",\n+ ]\n\n  153 |         if (body.byteLength > 8192) throw new Error('The boundary attachment exceeded its fixed bound.');\n  154 |         await testInfo.attach('trippin-browser-boundary', { body, contentType: 'application/json' });\n> 155 |         expect(guard.unexpected, 'No cross-origin request or app-origin mutation may escape the guard.').toEqual([]);\n      |                                                                                                          ^\n  156 |         expect(guard.pageErrorCount, 'Uncaught page errors must fail the browser case.').toBe(0);\n  157 |         console.log(`Out-of-scope reads blocked: api=${guard.blockedApi}, weather=${guard.blockedWeather}, tiles=${guard.blockedTiles}; pageErrors=${guard.pageErrorCount}`);\n  158 |       } finally {\n    at Object._test.test.extend.networkGuard.auto ([scratch]/tools/csv-backup.spec.ts:155:106)"
+          ],
+          "boundaryError": "boundary_attachment_count"
+        },
+        {
+          "title": "ambiguous duplicate and explicit blank currency both reject without losing expenses",
+          "project": "mobile-chromium",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "actualStatus": "failed",
+          "retry": 0,
+          "durationMs": 772,
+          "errors": [
+            "Error: No cross-origin request or app-origin mutation may escape the guard.\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 3\n\n- Array []\n+ Array [\n+   \"unexpected-read\",\n+ ]\n\n  153 |         if (body.byteLength > 8192) throw new Error('The boundary attachment exceeded its fixed bound.');\n  154 |         await testInfo.attach('trippin-browser-boundary', { body, contentType: 'application/json' });\n> 155 |         expect(guard.unexpected, 'No cross-origin request or app-origin mutation may escape the guard.').toEqual([]);\n      |                                                                                                          ^\n  156 |         expect(guard.pageErrorCount, 'Uncaught page errors must fail the browser case.').toBe(0);\n  157 |         console.log(`Out-of-scope reads blocked: api=${guard.blockedApi}, weather=${guard.blockedWeather}, tiles=${guard.blockedTiles}; pageErrors=${guard.pageErrorCount}`);\n  158 |       } finally {\n    at Object._test.test.extend.networkGuard.auto ([scratch]/tools/csv-backup.spec.ts:155:106)"
+          ],
+          "boundaryError": "boundary_attachment_count"
+        },
+        {
+          "title": "legacy pretty backup above two MB restores and invalid UTF-8 cannot replace its UI or durable state",
+          "project": "desktop-chromium",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "actualStatus": "failed",
+          "retry": 0,
+          "durationMs": 16009,
+          "errors": [
+            "Error: expect(locator).toBeVisible() failed\n\nLocator: getByLabel('Your name', { exact: true })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" with timeout 15000ms\n  - waiting for getByLabel('Your name', { exact: true })\n\n\n  197 | async function profile(page: Page): Promise<void> {\n  198 |   await page.getByRole('button', { name: 'Your profile', exact: true }).click();\n> 199 |   await expect(page.getByLabel('Your name', { exact: true })).toBeVisible();\n      |                                                               ^\n  200 | }\n  201 | async function expectProfile(page: Page, expected: WorkspaceState): Promise<void> {\n  202 |   await expect(page.getByLabel('Your name', { exact: true })).toHaveValue(expected.profile.name);\n    at profile ([scratch]/tools/csv-backup.spec.ts:199:63)\n    at [scratch]/tools/csv-backup.spec.ts:328:3",
+            "Error: No cross-origin request or app-origin mutation may escape the guard.\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 4\n\n- Array []\n+ Array [\n+   \"unexpected-read\",\n+   \"unexpected-read\",\n+ ]\n\n  153 |         if (body.byteLength > 8192) throw new Error('The boundary attachment exceeded its fixed bound.');\n  154 |         await testInfo.attach('trippin-browser-boundary', { body, contentType: 'application/json' });\n> 155 |         expect(guard.unexpected, 'No cross-origin request or app-origin mutation may escape the guard.').toEqual([]);\n      |                                                                                                          ^\n  156 |         expect(guard.pageErrorCount, 'Uncaught page errors must fail the browser case.').toBe(0);\n  157 |         console.log(`Out-of-scope reads blocked: api=${guard.blockedApi}, weather=${guard.blockedWeather}, tiles=${guard.blockedTiles}; pageErrors=${guard.pageErrorCount}`);\n  158 |       } finally {\n    at Object._test.test.extend.networkGuard.auto ([scratch]/tools/csv-backup.spec.ts:155:106)"
+          ],
+          "boundaryError": "boundary_attachment_count"
+        },
+        {
+          "title": "legacy pretty backup above two MB restores and invalid UTF-8 cannot replace its UI or durable state",
+          "project": "mobile-chromium",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "actualStatus": "failed",
+          "retry": 0,
+          "durationMs": 3090,
+          "errors": [
+            "Error: No cross-origin request or app-origin mutation may escape the guard.\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 4\n\n- Array []\n+ Array [\n+   \"unexpected-read\",\n+   \"unexpected-read\",\n+ ]\n\n  153 |         if (body.byteLength > 8192) throw new Error('The boundary attachment exceeded its fixed bound.');\n  154 |         await testInfo.attach('trippin-browser-boundary', { body, contentType: 'application/json' });\n> 155 |         expect(guard.unexpected, 'No cross-origin request or app-origin mutation may escape the guard.').toEqual([]);\n      |                                                                                                          ^\n  156 |         expect(guard.pageErrorCount, 'Uncaught page errors must fail the browser case.').toBe(0);\n  157 |         console.log(`Out-of-scope reads blocked: api=${guard.blockedApi}, weather=${guard.blockedWeather}, tiles=${guard.blockedTiles}; pageErrors=${guard.pageErrorCount}`);\n  158 |       } finally {\n    at Object._test.test.extend.networkGuard.auto ([scratch]/tools/csv-backup.spec.ts:155:106)"
+          ],
+          "boundaryError": "boundary_attachment_count"
+        },
+        {
+          "title": "actual CJK download above two MB restores after a visible profile edit and survives reload",
+          "project": "desktop-chromium",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "actualStatus": "failed",
+          "retry": 0,
+          "durationMs": 4366,
+          "errors": [
+            "Error: No cross-origin request or app-origin mutation may escape the guard.\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 4\n\n- Array []\n+ Array [\n+   \"unexpected-read\",\n+   \"unexpected-read\",\n+ ]\n\n  153 |         if (body.byteLength > 8192) throw new Error('The boundary attachment exceeded its fixed bound.');\n  154 |         await testInfo.attach('trippin-browser-boundary', { body, contentType: 'application/json' });\n> 155 |         expect(guard.unexpected, 'No cross-origin request or app-origin mutation may escape the guard.').toEqual([]);\n      |                                                                                                          ^\n  156 |         expect(guard.pageErrorCount, 'Uncaught page errors must fail the browser case.').toBe(0);\n  157 |         console.log(`Out-of-scope reads blocked: api=${guard.blockedApi}, weather=${guard.blockedWeather}, tiles=${guard.blockedTiles}; pageErrors=${guard.pageErrorCount}`);\n  158 |       } finally {\n    at Object._test.test.extend.networkGuard.auto ([scratch]/tools/csv-backup.spec.ts:155:106)"
+          ],
+          "boundaryError": "boundary_attachment_count"
+        },
+        {
+          "title": "actual CJK download above two MB restores after a visible profile edit and survives reload",
+          "project": "mobile-chromium",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "actualStatus": "failed",
+          "retry": 0,
+          "durationMs": 6245,
+          "errors": [
+            "Error: No cross-origin request or app-origin mutation may escape the guard.\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 4\n\n- Array []\n+ Array [\n+   \"unexpected-read\",\n+   \"unexpected-read\",\n+ ]\n\n  153 |         if (body.byteLength > 8192) throw new Error('The boundary attachment exceeded its fixed bound.');\n  154 |         await testInfo.attach('trippin-browser-boundary', { body, contentType: 'application/json' });\n> 155 |         expect(guard.unexpected, 'No cross-origin request or app-origin mutation may escape the guard.').toEqual([]);\n      |                                                                                                          ^\n  156 |         expect(guard.pageErrorCount, 'Uncaught page errors must fail the browser case.').toBe(0);\n  157 |         console.log(`Out-of-scope reads blocked: api=${guard.blockedApi}, weather=${guard.blockedWeather}, tiles=${guard.blockedTiles}; pageErrors=${guard.pageErrorCount}`);\n  158 |       } finally {\n    at Object._test.test.extend.networkGuard.auto ([scratch]/tools/csv-backup.spec.ts:155:106)"
+          ],
+          "boundaryError": "boundary_attachment_count"
+        }
+      ],
+      "globalErrors": []
+    },
+    "processCleanup": {
+      "passed": true,
+      "started": 28
+    },
+    "browserProcessCleanup": {
+      "passed": true,
+      "basis": "Same UID, unique owned-root argv attribution and revalidated Linux kernel PID starttime; no argv/env output.",
+      "observed": [
+        {
+          "pid": 3049,
+          "ppid": 2236,
+          "pgid": 3049,
+          "session": 3049,
+          "state": "R",
+          "starttime": "17247",
+          "owned": true,
+          "executable": "node",
+          "firstSeenAtUtc": "2026-11-05T03:21:51.945Z"
+        },
+        {
+          "pid": 3061,
+          "ppid": 3049,
+          "pgid": 3049,
+          "session": 3049,
+          "state": "S",
+          "starttime": "17299",
+          "owned": true,
+          "executable": "node",
+          "firstSeenAtUtc": "2026-11-05T03:21:52.954Z"
+        },
+        {
+          "pid": 3073,
+          "ppid": 3061,
+          "pgid": 3073,
+          "session": 3073,
+          "state": "S",
+          "starttime": "17327",
+          "owned": true,
+          "executable": "chrome-headless-shell",
+          "firstSeenAtUtc": "2026-11-05T03:21:52.954Z"
+        },
+        {
+          "pid": 3075,
+          "ppid": 3073,
+          "pgid": 3073,
+          "session": 3073,
+          "state": "S",
+          "starttime": "17328",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=zygote --no-zygote-sandbox --no-sandbox --headless",
+          "firstSeenAtUtc": "2026-11-05T03:21:52.954Z"
+        },
+        {
+          "pid": 3076,
+          "ppid": 3073,
+          "pgid": 3073,
+          "session": 3073,
+          "state": "S",
+          "starttime": "17329",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=zygote --no-sandbox --headless",
+          "firstSeenAtUtc": "2026-11-05T03:21:52.954Z"
+        },
+        {
+          "pid": 3093,
+          "ppid": 3075,
+          "pgid": 3073,
+          "session": 3073,
+          "state": "S",
+          "starttime": "17330",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=gpu-process --no-sandbox --disable-dev-shm-usage --",
+          "firstSeenAtUtc": "2026-11-05T03:21:52.954Z"
+        },
+        {
+          "pid": 3106,
+          "ppid": 3073,
+          "pgid": 3073,
+          "session": 3073,
+          "state": "S",
+          "starttime": "17663",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=utility --utility-sub-type=network.mojom.NetworkSer",
+          "firstSeenAtUtc": "2026-11-05T03:21:56.493Z"
+        },
+        {
+          "pid": 3127,
+          "ppid": 3076,
+          "pgid": 3073,
+          "session": 3073,
+          "state": "R",
+          "starttime": "17669",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-dev-",
+          "firstSeenAtUtc": "2026-11-05T03:21:56.493Z"
+        },
+        {
+          "pid": 3138,
+          "ppid": 3049,
+          "pgid": 3049,
+          "session": 3049,
+          "state": "R",
+          "starttime": "17777",
+          "owned": true,
+          "executable": "node",
+          "firstSeenAtUtc": "2026-11-05T03:21:57.506Z"
+        },
+        {
+          "pid": 3151,
+          "ppid": 3138,
+          "pgid": 3151,
+          "session": 3151,
+          "state": "S",
+          "starttime": "17804",
+          "owned": true,
+          "executable": "chrome-headless-shell",
+          "firstSeenAtUtc": "2026-11-05T03:21:58.020Z"
+        },
+        {
+          "pid": 3153,
+          "ppid": 3151,
+          "pgid": 3151,
+          "session": 3151,
+          "state": "S",
+          "starttime": "17806",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=zygote --no-zygote-sandbox --no-sandbox --headless",
+          "firstSeenAtUtc": "2026-11-05T03:21:58.021Z"
+        },
+        {
+          "pid": 3154,
+          "ppid": 3151,
+          "pgid": 3151,
+          "session": 3151,
+          "state": "S",
+          "starttime": "17806",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=zygote --no-sandbox --headless",
+          "firstSeenAtUtc": "2026-11-05T03:21:58.021Z"
+        },
+        {
+          "pid": 3169,
+          "ppid": 3153,
+          "pgid": 3151,
+          "session": 3151,
+          "state": "S",
+          "starttime": "17807",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=gpu-process --no-sandbox --disable-dev-shm-usage --",
+          "firstSeenAtUtc": "2026-11-05T03:21:58.021Z"
+        },
+        {
+          "pid": 3180,
+          "ppid": 3151,
+          "pgid": 3151,
+          "session": 3151,
+          "state": "S",
+          "starttime": "17808",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=utility --utility-sub-type=network.mojom.NetworkSer",
+          "firstSeenAtUtc": "2026-11-05T03:21:58.021Z"
+        },
+        {
+          "pid": 3209,
+          "ppid": 3154,
+          "pgid": 3151,
+          "session": 3151,
+          "state": "R",
+          "starttime": "17815",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-dev-",
+          "firstSeenAtUtc": "2026-11-05T03:21:58.021Z"
+        },
+        {
+          "pid": 3220,
+          "ppid": 3049,
+          "pgid": 3049,
+          "session": 3049,
+          "state": "R",
+          "starttime": "17881",
+          "owned": true,
+          "executable": "node",
+          "firstSeenAtUtc": "2026-11-05T03:21:58.527Z"
+        },
+        {
+          "pid": 3233,
+          "ppid": 3220,
+          "pgid": 3233,
+          "session": 3233,
+          "state": "S",
+          "starttime": "17909",
+          "owned": true,
+          "executable": "chrome-headless-shell",
+          "firstSeenAtUtc": "2026-11-05T03:21:59.033Z"
+        },
+        {
+          "pid": 3235,
+          "ppid": 3233,
+          "pgid": 3233,
+          "session": 3233,
+          "state": "S",
+          "starttime": "17910",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=zygote --no-zygote-sandbox --no-sandbox --headless",
+          "firstSeenAtUtc": "2026-11-05T03:21:59.033Z"
+        },
+        {
+          "pid": 3236,
+          "ppid": 3233,
+          "pgid": 3233,
+          "session": 3233,
+          "state": "S",
+          "starttime": "17910",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=zygote --no-sandbox --headless",
+          "firstSeenAtUtc": "2026-11-05T03:21:59.033Z"
+        },
+        {
+          "pid": 3251,
+          "ppid": 3235,
+          "pgid": 3233,
+          "session": 3233,
+          "state": "S",
+          "starttime": "17912",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=gpu-process --no-sandbox --disable-dev-shm-usage --",
+          "firstSeenAtUtc": "2026-11-05T03:21:59.033Z"
+        },
+        {
+          "pid": 3253,
+          "ppid": 3233,
+          "pgid": 3233,
+          "session": 3233,
+          "state": "S",
+          "starttime": "17912",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=utility --utility-sub-type=network.mojom.NetworkSer",
+          "firstSeenAtUtc": "2026-11-05T03:21:59.033Z"
+        },
+        {
+          "pid": 3282,
+          "ppid": 3236,
+          "pgid": 3233,
+          "session": 3233,
+          "state": "R",
+          "starttime": "17915",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-dev-",
+          "firstSeenAtUtc": "2026-11-05T03:21:59.033Z"
+        },
+        {
+          "pid": 3291,
+          "ppid": 3236,
+          "pgid": 3233,
+          "session": 3233,
+          "state": "R",
+          "starttime": "17963",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-dev-",
+          "firstSeenAtUtc": "2026-11-05T03:21:59.539Z"
+        },
+        {
+          "pid": 3303,
+          "ppid": 3049,
+          "pgid": 3049,
+          "session": 3049,
+          "state": "R",
+          "starttime": "18355",
+          "owned": true,
+          "executable": "node",
+          "firstSeenAtUtc": "2026-11-05T03:22:03.073Z"
+        },
+        {
+          "pid": 3315,
+          "ppid": 3303,
+          "pgid": 3315,
+          "session": 3315,
+          "state": "S",
+          "starttime": "18382",
+          "owned": true,
+          "executable": "chrome-headless-shell",
+          "firstSeenAtUtc": "2026-11-05T03:22:03.584Z"
+        },
+        {
+          "pid": 3317,
+          "ppid": 3315,
+          "pgid": 3315,
+          "session": 3315,
+          "state": "S",
+          "starttime": "18383",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=zygote --no-zygote-sandbox --no-sandbox --headless",
+          "firstSeenAtUtc": "2026-11-05T03:22:03.584Z"
+        },
+        {
+          "pid": 3318,
+          "ppid": 3315,
+          "pgid": 3315,
+          "session": 3315,
+          "state": "S",
+          "starttime": "18383",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=zygote --no-sandbox --headless",
+          "firstSeenAtUtc": "2026-11-05T03:22:03.584Z"
+        },
+        {
+          "pid": 3334,
+          "ppid": 3317,
+          "pgid": 3315,
+          "session": 3315,
+          "state": "S",
+          "starttime": "18385",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=gpu-process --no-sandbox --disable-dev-shm-usage --",
+          "firstSeenAtUtc": "2026-11-05T03:22:03.584Z"
+        },
+        {
+          "pid": 3339,
+          "ppid": 3315,
+          "pgid": 3315,
+          "session": 3315,
+          "state": "S",
+          "starttime": "18385",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=utility --utility-sub-type=network.mojom.NetworkSer",
+          "firstSeenAtUtc": "2026-11-05T03:22:03.584Z"
+        },
+        {
+          "pid": 3371,
+          "ppid": 3318,
+          "pgid": 3315,
+          "session": 3315,
+          "state": "R",
+          "starttime": "18392",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-dev-",
+          "firstSeenAtUtc": "2026-11-05T03:22:03.584Z"
+        },
+        {
+          "pid": 3386,
+          "ppid": 3049,
+          "pgid": 3049,
+          "session": 3049,
+          "state": "R",
+          "starttime": "19995",
+          "owned": true,
+          "executable": "node",
+          "firstSeenAtUtc": "2026-11-05T03:22:19.765Z"
+        },
+        {
+          "pid": 3398,
+          "ppid": 3386,
+          "pgid": 3398,
+          "session": 3398,
+          "state": "R",
+          "starttime": "20022",
+          "owned": true,
+          "executable": "chrome-headless-shell",
+          "firstSeenAtUtc": "2026-11-05T03:22:19.765Z"
+        },
+        {
+          "pid": 3400,
+          "ppid": 3398,
+          "pgid": 3398,
+          "session": 3398,
+          "state": "S",
+          "starttime": "20023",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=zygote --no-zygote-sandbox --no-sandbox --headless",
+          "firstSeenAtUtc": "2026-11-05T03:22:19.765Z"
+        },
+        {
+          "pid": 3401,
+          "ppid": 3398,
+          "pgid": 3398,
+          "session": 3398,
+          "state": "S",
+          "starttime": "20023",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=zygote --no-sandbox --headless",
+          "firstSeenAtUtc": "2026-11-05T03:22:19.765Z"
+        },
+        {
+          "pid": 3416,
+          "ppid": 3400,
+          "pgid": 3398,
+          "session": 3398,
+          "state": "S",
+          "starttime": "20025",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=gpu-process --no-sandbox --disable-dev-shm-usage --",
+          "firstSeenAtUtc": "2026-11-05T03:22:19.765Z"
+        },
+        {
+          "pid": 3421,
+          "ppid": 3398,
+          "pgid": 3398,
+          "session": 3398,
+          "state": "S",
+          "starttime": "20025",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=utility --utility-sub-type=network.mojom.NetworkSer",
+          "firstSeenAtUtc": "2026-11-05T03:22:19.765Z"
+        },
+        {
+          "pid": 3444,
+          "ppid": 3401,
+          "pgid": 3398,
+          "session": 3398,
+          "state": "R",
+          "starttime": "20028",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-dev-",
+          "firstSeenAtUtc": "2026-11-05T03:22:19.765Z"
+        },
+        {
+          "pid": 3453,
+          "ppid": 3401,
+          "pgid": 3398,
+          "session": 3398,
+          "state": "S",
+          "starttime": "20032",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-dev-",
+          "firstSeenAtUtc": "2026-11-05T03:22:20.270Z"
+        },
+        {
+          "pid": 3463,
+          "ppid": 3049,
+          "pgid": 3049,
+          "session": 3049,
+          "state": "R",
+          "starttime": "20110",
+          "owned": true,
+          "executable": "node",
+          "firstSeenAtUtc": "2026-11-05T03:22:20.775Z"
+        },
+        {
+          "pid": 3475,
+          "ppid": 3463,
+          "pgid": 3475,
+          "session": 3475,
+          "state": "S",
+          "starttime": "20139",
+          "owned": true,
+          "executable": "chrome-headless-shell",
+          "firstSeenAtUtc": "2026-11-05T03:22:21.281Z"
+        },
+        {
+          "pid": 3477,
+          "ppid": 3475,
+          "pgid": 3475,
+          "session": 3475,
+          "state": "S",
+          "starttime": "20140",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=zygote --no-zygote-sandbox --no-sandbox --headless",
+          "firstSeenAtUtc": "2026-11-05T03:22:21.281Z"
+        },
+        {
+          "pid": 3478,
+          "ppid": 3475,
+          "pgid": 3475,
+          "session": 3475,
+          "state": "S",
+          "starttime": "20140",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=zygote --no-sandbox --headless",
+          "firstSeenAtUtc": "2026-11-05T03:22:21.281Z"
+        },
+        {
+          "pid": 3493,
+          "ppid": 3477,
+          "pgid": 3475,
+          "session": 3475,
+          "state": "S",
+          "starttime": "20142",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=gpu-process --no-sandbox --disable-dev-shm-usage --",
+          "firstSeenAtUtc": "2026-11-05T03:22:21.281Z"
+        },
+        {
+          "pid": 3501,
+          "ppid": 3475,
+          "pgid": 3475,
+          "session": 3475,
+          "state": "S",
+          "starttime": "20142",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=utility --utility-sub-type=network.mojom.NetworkSer",
+          "firstSeenAtUtc": "2026-11-05T03:22:21.281Z"
+        },
+        {
+          "pid": 3529,
+          "ppid": 3478,
+          "pgid": 3475,
+          "session": 3475,
+          "state": "R",
+          "starttime": "20160",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-dev-",
+          "firstSeenAtUtc": "2026-11-05T03:22:21.281Z"
+        },
+        {
+          "pid": 3540,
+          "ppid": 3049,
+          "pgid": 3049,
+          "session": 3049,
+          "state": "R",
+          "starttime": "20224",
+          "owned": true,
+          "executable": "node",
+          "firstSeenAtUtc": "2026-11-05T03:22:21.787Z"
+        },
+        {
+          "pid": 3552,
+          "ppid": 3540,
+          "pgid": 3552,
+          "session": 3552,
+          "state": "S",
+          "starttime": "20253",
+          "owned": true,
+          "executable": "chrome-headless-shell",
+          "firstSeenAtUtc": "2026-11-05T03:22:22.295Z"
+        },
+        {
+          "pid": 3554,
+          "ppid": 3552,
+          "pgid": 3552,
+          "session": 3552,
+          "state": "S",
+          "starttime": "20254",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=zygote --no-zygote-sandbox --no-sandbox --headless",
+          "firstSeenAtUtc": "2026-11-05T03:22:22.295Z"
+        },
+        {
+          "pid": 3555,
+          "ppid": 3552,
+          "pgid": 3552,
+          "session": 3552,
+          "state": "S",
+          "starttime": "20254",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=zygote --no-sandbox --headless",
+          "firstSeenAtUtc": "2026-11-05T03:22:22.295Z"
+        },
+        {
+          "pid": 3571,
+          "ppid": 3554,
+          "pgid": 3552,
+          "session": 3552,
+          "state": "S",
+          "starttime": "20256",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=gpu-process --no-sandbox --disable-dev-shm-usage --",
+          "firstSeenAtUtc": "2026-11-05T03:22:22.295Z"
+        },
+        {
+          "pid": 3573,
+          "ppid": 3552,
+          "pgid": 3552,
+          "session": 3552,
+          "state": "S",
+          "starttime": "20256",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=utility --utility-sub-type=network.mojom.NetworkSer",
+          "firstSeenAtUtc": "2026-11-05T03:22:22.295Z"
+        },
+        {
+          "pid": 3598,
+          "ppid": 3555,
+          "pgid": 3552,
+          "session": 3552,
+          "state": "R",
+          "starttime": "20259",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-dev-",
+          "firstSeenAtUtc": "2026-11-05T03:22:22.296Z"
+        },
+        {
+          "pid": 3607,
+          "ppid": 3555,
+          "pgid": 3552,
+          "session": 3552,
+          "state": "R",
+          "starttime": "20307",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-dev-",
+          "firstSeenAtUtc": "2026-11-05T03:22:22.799Z"
+        },
+        {
+          "pid": 3618,
+          "ppid": 3049,
+          "pgid": 3049,
+          "session": 3049,
+          "state": "R",
+          "starttime": "20887",
+          "owned": true,
+          "executable": "node",
+          "firstSeenAtUtc": "2026-11-05T03:22:28.356Z"
+        },
+        {
+          "pid": 3631,
+          "ppid": 3618,
+          "pgid": 3631,
+          "session": 3631,
+          "state": "S",
+          "starttime": "20914",
+          "owned": true,
+          "executable": "chrome-headless-shell",
+          "firstSeenAtUtc": "2026-11-05T03:22:28.863Z"
+        },
+        {
+          "pid": 3633,
+          "ppid": 3631,
+          "pgid": 3631,
+          "session": 3631,
+          "state": "S",
+          "starttime": "20915",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=zygote --no-zygote-sandbox --no-sandbox --headless",
+          "firstSeenAtUtc": "2026-11-05T03:22:28.863Z"
+        },
+        {
+          "pid": 3634,
+          "ppid": 3631,
+          "pgid": 3631,
+          "session": 3631,
+          "state": "S",
+          "starttime": "20915",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=zygote --no-sandbox --headless",
+          "firstSeenAtUtc": "2026-11-05T03:22:28.863Z"
+        },
+        {
+          "pid": 3652,
+          "ppid": 3633,
+          "pgid": 3631,
+          "session": 3631,
+          "state": "S",
+          "starttime": "20917",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=gpu-process --no-sandbox --disable-dev-shm-usage --",
+          "firstSeenAtUtc": "2026-11-05T03:22:28.863Z"
+        },
+        {
+          "pid": 3654,
+          "ppid": 3631,
+          "pgid": 3631,
+          "session": 3631,
+          "state": "S",
+          "starttime": "20917",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=utility --utility-sub-type=network.mojom.NetworkSer",
+          "firstSeenAtUtc": "2026-11-05T03:22:28.863Z"
+        },
+        {
+          "pid": 3685,
+          "ppid": 3634,
+          "pgid": 3631,
+          "session": 3631,
+          "state": "R",
+          "starttime": "20925",
+          "owned": true,
+          "executable": "chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-dev-",
+          "firstSeenAtUtc": "2026-11-05T03:22:28.863Z"
+        }
+      ],
+      "remaining": [],
+      "termSent": 0,
+      "killSent": 0,
+      "scanUncertain": false
+    },
+    "scratchCleanup": "passed",
+    "interrupted": false,
+    "completedAtUtc": "2026-11-05T03:22:32.226Z"
+  }
+}
