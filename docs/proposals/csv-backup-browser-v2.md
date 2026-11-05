@@ -1,9 +1,11 @@
 # Hosted CSV and backup browser packet v2
 
-5 November 2026. **Three failed outcomes preserved; callback evidence pending.** See the
+5 November 2026. **Four failed outcomes preserved; delayed zoom callback identified.** See the
 [first outcome](../results/2026/11-05/csv-backup-attempt-1.md) and
 [six-pass/two-fail second outcome](../results/2026/11-05/csv-backup-attempt-2.md)
 and [unchanged third outcome](../results/2026/11-05/csv-backup-attempt-3.md).
+The [fourth run](../results/2026/11-05/csv-backup-attempt-4.md) supplies actual
+public-asset frames identifying `_onZoomTransitionEnd` after map removal.
 The owner's standing approval to
 continue and complete the personal-project work covers this focused temporary
 public CI packet. The [historical proposal](csv-backup-browser.md) remains an
