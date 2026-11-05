@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "trippin.csv-backup-publication.v1",
+  "observedAtUtc": "2026-11-05T04:19:00Z",
+  "checked": {
+    "commit": "2bce8e4de973ab127eacf48d40f129ad8641c52b",
+    "tree": "776b2c82ecc90f4d3f52e6805c9208f610a6ef3d",
+    "deploymentId": "dpl_DJSCKrtJjvezejN4g6gnjVRHfkvz",
+    "runId": 41966406737,
+    "jobId": 127044318492,
+    "casesPassed": 10,
+    "receiptPath": "docs/results/2026/11-05/csv-backup-checks.json",
+    "receiptBytes": 187189,
+    "receiptSha256": "3f90207e0688957d9b91fd090534f033ea82e255631e8bad46005a2a4e35b2c1"
+  },
+  "publication": {
+    "commit": "cc96c1c269d77da8605e095af60d50f311b4457d",
+    "tree": "c9fb446446d0a5acef013db44a18e53779e09059",
+    "nativeVerification": {
+      "head": "cc96c1c269d77da8605e095af60d50f311b4457d",
+      "tree": "c9fb446446d0a5acef013db44a18e53779e09059",
+      "leaves": 96,
+      "bytes": 3409175,
+      "clean": true,
+      "noActiveWorkflow": true,
+      "changesSinceChecked": [
+        "M\tREADME.md",
+        "M\tdocs/acceptance.md",
+        "M\tdocs/deployment.md",
+        "M\tdocs/proposals/csv-backup-browser-v2.md",
+        "A\tdocs/results/2026/11-05/csv-backup-checks.json",
+        "A\tdocs/results/2026/11-05/csv-backup-checks.md"
+      ]
+    },
+    "remoteMain": "cc96c1c269d77da8605e095af60d50f311b4457d",
+    "remoteQa": "cc96c1c269d77da8605e095af60d50f311b4457d",
+    "qaWorkflowRetired": true,
+    "remoteTreeTruncated": false,
+    "testedInputs": 94,
+    "unchangedTestedInputs": 90,
+    "laterModifiedInputs": [
+      "README.md",
+      "docs/acceptance.md",
+      "docs/deployment.md",
+      "docs/proposals/csv-backup-browser-v2.md"
+    ],
+    "productFixturesControllerAndDependenciesUnchanged": true
+  },
+  "deploymentMetadata": {
+    "id": "dpl_J2cc3Pp3XJFNtmdchbngjKqk6N2M",
+    "name": "trippin",
+    "url": "trippin-khpumuurz-my-team-4f230354.vercel.app",
+    "type": "LAMBDAS",
+    "state": "READY",
+    "createdAt": 1793852264134,
+    "creator": {
+      "uid": "zsxQcbiAfBXuwfpA5YtTh7Nm",
+      "username": "alvipedev"
+    },
+    "project": {
+      "id": "prj_xuwm0LbMAUFWKzYZv7IzHshOqoh8",
+      "name": "trippin",
+      "framework": "nextjs"
+    },
+    "meta": {
+      "githubCommitRef": "main",
+      "githubCommitSha": "cc96c1c269d77da8605e095af60d50f311b4457d",
+      "githubCommitMessage": "Publish ten accepted hosted portability cases and retire temporary browser CI",
+      "githubRepo": "trippin",
+      "githubOrg": "alvarovillalbaa"
+    },
+    "alias": [
+      "trippin-theta.vercel.app",
+      "trippin-my-team-4f230354.vercel.app",
+      "trippin-git-main-my-team-4f230354.vercel.app"
+    ],
+    "target": "production",
+    "regions": [
+      "iad1"
+    ],
+    "buildingAt": 1793852264969,
+    "ready": 1793852285243,
+    "readyState": "READY",
+    "source": "git",
+    "aliasError": null
+  },
+  "publicObservation": {
+    "observedAtUtc": "2026-11-05T04:19:00Z",
+    "status": 200,
+    "origin": "https://trippin-theta.vercel.app/",
+    "uniqueDeploymentId": "dpl_J2cc3Pp3XJFNtmdchbngjKqk6N2M",
+    "onlyExpectedId": true
+  },
+  "limits": [
+    "Publication adds two result files and changes four status documents after the checked application source. All product, fixture, controller, manifest and dependency inputs remain byte-identical.",
+    "The ten browser cases ran on the checked deployment, not this later documentation deployment. The later READY metadata and anonymous HTTP observation establish publication/serving only.",
+    "This receipt is itself a later documentation-only addition. Its commit and production state must be verified separately; this record does not claim a self-referential final commit.",
+    "Physical devices, system pickers, live maps/weather, Auth, configured Redis/Plaid, providers/AI, quota/concurrency stress and full-product acceptance remain open."
+  ]
+}
