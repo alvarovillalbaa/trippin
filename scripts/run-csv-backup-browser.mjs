@@ -10,8 +10,8 @@ const REPOSITORY = 'alvarovillalbaa/trippin';
 const BRANCH = 'refs/heads/qa/trippin-portability-20261105';
 const ACTIVE = '.github/workflows/csv-backup-browser-v2.yml';
 const SPEC = 'docs/proposals/csv-backup-browser-v2.spec.ts.example';
-const SPEC_SHA = '961da2939c53693e18c5ea00d54e1199aa50f455a89505daeb9eee273329281d';
-const CANONICAL_SPEC_SHA = '41f60d9626acf0185c053c20201402b37d39fa51766f7c583beb956d9135a271';
+const SPEC_SHA = '14a406f67f351f8042404b5b93974ee6d35189e7dfe905fee8ecf7355acd4612';
+const CANONICAL_SPEC_SHA = 'f09a901c2737ab4cc3312370a1810fb3f9940d8213db4808b722ad00d1bf63c9';
 const ORIGIN = 'https://trippin-theta.vercel.app';
 const TITLES = [
   'EUR imports append once and explicit USD rejects without changing existing expenses',
@@ -325,11 +325,19 @@ function browserResults() {
             need(Number.isSafeInteger(boundary[field]) && boundary[field] >= 0 && boundary[field] <= 100000, 'boundary_counter');
           need(Array.isArray(boundary.pageErrorFingerprints) && boundary.pageErrorFingerprints.length === Math.min(boundary.pageErrorCount, 8)
             && boundary.pageErrorFingerprints.every(item => typeof item === 'string' && /^[a-f0-9]{64}$/.test(item)), 'boundary_error_fingerprints');
-          need(Array.isArray(boundary.pageErrorDiagnostics) && boundary.pageErrorDiagnostics.length === Math.min(boundary.pageErrorCount, 4)
-            && boundary.pageErrorDiagnostics.every((item, index) => item && typeof item.name === 'string' && Buffer.byteLength(item.name) <= 64
-              && typeof item.message === 'string' && Buffer.byteLength(item.message) <= 384 && !/[\x00-\x1f\x7f]/.test(item.name + item.message)
-              && item.sha256 === boundary.pageErrorFingerprints[index]), 'boundary_error_diagnostics');
           need(Array.isArray(boundary.rootNavigations) && boundary.rootNavigations.length <= 8, 'boundary_navigation_shape');
+          need(Array.isArray(boundary.pageErrorDiagnostics) && boundary.pageErrorDiagnostics.length === Math.min(boundary.pageErrorCount, 4)
+            && boundary.pageErrorDiagnostics.every((item, index) => item && Object.keys(item).sort().join(',') === 'frames,message,name,rootNavigationCount,sha256'
+              && typeof item.name === 'string' && Buffer.byteLength(item.name) <= 64
+              && typeof item.message === 'string' && Buffer.byteLength(item.message) <= 384 && !/[\x00-\x1f\x7f]/.test(item.name + item.message)
+              && item.sha256 === boundary.pageErrorFingerprints[index]
+              && Number.isSafeInteger(item.rootNavigationCount) && item.rootNavigationCount >= 0 && item.rootNavigationCount <= boundary.rootNavigations.length
+              && Array.isArray(item.frames) && item.frames.length <= 8 && item.frames.every(frame => frame
+                && Object.keys(frame).sort().join(',') === 'assetPath,column,line' && typeof frame.assetPath === 'string'
+                && /^\/_next\/static\/[^\s?#\\\x00-\x1f\x7f]*\.js$/.test(frame.assetPath) && Buffer.byteLength(frame.assetPath) <= 256
+                && Number.isSafeInteger(frame.line) && frame.line >= 1 && frame.line <= 999999999
+                && Number.isSafeInteger(frame.column) && frame.column >= 1 && frame.column <= 999999999))
+            && boundary.pageErrorDiagnostics.reduce((sum, item) => sum + item.frames.length, 0) <= 8, 'boundary_error_diagnostics');
           valid &&= boundary.blockedMutations === 0 && boundary.blockedUnexpectedReads === 0 && boundary.blockedWebSockets === 0
             && boundary.unexpectedCount === 0 && boundary.pageErrorCount === 0 && boundary.pageErrorFingerprints.length === 0 && boundary.pageErrorDiagnostics.length === 0
             && boundary.allowedAppReads > 0 && boundary.rootNavigations.length === [2, 1, 2, 2][TITLES.indexOf(spec.title)]

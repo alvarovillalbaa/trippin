@@ -58,6 +58,12 @@ failed both CJK cases with the same error; the owned callback guards were
 insufficient. The next evidence step retains bounded public-asset stack frames
 and root-navigation counts before any further application repair.
 
+The diagnostic candidate retains at most eight public same-origin
+`/_next/static/*.js` stack frames across the first four errors: path (256 UTF-8
+bytes), positive bounded line/column and root-navigation count. It excludes raw
+stacks, URL queries/fragments, function names, source and private URLs. This
+adds evidence only; every page error still fails the unchanged eight cases.
+
 ## Immutable preparation and one QA run
 
 The inactive [workflow example](csv-backup-browser-v2.workflow.yml.example) runs

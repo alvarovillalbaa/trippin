@@ -73,12 +73,13 @@ type DeploymentObservation = {
   status: number; sameOrigin: boolean; rootPath: boolean;
   deploymentIdCount: number | null; matchesExpected: boolean;
 };
+type PublicStackFrame = { assetPath: string; line: number; column: number };
 type Guard = {
   unexpected: string[]; blockedApi: number; blockedWeather: number; blockedTiles: number;
   blockedFonts: number;
   allowedAppReads: number; blockedMutations: number; blockedUnexpectedReads: number;
   blockedWebSockets: number; pageErrorCount: number; pageErrorFingerprints: string[];
-  pageErrorDiagnostics: { name: string; message: string; sha256: string }[];
+  pageErrorDiagnostics: { name: string; message: string; sha256: string; rootNavigationCount: number; frames: PublicStackFrame[] }[];
   rootNavigations: DeploymentObservation[];
 };
 function diagnosticText(value: string, maximumBytes: number): string {
@@ -93,6 +94,22 @@ function diagnosticText(value: string, maximumBytes: number): string {
     end += character.length; bytes += size;
   }
   return redacted.slice(0, end);
+}
+function publicStackFrames(stack: string, limit: number): PublicStackFrame[] {
+  const frames: PublicStackFrame[] = [];
+  if (limit <= 0) return frames;
+  for (const line of stack.split('\n', 65)) {
+    const match = line.match(/(https?:\/\/[^\s]+):([1-9]\d{0,8}):([1-9]\d{0,8})\)?\s*$/);
+    if (!match) continue;
+    try {
+      const url = new URL(match[1]);
+      if (url.origin !== ORIGIN || url.username || url.password || !url.pathname.startsWith('/_next/static/')
+        || !url.pathname.endsWith('.js') || Buffer.byteLength(url.pathname) > 256) continue;
+      frames.push({ assetPath: url.pathname, line: Number(match[2]), column: Number(match[3]) });
+      if (frames.length >= limit) break;
+    } catch { /* Non-URL stack entries are outside the public asset diagnostic. */ }
+  }
+  return frames;
 }
 type Fixtures = { authoredWorkspace: WorkspaceState; networkGuard: Guard };
 const guards = new WeakMap<BrowserContext, Guard>();
@@ -123,7 +140,11 @@ const test = base.extend<Fixtures>({
         const sha256 = createHash('sha256').update(error.name + '\n' + error.message).digest('hex');
         guard.pageErrorFingerprints.push(sha256);
         if (guard.pageErrorDiagnostics.length < 4) {
-          guard.pageErrorDiagnostics.push({ name: diagnosticText(error.name, 64), message: diagnosticText(error.message, 384), sha256 });
+          const remainingFrames = 8 - guard.pageErrorDiagnostics.reduce((sum, item) => sum + item.frames.length, 0);
+          guard.pageErrorDiagnostics.push({
+            name: diagnosticText(error.name, 64), message: diagnosticText(error.message, 384), sha256,
+            rootNavigationCount: guard.rootNavigations.length, frames: publicStackFrames(error.stack || '', remainingFrames),
+          });
         }
       }
     };
