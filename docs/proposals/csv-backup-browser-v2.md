@@ -1,8 +1,9 @@
 # Hosted CSV and backup browser packet v2
 
-5 November 2026. **Two failed outcomes preserved; map repair prepared.** See the
+5 November 2026. **Three failed outcomes preserved; callback evidence pending.** See the
 [first outcome](../results/2026/11-05/csv-backup-attempt-1.md) and
-[six-pass/two-fail second outcome](../results/2026/11-05/csv-backup-attempt-2.md).
+[six-pass/two-fail second outcome](../results/2026/11-05/csv-backup-attempt-2.md)
+and [unchanged third outcome](../results/2026/11-05/csv-backup-attempt-3.md).
 The owner's standing approval to
 continue and complete the personal-project work covers this focused temporary
 public CI packet. The [historical proposal](csv-backup-browser.md) remains an
@@ -52,7 +53,10 @@ preserved. Leaflet's
 [1.9.4 map lifecycle](https://github.com/Leaflet/Leaflet/blob/v1.9.4/src/map/Map.js#L741)
 supports the post-removal access path, but the original caller stack was not
 retained. The full eight cases must run again with the same error assertion;
-no CJK scenario or feature is reduced to obtain a pass.
+no CJK scenario or feature is reduced to obtain a pass. The third run still
+failed both CJK cases with the same error; the owned callback guards were
+insufficient. The next evidence step retains bounded public-asset stack frames
+and root-navigation counts before any further application repair.
 
 ## Immutable preparation and one QA run
 
