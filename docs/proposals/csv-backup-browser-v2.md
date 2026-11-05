@@ -1,6 +1,6 @@
 # Hosted CSV and backup browser packet v2
 
-5 November 2026. **Two failed outcomes preserved before map repair.** See the
+5 November 2026. **Two failed outcomes preserved; map repair prepared.** See the
 [first outcome](../results/2026/11-05/csv-backup-attempt-1.md) and
 [six-pass/two-fail second outcome](../results/2026/11-05/csv-backup-attempt-2.md).
 The owner's standing approval to
@@ -43,6 +43,16 @@ four original scenario bodies and their assertions remain unchanged. Failed
 cases may expose only contained `error-context` file metadata alongside their
 boundary receipt; its Markdown contents are not read. Passing cases still
 allow no additional attachment.
+
+The second run passed six cases and exposed the same `_leaflet_pos` TypeError
+in both CJK cases. The candidate now disconnects the map's owned observer
+before removing its captured instance; resize, tile-error and marker callbacks
+reject disposed or superseded instances. Controls, map modes and animations are
+preserved. Leaflet's
+[1.9.4 map lifecycle](https://github.com/Leaflet/Leaflet/blob/v1.9.4/src/map/Map.js#L741)
+supports the post-removal access path, but the original caller stack was not
+retained. The full eight cases must run again with the same error assertion;
+no CJK scenario or feature is reduced to obtain a pass.
 
 ## Immutable preparation and one QA run
 
