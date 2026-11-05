@@ -1,6 +1,10 @@
 # Proposed CSV and backup browser acceptance
 
-Status: **inactive; not executed**. These three proposal files do not activate a workflow, add a repository dependency, install a tool, or run a browser. The supplied AGENTS.md §7 browser gate and §14 CI/dependency gate require new Trippin-specific approval. The repository's [instructions](../../AGENTS.md) and [product contract](../product.md) also apply.
+Historical preparation, superseded by the [v2 portability scope](csv-backup-browser-v2.md)
+under the user's standing all-project approval on 2026-11-05. Its four authored
+scenario definitions remain preserved. Use v2 immutable-source QA-push activation
+and observed cleanup instead of the original main/manual-dispatch instructions
+below. No workflow is installed on main by this document.
 
 The proposal is one manually dispatched, temporary GitHub Actions run against **https://trippin-theta.vercel.app**. Dispatch requires the READY deployment ID currently served by that public alias. It uses a fresh Chromium context for each case with only authored private browser data. No existing user session, account, provider credential, model call, server write, publication, or real booking is used.
 
