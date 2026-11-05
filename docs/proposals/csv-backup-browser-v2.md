@@ -1,6 +1,8 @@
 # Hosted CSV and backup browser packet v2
 
-5 November 2026. **Four failed outcomes preserved; delayed zoom callback identified.** See the
+5 November 2026. **Accepted: all ten cases passed on the changed repair.**
+See the [terminal receipt](../results/2026/11-05/csv-backup-checks.md).
+Four failed outcomes remain preserved. See the
 [first outcome](../results/2026/11-05/csv-backup-attempt-1.md) and
 [six-pass/two-fail second outcome](../results/2026/11-05/csv-backup-attempt-2.md)
 and [unchanged third outcome](../results/2026/11-05/csv-backup-attempt-3.md).
