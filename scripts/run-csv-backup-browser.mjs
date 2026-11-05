@@ -10,14 +10,15 @@ const REPOSITORY = 'alvarovillalbaa/trippin';
 const BRANCH = 'refs/heads/qa/trippin-portability-20261105';
 const ACTIVE = '.github/workflows/csv-backup-browser-v2.yml';
 const SPEC = 'docs/proposals/csv-backup-browser-v2.spec.ts.example';
-const SPEC_SHA = '14a406f67f351f8042404b5b93974ee6d35189e7dfe905fee8ecf7355acd4612';
-const CANONICAL_SPEC_SHA = 'f09a901c2737ab4cc3312370a1810fb3f9940d8213db4808b722ad00d1bf63c9';
+const SPEC_SHA = '3db210ee661c4b43406ddf726f8ebef842bb462386827b3b315b0d0449961cf1';
+const CANONICAL_SPEC_SHA = '9598f6b2ac71401f8f99adf7d2a11678cf5b1bba1d2412246a198b6aa4fae57c';
 const ORIGIN = 'https://trippin-theta.vercel.app';
 const TITLES = [
   'EUR imports append once and explicit USD rejects without changing existing expenses',
   'ambiguous duplicate and explicit blank currency both reject without losing expenses',
   'actual CJK download above two MB restores after a visible profile edit and survives reload',
   'legacy pretty backup above two MB restores and invalid UTF-8 cannot replace its UI or durable state',
+  'an active user zoom retires safely on profile navigation and the replacement map remains usable',
 ];
 const PROFILES = ['desktop-chromium', 'mobile-chromium'];
 const STREAM_LIMIT = 524288, REPORT_LIMIT = 1048576, BROWSER_LIMIT = 2097152;
@@ -61,14 +62,14 @@ const report = {
   schemaVersion: 'trippin.csv-backup-browser.v2', sourceCommit, expectedDeployment: deployment, origin: ORIGIN,
   status: 'failed', startedAtUtc: new Date().toISOString(),
   runtime: { node: process.version, platform: process.platform, architecture: process.arch },
-  scope: { scenarios: TITLES, profiles: PROFILES, cases: 8, workers: 1, retries: 0, appBuild: false, appDependencies: false,
+  scope: { scenarios: TITLES, profiles: PROFILES, cases: 10, workers: 1, retries: 0, appBuild: false, appDependencies: false,
     accounts: false, serverWrites: false, providers: false, models: false, screenshots: false, traces: false, videos: false },
   limits: { workSeconds: 720, cleanupSeconds: 90, browserGlobalSeconds: 480, jobMinutes: 15, finalStdoutSeconds: 2,
     streamBytes: STREAM_LIMIT, streamGzipBytes: 131072, allStreamsGzipBytes: 524288, browserJsonBytes: BROWSER_LIMIT,
     browserJsonGzipBytes: 262144, reportBytes: REPORT_LIMIT, termToKillSeconds: 3, drainSeconds: 3 },
   commands: [], guards: [], errors: [], sourceFiles: [],
   proofLimits: [
-    'Eight private authored-browser scenarios exercise the actual public deployment, not existing user data, API writes, providers or a full product acceptance.',
+    'Ten private authored-browser cases exercise the actual public deployment, not existing user data, API writes, providers or a full product acceptance.',
     'The only installed JavaScript tool is Playwright 1.61.1 in owned external runner storage. Chromium Linux system packages are installed on the disposable runner and are not independently uninstalled.',
     'Direct child exit/close/EOF and original groups are checked. Same-UID Linux browser processes are additionally attributed by the unique owned binary/profile/cache path and kernel starttime; unreadable or uncertain attribution prevents owned-root deletion. This is not a host-wide process inventory.',
     'Registry/browser downloads and allowed public hosted GETs are setup/acceptance network traffic, not a network sandbox. Userspace deadlines cannot interrupt blocked kernel filesystem calls.',
@@ -340,7 +341,7 @@ function browserResults() {
             && boundary.pageErrorDiagnostics.reduce((sum, item) => sum + item.frames.length, 0) <= 8, 'boundary_error_diagnostics');
           valid &&= boundary.blockedMutations === 0 && boundary.blockedUnexpectedReads === 0 && boundary.blockedWebSockets === 0
             && boundary.unexpectedCount === 0 && boundary.pageErrorCount === 0 && boundary.pageErrorFingerprints.length === 0 && boundary.pageErrorDiagnostics.length === 0
-            && boundary.allowedAppReads > 0 && boundary.rootNavigations.length === [2, 1, 2, 2][TITLES.indexOf(spec.title)]
+            && boundary.allowedAppReads > 0 && boundary.rootNavigations.length === [2, 1, 2, 2, 2][TITLES.indexOf(spec.title)]
             && boundary.rootNavigations.every(nav => nav.status === 200 && nav.sameOrigin === true && nav.rootPath === true && nav.deploymentIdCount === 1 && nav.matchesExpected === true);
         } catch (error) { row.boundaryError = finite(error); valid = false; }
         try {
@@ -359,7 +360,7 @@ function browserResults() {
     for (const child of suite.suites ?? []) walk(child);
   }
   for (const suite of value.suites) walk(suite);
-  const stats = value.stats; need(stats && stats.expected === 8 && stats.unexpected === 0 && stats.flaky === 0 && stats.skipped === 0, 'browser_stats');
+  const stats = value.stats; need(stats && stats.expected === 10 && stats.unexpected === 0 && stats.flaky === 0 && stats.skipped === 0, 'browser_stats');
   valid &&= seen.size === expected.size;
   Object.assign(report.browser, { accepted: valid, stats, expectedCases: [...expected].map(key => { const [project, title] = key.split('\0'); return { project, title }; }) });
   need(valid, 'browser_case_failure');

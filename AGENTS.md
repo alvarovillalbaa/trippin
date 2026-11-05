@@ -14,7 +14,8 @@ Trippin is a Next.js travel workspace with an EVE travel assistant. Use Node 24.
 
 The user's standing "I approve everything / Keep going / Do all the work"
 instructions cover the [v2 CSV/backup scope](docs/proposals/csv-backup-browser-v2.md):
-eight real desktop/narrow-touch Chromium cases on the public app, using only
+ten real desktop/narrow-touch Chromium cases on the public app: the original
+eight portability cases and two user-zoom/navigation lifecycle regressions, using only
 authored private browser data, in one temporary public Ubuntu job per changed
 candidate, capped at 15 minutes. Pin both the reviewed source and the actual
 READY deployment served by the alias. The temporary push workflow belongs only

@@ -6,6 +6,8 @@
 and [unchanged third outcome](../results/2026/11-05/csv-backup-attempt-3.md).
 The [fourth run](../results/2026/11-05/csv-backup-attempt-4.md) supplies actual
 public-asset frames identifying `_onZoomTransitionEnd` after map removal.
+The changed repair candidate adds one focused user-zoom/navigation scenario
+per profile, retaining every original portability case.
 The owner's standing approval to
 continue and complete the personal-project work covers this focused temporary
 public CI packet. The [historical proposal](csv-backup-browser.md) remains an
@@ -21,7 +23,8 @@ dependency changes or repeated unit suites are included.
 Use the [v2 browser fixture](csv-backup-browser-v2.spec.ts.example), preserving
 the original four scenario bodies and assertions, once in desktop Chromium
 (1440 × 1000) and once in touch-enabled narrow Chromium (390 × 844). Require all
-eight exact title/profile identities, one worker, no retries, no skipped/flaky
+ten exact title/profile identities (the original eight plus two map lifecycle
+regressions), one worker, no retries, no skipped/flaky
 cases, empty global errors, actual Playwright exit zero and boundary receipts.
 The cases exercise EUR/USD and ambiguous/blank currency handling, actual CJK
 backup download/restore, legacy pretty JSON restore and invalid UTF-8 rejection.
@@ -47,24 +50,29 @@ cases may expose only contained `error-context` file metadata alongside their
 boundary receipt; its Markdown contents are not read. Passing cases still
 allow no additional attachment.
 
-The second run passed six cases and exposed the same `_leaflet_pos` TypeError
-in both CJK cases. The candidate now disconnects the map's owned observer
-before removing its captured instance; resize, tile-error and marker callbacks
-reject disposed or superseded instances. Controls, map modes and animations are
-preserved. Leaflet's
-[1.9.4 map lifecycle](https://github.com/Leaflet/Leaflet/blob/v1.9.4/src/map/Map.js#L741)
-supports the post-removal access path, but the original caller stack was not
-retained. The full eight cases must run again with the same error assertion;
-no CJK scenario or feature is reduced to obtain a pass. The third run still
-failed both CJK cases with the same error; the owned callback guards were
-insufficient. The next evidence step retains bounded public-asset stack frames
-and root-navigation counts before any further application repair.
+The second and third runs each passed six cases; owned observer/callback
+guards were insufficient. The fourth run's actual public-asset stack identifies
+Leaflet's delayed zoom completion accessing the removed pane. The repair uses
+the first `fitBounds` or `setView` to initialize the intended viewport directly.
+Each effect owns a distinct map host, fences its callbacks and disconnects its
+observer on retirement. An active zoom finishes through public `zoomend`, then
+owned removal runs in a microtask after Leaflet's event dispatch unwinds. The
+retiring host is detached immediately so it cannot receive user input or be
+reused by its replacement. Controls, markers, selected-place panning, map modes
+and normal user animations stay available. No private Leaflet field, guessed
+timeout, synthetic completion event or global animation disabling is used.
+See [Leaflet 1.9.4 Map](https://github.com/Leaflet/Leaflet/blob/v1.9.4/src/map/Map.js).
+All original cases must run with the same page-error assertion; no CJK scenario
+or feature is reduced to obtain a pass. The additional cases must observe an
+actual user zoom at navigation and verify a usable replacement without errors
+or durable-workspace changes. Authored DOM observation is evidence only and
+does not intercept the click or access application/Leaflet private globals.
 
 The diagnostic candidate retains at most eight public same-origin
 `/_next/static/*.js` stack frames across the first four errors: path (256 UTF-8
 bytes), positive bounded line/column and root-navigation count. It excludes raw
 stacks, URL queries/fragments, function names, source and private URLs. This
-adds evidence only; every page error still fails the unchanged eight cases.
+adds evidence only; every page error still fails any of the ten cases.
 
 ## Immutable preparation and one QA run
 

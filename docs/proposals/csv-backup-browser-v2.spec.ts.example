@@ -1,5 +1,5 @@
 // INACTIVE: copy only into an explicitly approved disposable CI checkout.
-// Four real DOM scenarios run once per desktop/mobile Chromium project.
+// Five real DOM scenarios run once per desktop/mobile Chromium project.
 import { test as base, expect, type BrowserContext, type Page, type Response } from '@playwright/test';
 import { createHash } from 'node:crypto';
 import { isWorkspace } from '../../lib/trip';
@@ -373,5 +373,51 @@ test('legacy pretty backup above two MB restores and invalid UTF-8 cannot replac
   await expectDeployment(await page.reload({ waitUntil: 'domcontentloaded' }));
   await profile(page);
   await expectProfile(page, legacy);
+});
+
+test('an active user zoom retires safely on profile navigation and the replacement map remains usable', async ({ page, authoredWorkspace }, testInfo) => {
+  const mobile = testInfo.project.name === 'mobile-chromium';
+  if (mobile) await page.getByRole('button', { name: 'Show map', exact: true }).click();
+  const currentMap = page.getByRole('region', { name: `Map of ${authoredWorkspace.trips[0].city}`, exact: true });
+  await expect(currentMap.locator('.leaflet-container')).toHaveCount(1);
+  const oldHost = await currentMap.locator('.leaflet-container').elementHandle();
+  if (!oldHost) throw new Error('The displayed map has no public container.');
+  const profileButton = page.getByRole('button', { name: 'Your profile', exact: true });
+  const clickObservation = await profileButton.evaluateHandle(button => {
+    const listener = (event: Event) => {
+      button.setAttribute('data-trippin-qa-zoom-active', event.isTrusted && document.querySelector('.leaflet-zoom-anim') !== null ? 'true' : 'false');
+    };
+    button.addEventListener('click', listener, { capture: true, once: true });
+    return { button, listener };
+  });
+  try {
+    await currentMap.getByRole('button', { name: 'Zoom in', exact: true }).click();
+    await expect(currentMap.locator('.leaflet-zoom-anim')).toHaveCount(1);
+    await profileButton.click();
+    await expect(profileButton).toHaveAttribute('data-trippin-qa-zoom-active', 'true');
+    await expectProfile(page, authoredWorkspace);
+    await expect.poll(() => oldHost.evaluate(host => host.isConnected)).toBe(false);
+    await expect.poll(() => oldHost.evaluate(host => host.childElementCount)).toBe(0);
+  } finally {
+    try {
+      await clickObservation.evaluate(({ button, listener }) => {
+        button.removeEventListener('click', listener, true);
+        button.removeAttribute('data-trippin-qa-zoom-active');
+      });
+    } finally {
+      await Promise.all([clickObservation.dispose(), oldHost.dispose()]);
+    }
+  }
+  await page.getByRole('button', { name: /^My trips/ }).click();
+  await expect(currentMap).toBeVisible();
+  await expect(currentMap.locator('.place-marker')).toHaveCount(1);
+  await currentMap.getByRole('button', { name: 'Zoom in', exact: true }).click();
+  await expect(currentMap.locator('.leaflet-zoom-anim')).toHaveCount(1);
+  await expect(currentMap.locator('.leaflet-zoom-anim')).toHaveCount(0);
+  await expectStored(page, authoredWorkspace);
+  await expectDeployment(await page.reload({ waitUntil: 'domcontentloaded' }));
+  if (mobile) await page.getByRole('button', { name: 'Show map', exact: true }).click();
+  await expect(currentMap.locator('.place-marker')).toHaveCount(1);
+  await expectStored(page, authoredWorkspace);
 });
 
