@@ -27,3 +27,28 @@ server write, bank connection or public trip is part of this acceptance.
 Preserve failures and verify owned cleanup. Local Storage Guard still applies;
 this scope does not authorize a local install, build or browser run below its
 reserve.
+
+## Approved itinerary lifecycle acceptance — 2026-11-07
+
+The owner's renewed "Keep going / Do all the work" and standing approval cover
+this [focused itinerary packet](docs/proposals/itinerary-lifecycle-checks.md):
+one desktop and one narrow touch-emulated Chromium journey using the labeled
+Munich sample in fresh disposable private browser contexts. It covers done,
+skip/restore, the authored garden/museum alternative, estimates and reload.
+The earlier creation/share and ten CSV/backup/zoom cases remain closed.
+
+Use only the reviewed source and an actually READY canonical deployment, with
+unchanged application input bytes explicitly bound to its Git source. This is
+Tier 2 browser-client integration; hosted backend, providers, models, physical
+devices and full-product acceptance remain separate. Block/count the existing
+API/weather/tile/font boundaries; unexpected reads, mutations, WebSockets and
+page errors fail. Do not seed app state or invoke internal handlers.
+
+One temporary public Ubuntu job per changed candidate is capped at 15 minutes.
+Install only the pinned browser tool/Chromium in owned runner storage, preserve
+HOME and original failure outputs, and verify source/browser/process teardown.
+Do not install application dependencies, run a broad app build, change paid
+services or retry an unchanged failure. The workflow belongs only to
+`qa/trippin-itinerary-20261107-1` and is disabled/retired after its terminal run.
+Storage Guard still prohibits local installs, builds and browser runs below its
+reserve. No local storage exception is granted here.
