@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "trippin.itinerary-lifecycle-publication.v1",
+  "observedAtUtc": "2026-11-07T10:50:34Z",
+  "checked": {
+    "commit": "562876d25a59e91fba22a5a009729e0dcb26cc1b",
+    "tree": "dce6a5b875d2f4e182766bfb537fa79c53df641f",
+    "trackedFiles": 102,
+    "sourceBytes": 3504195,
+    "runId": 42364155927,
+    "jobId": 128378602695,
+    "caseIds": [
+      "L01",
+      "L02"
+    ],
+    "casesPassed": 2,
+    "workspaceOriginals": 22,
+    "rootDeploymentObservations": 10,
+    "runtimeCommit": "a6ec77dcb116e52246374ac023dcb5b5f83fb029",
+    "runtimeDeploymentId": "dpl_cj8QiA2iUWRyiTxDyhzjntbUFJ4q",
+    "originals": [
+      {
+        "path": "docs/results/2026/11-07/itinerary-lifecycle-attempt-1.md",
+        "bytes": 4993,
+        "sha256": "f95e339bbc784367d9e60aeca3771152a55cfeb5e72442c06c91bdbf1416581e",
+        "gitBlob": "69c67015cde395154777fd64a6b31073cd8c2086"
+      },
+      {
+        "path": "docs/results/2026/11-07/itinerary-lifecycle-attempt-1.json",
+        "bytes": 379877,
+        "sha256": "1bb3aa797c21580897a480e2d74fea00da1471994d5c70bc9160c0085fa28724",
+        "gitBlob": "464050533bcea28859e2a5bd740f3e6a1a8a0704"
+      },
+      {
+        "path": "docs/results/2026/11-07/itinerary-lifecycle-attempt-1.log",
+        "bytes": 399405,
+        "sha256": "ede491db5c815f6048c98472628b5f9eb1b87a946b064a60c5b4c3f03c854073",
+        "gitBlob": "7281487e9175b8b2c3246b4aaf5e08e1c64092ac"
+      }
+    ]
+  },
+  "publicationCheckpoint": {
+    "commit": "01828b529208c8bb460f23b4590eda3ef57e8290",
+    "tree": "c85d6c2919d10fe159b0d9cd2bab7ef0f6bf7466",
+    "trackedFiles": 105,
+    "sourceBytes": 4290855,
+    "unchangedCheckedInputs": 96,
+    "laterStatusDocuments": 6,
+    "addedOriginalResultFiles": 3,
+    "remoteMain": "01828b529208c8bb460f23b4590eda3ef57e8290",
+    "remoteWork": "01828b529208c8bb460f23b4590eda3ef57e8290",
+    "remoteRefsObservedAtUtc": "2026-11-07T10:44:23Z",
+    "retiredQa": "8e92641095a90b685753a64dccea793c4dc3f2cc",
+    "retiredQaTree": "c85d6c2919d10fe159b0d9cd2bab7ef0f6bf7466",
+    "workflowId": 410247231,
+    "workflowState": "disabled_manually",
+    "workflowFreshReadbackAtUtc": "2026-11-07T10:31:38Z",
+    "native": {
+      "head": "01828b529208c8bb460f23b4590eda3ef57e8290",
+      "tree": "c85d6c2919d10fe159b0d9cd2bab7ef0f6bf7466",
+      "clean": true,
+      "originMainMatched": true,
+      "observedAtUtc": "2026-11-07T10:50:34Z",
+      "transport": "Shell git fetch failed DNS resolution. Supported GitHub Git-object API and already reviewed bodies supplied byte-exact existing objects; all object IDs were verified before a fast-forward-only merge. No reset, stash, clean or force was used."
+    },
+    "production": {
+      "deploymentId": "dpl_CUgwbuZzPdzz17r3k4nu7urJ5caw",
+      "state": "READY",
+      "target": "production",
+      "commit": "01828b529208c8bb460f23b4590eda3ef57e8290",
+      "canonicalAlias": "trippin-theta.vercel.app",
+      "canonicalAliasVerified": true,
+      "observedAtUtc": "2026-11-07T10:47:50Z"
+    }
+  },
+  "proofLimits": [
+    "This file is added after the named publication checkpoint; its own commit is not the checkpoint commit.",
+    "The two actual browser journeys exercised the separately pinned baseline deployment, not a browser run against the later documentation publication.",
+    "All application inputs and driver/controller/workflow-example bodies remain unchanged. READY metadata, source identity and decoded HTML observations are separate claims; no compiled-asset/source equivalence follows.",
+    "101 retained gzip records include intentional tree/browser-output copies. Counts do not imply unique payloads or additional executions.",
+    "Actual Chromium API closure and owned process absence are verified; no headless-shell/full-Chrome binary hash equality or host-wide inventory is claimed.",
+    "Providers, APIs, weather, map tiles and fonts were blocked/counted. Server/database/model/account/physical-device/full-product behavior remains unverified.",
+    "Earlier core and CSV/backup/zoom scopes were not rerun; no local app install, build, server or browser run occurred."
+  ]
+}
