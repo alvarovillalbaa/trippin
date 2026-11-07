@@ -51,3 +51,8 @@ Attempt 1 [failed before saving](../docs/results/2026/11-07/linked-wallet-attemp
 Its originals/source remain preserved. Candidate 2 changes only five nested-select
 label matchers and adds bounded read-only dialog/control observations; it keeps
 the same wallet cases and every original state, ledger and safety gate.
+
+The [second receipt](../docs/results/2026/11-07/linked-wallet-attempt-2.md) accepts both revised cases at
+`9a755d6e6d004e4210bf3ac7f000313a211701ec`. Actual dialog/select
+observations, complete wallet transitions and baseline restoration passed.
+First failure originals remain unchanged; no acceptance was carried from them.
