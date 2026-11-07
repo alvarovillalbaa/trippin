@@ -1,5 +1,10 @@
 # Focused browser-client integration contract
 
+L01/L02 [passed their first invocation](../docs/results/2026/11-07/itinerary-lifecycle-attempt-1.md)
+at preparation `562876d25a59e91fba22a5a009729e0dcb26cc1b`, against the
+separately pinned baseline production deployment. Do not repeat these closed
+identities without changed inputs or a concrete concern.
+
 The existing creation/share and ten CSV/backup/zoom scopes are closed; their
 original receipts under `docs/results/` retain their sources and proof limits.
 No existing package script, historical fixture or suite is changed here.

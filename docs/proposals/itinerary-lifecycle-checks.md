@@ -1,13 +1,17 @@
 # First itinerary lifecycle browser-client checks
 
-Status: preparation only; L01/L02 are unrun. The owner renewed autonomous work
-and approved checks/temporary free CI. No further approval is needed for this
-concrete scope. Canonical source is
+Status: [L01/L02 passed their first invocation](../results/2026/11-07/itinerary-lifecycle-attempt-1.md),
+run `42364155927`, at preparation `562876d25a59e91fba22a5a009729e0dcb26cc1b`.
+Original captures, source/deployment observations and owned cleanup passed
+independent audit; the temporary workflow is disabled. No retry or app repair
+occurred. The preparation contract below retains its original scope. The owner
+renewed autonomous work and approved checks/temporary free CI. Baseline source is
 `a6ec77dcb116e52246374ac023dcb5b5f83fb029`; the existing core journey and ten
 CSV/backup/zoom cases stay closed.
 
-The product and acceptance contracts already implement completion, skip and
-alternative selection but leave their actual browser behavior unverified.
+At preparation, the product and acceptance contracts already implemented
+completion, skip and alternative selection, while their browser behavior was
+unverified.
 This packet uses the labeled Munich sample in fresh disposable private
 contexts; no fixture import, state injection, internal handler invocation,
 real booking or real traveler data is required.

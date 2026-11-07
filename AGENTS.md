@@ -52,3 +52,8 @@ services or retry an unchanged failure. The workflow belongs only to
 `qa/trippin-itinerary-20261107-1` and is disabled/retired after its terminal run.
 Storage Guard still prohibits local installs, builds and browser runs below its
 reserve. No local storage exception is granted here.
+
+The [first result](docs/results/2026/11-07/itinerary-lifecycle-attempt-1.md)
+accepts L01/L02 at preparation `562876d25a59e91fba22a5a009729e0dcb26cc1b`.
+The workflow is disabled. These identities are closed; retain their source,
+runtime/deployment and client-only proof boundaries before choosing new work.

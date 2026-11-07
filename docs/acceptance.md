@@ -1,6 +1,6 @@
 # Delivery coverage
 
-Last updated: 2026-11-05
+Last updated: 2026-11-07
 
 This release builds the product with provider credentials deferred at Alvaro's request. Passing a build does not prove live provider behavior.
 
@@ -8,7 +8,7 @@ This release builds the product with provider credentials deferred at Alvaro's r
 | --- | --- | --- |
 | Solo/weekend/4–7-day trips | Multiple trips, any city via geocoding, editable dates/budgets, private browser persistence and backup | Earlier hosted build and authored creation/date/budget/reload checks passed. The [5 November hosted packet](results/2026/11-05/csv-backup-checks.md) passes actual CJK download/restore/reload, legacy pretty restore and invalid UTF-8 preservation in desktop/narrow Chromium. City search, physical pickers and storage-quota stress remain unverified. |
 | Map on right | Leaflet/OSM, selected-day pins, walking estimates, external directions, mobile map toggle | Earlier desktop/two-pin and mobile switching checks remain separate. The 5 November packet verifies trusted navigation during a real zoom, old-map disposal, usable replacement zoom/markers and reload in both profiles, with zero page errors. Tiles were blocked in this packet; routing/live availability and physical touch remain outside it. |
-| Flexible itinerary | Add/edit/reorder/complete/skip/swap stops, seeded rain alternative, date changes preserve agenda order | Add/edit/reorder and reload persistence checked in Chrome. Completion, skip, swap and destructive date-shortening with saved stops remain unverified in a browser. |
+| Flexible itinerary | Add/edit/reorder/complete/skip/swap stops, seeded rain alternative, date changes preserve agenda order | Earlier add/edit/reorder and reload checks remain separate. The [7 November lifecycle packet](results/2026/11-07/itinerary-lifecycle-attempt-1.md) passes desktop/narrow touch-emulated completion reversal, skip/restore to planned, the existing authored alternative, whole-workspace reloads and visible estimates. Stable museum ID/14:30 and old-garden linkage passed. Destructive date-shortening, other alternative sources, physical devices and full-product behavior remain unverified. |
 | Full trip costs | Flights/stays/tickets, activity admissions, daily food/transport, linked actual expenses; ticket reservations can replace itinerary estimates | Browser observed activity estimate edits, projected costs, a private manual expense and its exclusion from the shared copy. Linked booking reconciliation and provider quotes remain separate. |
 | Center access/stay choice | Commute-aware stay calculator, nightly costs/fees/transit/time, optional value of time | Source/build; manually supplied estimates, no transit routing provider. |
 | Ticketing | Editable flight/stay/event wallet; external booking/checkout; FlightAware status; Ticketmaster discovery bounded by trip-local dates and optional country; explicit event-to-itinerary draft and linked cost | Source/build; unconfigured provider requests return503. Browser save flow, live date-range serialization, and live events remain unverified. No native purchase/ticket issuance. |
