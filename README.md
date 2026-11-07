@@ -1,6 +1,6 @@
 # trippin
 
-Last updated: 2026-10-28
+Last updated: 2026-11-07
 
 A flexible travel workspace for the days you have, and the things you stumble into.
 
@@ -20,6 +20,12 @@ Create trips worldwide with city search; edit dates, budget, and daily stops; sk
 CSV expenses use EUR; an explicit foreign, blank or ambiguous currency column is rejected. Compact backups preserve private workspace data and restore within the existing workspace limit; oversized or unsupported in-memory data remains exportable as a recovery archive. Restore validates the file and saves it before replacing current trips. See the [CSV/backup repair](docs/results/2026/10-27/csv-backup-repair.md) and [ten passing hosted desktop/narrow Chromium cases](docs/results/2026/11-05/csv-backup-checks.md), including actual download/restore/reload and safe navigation during map zoom.
 
 Overlapping CSV reads append against the latest trip and workspace limits. Reads for a deleted or restored trip are ignored; newer edits survive. See the [CSV state repair](docs/results/2026/10-27/csv-import-state.md).
+
+The [first itinerary lifecycle receipt](docs/results/2026/11-07/itinerary-lifecycle-attempt-1.md)
+passes desktop and narrow touch-emulated private-browser journeys for completion
+reversal, skip/restore and the existing garden/museum alternative. Whole-workspace
+reloads, stable IDs/linkage and EUR 25 → 16 → 25 → 37 day estimates passed on
+the labeled sample. This does not accept providers, real travel prices or devices.
 
 Public-plan management entries save before a publication request leaves the
 browser. They remain available in **Your profile → Public plans you manage**
