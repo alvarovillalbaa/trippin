@@ -57,3 +57,42 @@ The [first result](docs/results/2026/11-07/itinerary-lifecycle-attempt-1.md)
 accepts L01/L02 at preparation `562876d25a59e91fba22a5a009729e0dcb26cc1b`.
 The workflow is disabled. These identities are closed; retain their source,
 runtime/deployment and client-only proof boundaries before choosing new work.
+
+## Approved linked wallet acceptance — 2026-11-07
+
+The owner's standing "I approve everything / Keep going / Do all the work"
+covers the [focused wallet packet](docs/proposals/linked-wallet-checks.md):
+W01 desktop and W02 narrow touch-emulated Chromium, once each in fresh private
+Munich sample contexts. Save/edit one authored event reservation linked to an
+existing admission, record an actual expense, remove the reservation while
+retaining its expense against that admission, then delete the expense. Check
+visible EUR reconciliation, stable IDs and eleven whole-workspace observations
+per profile, including real reloads and exact baseline restoration.
+
+Earlier core, CSV/backup/zoom and itinerary L01/L02 cases remain closed. Use
+actual UI only; do not seed storage, invoke application helpers, buy anything,
+create real bookings/accounts or call providers/models/banks/public-trip APIs.
+Retain the accepted Tier 2 source/deployment, strict blocked-network, original
+output and normal browser/process cleanup boundaries. One temporary public
+Ubuntu job, at most 15 minutes and no unchanged retry, belongs only to
+`qa/trippin-wallet-20261107-1`; disable/retire it after a terminal attempt.
+Install only pinned Playwright/Chromium in owned runner paths, preserve HOME,
+and do not install/build/serve the app. Storage Guard still prohibits local
+heavy operations below reserve; no exception is granted here.
+
+## Approved changed wallet candidate — attempt 2
+
+The first [wallet attempt failed](docs/results/2026/11-07/linked-wallet-attempt-1.md);
+its source and originals are immutable and neither case is accepted. Versioned
+Playwright 1.61.1 source proves exact nested-label strings include select-option
+text. This changed candidate uses anchored label regexes for those five controls,
+inside explicitly unique visible named dialogs, with bounded read-only selector
+metadata. Inputs, real controls, fixture, budgets, IDs, whole-workspace/ledger/UI
+gates and network/cleanup boundaries remain unchanged. The original composite
+timeout alone does not prove dialog presence or isolate its missing sublocator.
+
+Standing autonomous/check approval covers this concrete changed candidate once
+on `qa/trippin-wallet-20261107-2`, at most 15 free public runner minutes.
+Preserve the three first-attempt originals byte-exact in source. Disable/retire
+the second workflow after its terminal run; do not repeat an unchanged failure.
+No app change, provider/model call, paid service or local storage exception.
