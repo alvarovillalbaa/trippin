@@ -1,0 +1,39 @@
+# TEMPORARY. Exact reviewed source and production pin; retire after the terminal run.
+name: Trippin itinerary lifecycle 1
+on: create
+permissions:
+  contents: read
+concurrency:
+  group: trippin-itinerary-20261107-1
+  cancel-in-progress: false
+jobs:
+  itinerary-lifecycle:
+    if: >-
+      github.event.ref_type == 'branch' &&
+      github.event.ref == 'qa/trippin-itinerary-20261107-1' &&
+      github.repository == 'alvarovillalbaa/trippin' &&
+      github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      CI: 'true'
+      SOURCE_COMMIT: 562876d25a59e91fba22a5a009729e0dcb26cc1b
+      TRIPPIN_ITINERARY_PUBLIC_REPOSITORY: 'true'
+      TRIPPIN_ITINERARY_EXPECTED_DEPLOYMENT: dpl_cj8QiA2iUWRyiTxDyhzjntbUFJ4q
+    steps:
+      - name: Record earliest owned job step
+        shell: bash
+        run: echo "TRIPPIN_ITINERARY_JOB_STARTED_MS=$(date +%s%3N)" >> "$GITHUB_ENV"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ env.SOURCE_COMMIT }}
+          fetch-depth: 2
+          persist-credentials: false
+          clean: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '24.21.0'
+          check-latest: false
+      - name: Two first itinerary lifecycle journeys and owned cleanup
+        shell: bash
+        run: node tests/scripts/run-itinerary-lifecycle-checks.mjs --source-commit "$SOURCE_COMMIT"
