@@ -36,3 +36,13 @@ observations, not compiled-source byte-equivalence proof.
 Retain original partial/error outputs and source/deployment bindings before
 assertions. Acceptance requires normal browser/context closure and owned
 process/storage teardown. Interrupted or uncertain cleanup is not a pass.
+
+## Linked wallet W01/W02
+
+The [wallet contract](../docs/proposals/linked-wallet-checks.md) covers the first
+desktop/narrow linked-reservation reconciliation journeys. The Tier 2 driver is
+`integration/browser/linked-wallet.mjs`; its operational supervisor is
+`scripts/run-linked-wallet-checks.mjs`. Both profiles use actual controls and
+private authored sample data; whole-workspace originals and independent ledger
+expectations retain before/after-reload evidence. No backend/provider or full
+E2E claim follows. The earlier accepted suites remain unchanged and are not rerun.
