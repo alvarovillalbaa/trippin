@@ -27,6 +27,14 @@ reversal, skip/restore and the existing garden/museum alternative. Whole-workspa
 reloads, stable IDs/linkage and EUR 25 → 16 → 25 → 37 day estimates passed on
 the labeled sample. This does not accept providers, real travel prices or devices.
 
+The [second manual-wallet receipt](docs/results/2026/11-07/linked-wallet-attempt-2.md) passes the linked event-reservation
+and actual-expense flow in desktop/narrow private Chromium. Save EUR 20, edit the
+same reservation to 24, record actual 18, remove the reservation while retaining
+its expense against the admission, then delete it: totals 687 → 695 → 699 → 693
+→ 693 → 687 and exact original workspace restoration passed after real reloads.
+The first failed selector attempt remains preserved. These are authored private
+samples; no real reservation, purchase, bank or provider was exercised.
+
 Public-plan management entries save before a publication request leaves the
 browser. They remain available in **Your profile → Public plans you manage**
 after deleting a private copy or restoring a workspace. Separate attempt records

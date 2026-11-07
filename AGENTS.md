@@ -96,3 +96,9 @@ on `qa/trippin-wallet-20261107-2`, at most 15 free public runner minutes.
 Preserve the three first-attempt originals byte-exact in source. Disable/retire
 the second workflow after its terminal run; do not repeat an unchanged failure.
 No app change, provider/model call, paid service or local storage exception.
+
+The [changed second result](docs/results/2026/11-07/linked-wallet-attempt-2.md) accepts W01/W02 at source
+`9a755d6e6d004e4210bf3ac7f000313a211701ec`, run 42368205577. Its
+actual native labels/dialogs, 22 whole-workspace originals, reconciliation and
+normal owned teardown passed audit. The second workflow is disabled. Attempt 1
+remains failed and unchanged; these case identities are now closed.

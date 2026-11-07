@@ -1,11 +1,17 @@
 # Changed wallet candidate — second attempt
 
-Status: prepared, unrun. The [first attempt failed](../results/2026/11-07/linked-wallet-attempt-1.md)
+Status: [W01/W02 passed the changed second invocation](../results/2026/11-07/linked-wallet-attempt-2.md)
+at source `9a755d6e6d004e4210bf3ac7f000313a211701ec`, run 42368205577.
+The workflow is disabled. Six actual visible/open dialog observations and ten
+native select readbacks accompany 22 whole-workspace originals and twelve root
+metadata observations. All original ledger/state/cleanup gates passed; first
+failure evidence remains false and byte-exact. The preparation contract follows. The [first attempt failed](../results/2026/11-07/linked-wallet-attempt-1.md)
 at source `9dd1cd9329dad522794fd3c402734960493271be`: both profiles timed out
 at the same composite exact select label before saving. Its three originals are
 published at [`bf9af08`](https://github.com/alvarovillalbaa/trippin/blob/bf9af088336bc4630cc0500a22bad0af87f7c3d9/docs/results/2026/11-07/linked-wallet-attempt-1.md)
 and retained byte-exact in this candidate. The first QA branch is retired and its
-workflow disabled. Main/native and the actual runtime remain baseline `ac01586`.
+workflow disabled. At the second preparation checkpoint, main/native and the
+pinned browser runtime were at baseline `ac01586`.
 
 The concrete defect is the test's exact-label assumption. Playwright 1.61.1
 [collects native label descendant text](https://github.com/microsoft/playwright/blob/v1.61.1/packages/injected/src/selectorUtils.ts#L57-L129),
@@ -43,7 +49,7 @@ historical and is superseded only by the second branch above.
 
 # Linked manual wallet: source and check contract
 
-Preparation contract, 7 November 2026. No accepted result is claimed yet.
+Preparation contract, 7 November 2026. At preparation, no accepted result was claimed.
 The owner's standing autonomous-work/check approval covers W01 desktop
 1440 × 1000 and W02 narrow 390 × 844 with supported touch emulation, once each,
 sequentially and without retries. Git source is

@@ -42,3 +42,28 @@ Live provider calls require the user's later credentials. No live model reply, f
 Git pushes to `main` create production deployments. Preview/deployment URL protection remains enabled; the production alias is publicly accessible. No account-wide settings or existing projects were changed.
 
 The hosted production build compiles Next.js, runs its TypeScript check, and builds the EVE service. Earlier HTTP probes cover initial HTML and service setup boundaries. The focused packets above add client portability, map-lifecycle and itinerary-state evidence; provider credentials, configured Redis/Plaid, physical mobile devices and whole-product behavior remain unverified.
+
+
+## Manual linked wallet — 7 November
+
+The [second wallet receipt](results/2026/11-07/linked-wallet-attempt-2.md), run
+42368205577, accepts revised W01/W02 at check source
+`9a755d6e6d004e4210bf3ac7f000313a211701ec` (113 blobs / 4,805,234 bytes).
+The actual browser runtime was separately pinned to baseline
+`ac01586f10a0f1ff8609c00ee43300c57249a012` and READY production deployment
+`dpl_BASnM5VtYvhPWUKnW4hcE5VDhodd`; metadata/alias were refreshed before
+activation. Twelve real root HTML observations matched that DPL ID; no original
+HTML or compiled-asset equivalence is claimed. Application inputs stayed exact.
+
+Both profiles observed complete manual reservation/actual-expense reconciliation,
+22 whole-workspace originals and exact final baseline restoration. Six real
+named native dialogs and ten select readbacks verify the revised matchers.
+First-attempt source/originals remain failed and unchanged; no earlier case
+acceptance was carried. Both temporary workflows are disabled. Final status
+documentation is later than the tested source; original source/body identities
+and proof limits remain in each receipt. No provider, account, bank, purchase,
+server/database, physical-device or whole-product proof follows.
+
+Storage Guard measured 11.6 GiB free against 34 GiB required during preparation.
+No local install, build, server or browser run occurred. Focused tools/browser
+ran in owned disposable Ubuntu CI storage, preserving HOME and teardown evidence.
