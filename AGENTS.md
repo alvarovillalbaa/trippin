@@ -102,3 +102,55 @@ The [changed second result](docs/results/2026/11-07/linked-wallet-attempt-2.md) 
 actual native labels/dialogs, 22 whole-workspace originals, reconciliation and
 normal owned teardown passed audit. The second workflow is disabled. Attempt 1
 remains failed and unchanged; these case identities are now closed.
+
+## Approved stay-comparison repair and acceptance — 2026-11-08
+
+The owner's standing "I approve everything / Keep going / Do all the work"
+covers the [stay comparison scope](docs/proposals/stay-comparison-checks.md):
+zero overnight nights for same-day trips, stated finite input bounds, complete
+option totals rounded to cents and an explicit equal-total conclusion. The
+three application changes are published at
+`64faf1ca70ee2989b06a1444595b2d00304b5825`. Vercel runs the existing
+`npm run check` and `npm run build` commands; browser acceptance is separate.
+
+S01 desktop and S02 narrow touch-emulated Chromium use real private UI only.
+Each profile checks the scratch calculator, twelve whole-workspace stages and
+four actual root navigations, creates/deletes one authored one-day Munich trip
+and restores exact baseline data. Calculator-only edits must preserve saved
+workspace bytes. Include the independent EUR 1.005 → 1.01 rounding case.
+Keep all prior creation/share, CSV/backup/zoom, L01/L02 and W01/W02 cases closed.
+
+One manual public Ubuntu job per changed candidate, capped at fifteen minutes,
+checks immutable source/runtime/deployment inputs from main. The prepared
+source is the runtime commit's direct child: only append-only AGENTS/tests
+documentation and four new driver/supervisor/proposal/inactive-workflow paths.
+The later active workflow is outside that checked source. Preserve full source
+guards, pinned Node 24.21.0 / Playwright 1.61.1, original HOME, bounded originals,
+network refusal and normal owned browser/process/scratch cleanup. Unknown
+ownership fails. Preserve failed results and require a changed candidate before
+retrying; disable/remove the one-off workflow after its terminal attempt.
+
+Install only the pinned browser tool/Chromium on the owned runner. No app
+dependencies/build/server in that job, provider/model/bank call, real booking,
+account, paid service or server write. Only disposable authored browser-local
+trip changes are allowed. Storage Guard prohibits local heavy runtime below
+reserve; no local exception is granted. The zero-night assistant-tool schema
+has source/build coverage only, without a live tool/model turn.
+
+### Changed second stay candidate
+
+The [first stay attempt failed](docs/results/2026/11-08/stay-comparison-attempt-1.md);
+keep its exact receipt, log and human record. The source-derived responsive
+badge mismatch motivates a precise optional-count My trips matcher and one
+bounded actual unique-visible button/badge observation. It does not supply
+missing first-run DOM evidence. All trip/rounding/network/closure requirements
+remain; both S01/S02 must pass in the new invocation without carried acceptance.
+
+Standing autonomous/check approval covers this changed candidate once. Its
+checked source is a sibling of the first preparation, directly based on runtime
+`64faf1ca70ee2989b06a1444595b2d00304b5825`, with the same four checker paths,
+two append-only docs and three hash-pinned first-failure originals. Retain it on
+the owned `qa/trippin-stay-20261108` bookmark; the main merge/active workflow is
+separate. Preserve the first commit/history and disable/retire the temporary
+workflow after its terminal attempt. Application bytes, budgets, tools and
+local Storage Guard limits remain unchanged; no local runtime exception.

@@ -56,3 +56,30 @@ The [second receipt](../docs/results/2026/11-07/linked-wallet-attempt-2.md) acce
 `9a755d6e6d004e4210bf3ac7f000313a211701ec`. Actual dialog/select
 observations, complete wallet transitions and baseline restoration passed.
 First failure originals remain unchanged; no acceptance was carried from them.
+
+## Stay comparison S01/S02
+
+The [stay contract](../docs/proposals/stay-comparison-checks.md) covers two new
+desktop/narrow private-browser journeys. The driver is
+`integration/browser/stay-comparison.mjs`; the supervisor is
+`scripts/run-stay-comparison-checks.mjs`. Each observes the actual temporary
+calculator, independent rounded totals/input bounds and the zero-night case,
+with twelve whole-workspace observations and four real root navigations.
+One authored same-day trip is created/deleted through UI; calculator-only edits
+preserve saved bytes and final workspace bytes restore the guarded baseline.
+Include the independent EUR 1.005 → 1.01 observation without replaying old cases.
+
+The prepared source directly follows the reviewed runtime commit. A later
+main-only manual workflow receives immutable source/runtime/deployment inputs;
+it does not install, build or serve application code. Keep pinned tools,
+provider/API refusal, original HOME, bounded original outputs, strict source
+guards and normal owned browser/process/scratch closure. No local heavy runtime
+is permitted below Storage Guard. Preparation/source parsing is not acceptance;
+no backend, live prices/assistant, physical-device or full-product proof follows.
+
+The [first S01/S02 packet failed](../docs/results/2026/11-08/stay-comparison-attempt-1.md)
+at the narrow My trips composite wait. Preserve all first originals. The changed
+candidate adds a precise optional-count matcher plus actual bounded button/badge
+observations. Its independent supervisor keeps every original fixture, golden,
+raw-workspace, network and cleanup gate and pins the three failed originals.
+Both cases run afresh; the earlier desktop pass is not carried into acceptance.
