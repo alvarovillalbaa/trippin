@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 1,
+  "kind": "trippin-stay-comparison-deployment",
+  "applicationCommit": "64faf1ca70ee2989b06a1444595b2d00304b5825",
+  "applicationTree": "7163e9ab2c356f19303378bfc28ef97890abc29c",
+  "projectId": "prj_xuwm0LbMAUFWKzYZv7IzHshOqoh8",
+  "canonicalOrigin": "https://trippin-theta.vercel.app",
+  "requestedDeployment": {
+    "id": "dpl_9prap8D3stDKYGFBXw7Jxk4oeWx8",
+    "target": "production",
+    "state": "READY",
+    "readyAtMs": 1794111290210,
+    "ownerCreatedOnce": true,
+    "buildCommand": "npm run check && npm run build",
+    "checkPassed": true,
+    "buildPassed": true,
+    "nodeVersionSetting": "24.x",
+    "sourceMetadataMatches": true,
+    "nextDetected": "16.4.2",
+    "eveDeclared": "0.81.1",
+    "warnings": {
+      "npmUnknownCacheDir": 3,
+      "buildFailed": false
+    }
+  },
+  "buildOriginals": "stay-comparison-hosting-originals/manifest.json",
+  "providerObservations": [
+    {
+      "kind": "create",
+      "originalResponse": {
+        "bytes": 1417,
+        "sha256": "7772a7564efa3a5caae2ba493910b716e5e17ce076ded7d0b44768d61ef0deff",
+        "retainedOutsidePublicRepository": true
+      },
+      "projection": {
+        "id": "dpl_9prap8D3stDKYGFBXw7Jxk4oeWx8",
+        "state": "INITIALIZING",
+        "createdAt": 1794111266817,
+        "sourceCommit": "64faf1ca70ee2989b06a1444595b2d00304b5825",
+        "target": "production",
+        "url": "trippin-acxy1gwru-my-team-4f230354.vercel.app"
+      }
+    },
+    {
+      "kind": "ready",
+      "originalResponse": {
+        "bytes": 1504,
+        "sha256": "6edab47d81b280c2ad9a37e8a7ae84431764b2c10597d6bfd6feffc77f9f86f8",
+        "retainedOutsidePublicRepository": true
+      },
+      "projection": {
+        "id": "dpl_9prap8D3stDKYGFBXw7Jxk4oeWx8",
+        "state": "READY",
+        "createdAt": 1794111266817,
+        "readyAt": 1794111290210,
+        "sourceCommit": "64faf1ca70ee2989b06a1444595b2d00304b5825",
+        "target": "production",
+        "url": "trippin-acxy1gwru-my-team-4f230354.vercel.app"
+      }
+    },
+    {
+      "kind": "initialAlias",
+      "originalResponse": {
+        "bytes": 1226,
+        "sha256": "c0ef8b2389abdcc30b0c071ce785f2b2226ba196d710e2b46f7a86225b07256a",
+        "retainedOutsidePublicRepository": true
+      },
+      "projection": {
+        "alias": "trippin-theta.vercel.app",
+        "deploymentId": "dpl_9prap8D3stDKYGFBXw7Jxk4oeWx8",
+        "projectId": "prj_xuwm0LbMAUFWKzYZv7IzHshOqoh8",
+        "updatedAt": 1794111290426
+      }
+    },
+    {
+      "kind": "beforeFirstRun",
+      "originalResponse": {
+        "bytes": 1226,
+        "sha256": "9c5720feabaf1008d299149a06b805ee91389998d4a7e226163a2c0ecdf7ef19",
+        "retainedOutsidePublicRepository": true
+      },
+      "projection": {
+        "alias": "trippin-theta.vercel.app",
+        "deploymentId": "dpl_9prap8D3stDKYGFBXw7Jxk4oeWx8",
+        "projectId": "prj_xuwm0LbMAUFWKzYZv7IzHshOqoh8",
+        "updatedAt": 1794111860539
+      }
+    },
+    {
+      "kind": "beforeSecondRun",
+      "originalResponse": {
+        "bytes": 1226,
+        "sha256": "dea4251350f6215d295f75e4a9d3a5b61576ce11415d8ba3ccf9348f4f8afa43",
+        "retainedOutsidePublicRepository": true
+      },
+      "projection": {
+        "alias": "trippin-theta.vercel.app",
+        "deploymentId": "dpl_9prap8D3stDKYGFBXw7Jxk4oeWx8",
+        "projectId": "prj_xuwm0LbMAUFWKzYZv7IzHshOqoh8",
+        "updatedAt": 1794112936025
+      }
+    }
+  ],
+  "automaticMainDeploymentsObserved": [
+    {
+      "id": "dpl_B7fgeiGxuBjSZX3hWcb2Z96ScURB",
+      "sourceCommit": "127a6e40382ab337d985500da514100533ba3c4a",
+      "applicationInputsEqualRuntime": true
+    },
+    {
+      "id": "dpl_8qRscww3u8cnKgTvxeDNhzf1MZtn",
+      "sourceCommit": "049d859f764a35c9ab2ff181754e2c599b3e8ca6",
+      "applicationInputsEqualRuntime": true
+    }
+  ],
+  "aliasBinding": {
+    "initialUpdatedAtMs": 1794111290426,
+    "beforeFirstRunUpdatedAtMs": 1794111860539,
+    "beforeSecondRunUpdatedAtMs": 1794112936025,
+    "existingRuntimePromotedBeforeEachRun": true,
+    "promotionRebuild": false,
+    "sourceSettingsChangedByPromotion": false
+  },
+  "acceptance": {
+    "first": {
+      "status": "failed",
+      "sourceCommit": "c8606d6dae0603d1db629ae87bd77fe86d0cc15a",
+      "workflowCommit": "127a6e40382ab337d985500da514100533ba3c4a",
+      "runId": 42446727355,
+      "jobId": 128627103580,
+      "originals": "stay-comparison-attempt-1.json"
+    },
+    "second": {
+      "status": "passed",
+      "sourceCommit": "7e3ac5de60c0e245db2f3ac8993f766a2f87b583",
+      "workflowCommit": "049d859f764a35c9ab2ff181754e2c599b3e8ca6",
+      "runId": 42447910545,
+      "jobId": 128630667499,
+      "originals": "stay-comparison-attempt-2.json",
+      "browserCases": 2,
+      "workspaceSnapshots": 24,
+      "nativeInputEdits": 84,
+      "rootNavigations": 8,
+      "navigationObservations": 2
+    },
+    "priorPassCarried": false
+  },
+  "proofLimits": [
+    "One owner-requested check/build is distinguished from automatically generated GitHub-push deployments. This record does not claim there were no other provider builds.",
+    "Provider READY/source/alias observations and original response hashes are separate from the browser's actual decoded-HTML deployment-ID observations. No wire-byte or compiled/source-body equivalence is claimed.",
+    "Three application paths changed relative to the prior main. The later source/workflow commits preserve application/build/package inputs; these comparisons are native Git byte/mode observations.",
+    "Browser traffic intentionally refused known API/provider/weather/tile/font boundaries. No provider quote, AI model/tool turn, server/database write, real booking, account, paid plan, physical device or full-product acceptance is claimed.",
+    "Later documentation and workflow-retirement publication can cause another automatic deployment. Those later source identities are not retrospectively claimed by the browser packet."
+  ]
+}

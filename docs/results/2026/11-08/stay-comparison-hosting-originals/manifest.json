@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "kind": "trippin-stay-hosting-originals",
+  "applicationCommit": "64faf1ca70ee2989b06a1444595b2d00304b5825",
+  "deploymentId": "dpl_9prap8D3stDKYGFBXw7Jxk4oeWx8",
+  "files": [
+    {
+      "path": "build-events-1.json",
+      "bytes": 10894,
+      "sha256": "10bdae77d0c7996543c95aeb68fc41afe082769c14769636fd383c22d157e861"
+    },
+    {
+      "path": "build-events-2.json",
+      "bytes": 36508,
+      "sha256": "8c62e4b1e5141cee0807f8c6a6efb755eefff4298e471b6e9f334d11e0a1d52a"
+    },
+    {
+      "path": "build-events-3.json",
+      "bytes": 1716,
+      "sha256": "546abefbf354e621f35dec5c009d4cd96d82cc204440225d53a68b244f0d0e6c"
+    }
+  ],
+  "scope": "Exact serialized connector build-event responses in three bounded continuous windows; provider account responses retained outside public repository."
+}

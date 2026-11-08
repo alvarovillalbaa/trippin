@@ -1,6 +1,6 @@
 # trippin
 
-Last updated: 2026-11-07
+Last updated: 2026-11-08
 
 A flexible travel workspace for the days you have, and the things you stumble into.
 
@@ -15,7 +15,7 @@ Live app: **[trippin-theta.vercel.app](https://trippin-theta.vercel.app/)**.
 
 `npm run build` creates the production application. `npm run check` checks the TypeScript contracts. Read [the product contract](docs/product.md), [integration availability](docs/integrations.md), [travel API setup](docs/providers.md), [Sandbox bank setup](docs/bank.md), and [EVE setup](docs/eve.md).
 
-Create trips worldwide with city search; edit dates, budget, and daily stops; skip or swap plans; compare stays by price and commute; track reservations and actual expenses; export a travel story card. Choose the events you are open to, discover them within your trip dates, and confirm an editable itinerary stop and EUR admission estimate. Completed events earn individual badges alongside country milestones. These features and your profile persist in your browser. Export a backup before clearing site data. The Munich trip and community previews are sample data. Prices are planning estimates and provider purchases happen externally.
+Create trips worldwide with city search; edit dates, budget, and daily stops; skip or swap plans; compare stays by price and commute; track reservations and actual expenses; export a travel story card. Choose the events you are open to, discover them within your trip dates, and confirm an editable itinerary stop and EUR admission estimate. Completed events earn individual badges alongside country milestones. Trips, itinerary choices, reservations, expenses and your profile persist in your browser. Stay-comparison inputs are temporary scratch estimates and reset when the calculator remounts or the page reloads. Export a backup before clearing site data. The Munich trip and community previews are sample data. Prices are planning estimates and provider purchases happen externally.
 
 CSV expenses use EUR; an explicit foreign, blank or ambiguous currency column is rejected. Compact backups preserve private workspace data and restore within the existing workspace limit; oversized or unsupported in-memory data remains exportable as a recovery archive. Restore validates the file and saves it before replacing current trips. See the [CSV/backup repair](docs/results/2026/10-27/csv-backup-repair.md) and [ten passing hosted desktop/narrow Chromium cases](docs/results/2026/11-05/csv-backup-checks.md), including actual download/restore/reload and safe navigation during map zoom.
 
@@ -34,6 +34,16 @@ its expense against the admission, then delete it: totals 687 → 695 → 699 �
 → 693 → 687 and exact original workspace restoration passed after real reloads.
 The first failed selector attempt remains preserved. These are authored private
 samples; no real reservation, purchase, bank or provider was exercised.
+
+The [second stay-comparison receipt](docs/results/2026/11-08/stay-comparison-attempt-2.md)
+passes both desktop and narrow touch-emulated Chromium journeys afresh: bounded
+manual inputs, complete option totals rounded to cents, explicit ties and a
+same-day trip with zero overnight nights. At EUR 20/hour, displayed totals
+331.67 and 354.33 yield a 22.66 difference; the half-cent example rounds 1.005
+to 1.01. Twenty-four whole-workspace observations, authored-trip creation/removal
+and real reloads restore the exact original private sample. The first failed
+selector attempt remains preserved. This does not verify live prices, transit
+routing, physical devices or an assistant/model turn.
 
 Public-plan management entries save before a publication request leaves the
 browser. They remain available in **Your profile → Public plans you manage**

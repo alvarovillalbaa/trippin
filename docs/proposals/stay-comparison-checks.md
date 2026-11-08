@@ -1,5 +1,11 @@
 # Stay comparison: changed second candidate
 
+Status: [both profiles passed the changed second invocation](../results/2026/11-08/stay-comparison-attempt-2.md)
+at `7e3ac5de60c0e245db2f3ac8993f766a2f87b583`, run `42447910545`.
+The original receipt/log and first failure retain their separate source pins.
+The workflow is disabled; its active file is removed in the final publication.
+The concrete preparation contract below is preserved as history.
+
 The [first attempt failed](../results/2026/11-08/stay-comparison-attempt-1.md):
 S01 desktop completed, while S02 narrow reached ten snapshots and all 42
 calculator edits, then timed out waiting for a My trips name with mandatory

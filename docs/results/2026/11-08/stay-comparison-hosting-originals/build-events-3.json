@@ -1,0 +1,10 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"result\": {\n    \"events\": [\n      {\n        \"created\": 1794111290378,\n        \"date\": 1794111290378,\n        \"type\": \"stdout\",\n        \"text\": \"Deployment completed\",\n        \"info\": {\n          \"type\": \"build\",\n          \"name\": \"bld_34u7rdno7\",\n          \"entrypoint\": \".\"\n        }\n      },\n      {\n        \"created\": 1794111290380,\n        \"date\": 1794111290380,\n        \"type\": \"stdout\",\n        \"text\": \"Creating build cache...\",\n        \"info\": {\n          \"type\": \"build\",\n          \"name\": \"bld_34u7rdno7\",\n          \"entrypoint\": \".\"\n        }\n      },\n      {\n        \"created\": 1794111298784,\n        \"date\": 1794111298784,\n        \"type\": \"stdout\",\n        \"text\": \"Created build cache: 8s\",\n        \"info\": {\n          \"type\": \"build\",\n          \"name\": \"bld_34u7rdno7\",\n          \"entrypoint\": \".\"\n        }\n      },\n      {\n        \"created\": 1794111298784,\n        \"date\": 1794111298784,\n        \"type\": \"stdout\",\n        \"text\": \"Uploading build cache [169.64 MB]\",\n        \"info\": {\n          \"type\": \"build\",\n          \"name\": \"bld_34u7rdno7\",\n          \"entrypoint\": \".\"\n        }\n      },\n      {\n        \"created\": 1794111302089,\n        \"date\": 1794111302089,\n        \"type\": \"stdout\",\n        \"text\": \"Build cache uploaded: 3.305s\",\n        \"info\": {\n          \"type\": \"build\",\n          \"name\": \"bld_34u7rdno7\",\n          \"entrypoint\": \".\"\n        }\n      }\n    ]\n  }\n}"
+    }
+  ],
+  "structuredContent": null,
+  "isError": false
+}

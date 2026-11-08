@@ -154,3 +154,17 @@ the owned `qa/trippin-stay-20261108` bookmark; the main merge/active workflow is
 separate. Preserve the first commit/history and disable/retire the temporary
 workflow after its terminal attempt. Application bytes, budgets, tools and
 local Storage Guard limits remain unchanged; no local runtime exception.
+
+The [changed second stay result](docs/results/2026/11-08/stay-comparison-attempt-2.md)
+accepts S01/S02 afresh at checked source
+`7e3ac5de60c0e245db2f3ac8993f766a2f87b583`, run `42447910545`.
+Both profiles completed twelve exact workspace stages, 42 actual input edits,
+four deployment-ID root observations and two dialogs, with authored-trip
+deletion/final baseline restoration. Actual desktop/narrow button and badge
+observations support the changed matcher. Five 123-file guards, all forty
+normal commands and owned browser/process/scratch cleanup passed. Preserve the
+first failed source/records unchanged. The one-off workflow is disabled and
+its active file is removed in the acceptance publication; the checked QA source
+remains an immutable reproduction bookmark. These identities are closed.
+Provider/build/alias history is separate in the
+[deployment projection](docs/results/2026/11-08/stay-comparison-deployment.json).

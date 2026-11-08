@@ -83,3 +83,11 @@ candidate adds a precise optional-count matcher plus actual bounded button/badge
 observations. Its independent supervisor keeps every original fixture, golden,
 raw-workspace, network and cleanup gate and pins the three failed originals.
 Both cases run afresh; the earlier desktop pass is not carried into acceptance.
+
+The [second stay receipt](../docs/results/2026/11-08/stay-comparison-attempt-2.md)
+passes both profiles together at `7e3ac5de`, run `42447910545`: 24 exact
+workspace originals, 84 native edits, eight root observations and four dialogs,
+with independent cents/half-cent/zero-night expectations, final raw restoration
+and normal owned cleanup. Actual navigation metadata is retained. The first
+failure stays false; this closed packet adds no live-provider/model, backend,
+device or full-product acceptance.
