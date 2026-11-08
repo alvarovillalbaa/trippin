@@ -1,5 +1,6 @@
 # Inactive source. Root owns the separate main-only active workflow and retirement.
-name: Trippin stay comparison
+# Candidate 2 retains the failed first packet and requires both profiles afresh.
+name: Trippin stay comparison 2
 on:
   workflow_dispatch:
     inputs:

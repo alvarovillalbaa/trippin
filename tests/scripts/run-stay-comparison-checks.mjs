@@ -11,10 +11,18 @@ const BRANCH = 'refs/heads/main';
 const ACTIVE = '.github/workflows/stay-comparison-checks.yml';
 const BASE_COMMIT = process.env.TRIPPIN_STAY_RUNTIME_COMMIT;
 const SPEC = 'tests/integration/browser/stay-comparison.mjs';
-const SPEC_SHA = '376614dd0296a72e0bd76ee0cfcb370566be86db057a5e50a4650cd75fecc49b';
+const SPEC_SHA = '7ddadc3b64a879598becb06269eb194f40c6f9f28858dc336600e62bb81ef4bb';
 const MODIFIED_PRIOR = new Set(['AGENTS.md', 'tests/README.md']);
+const RETAINED_FAILURES = [
+  { path: 'docs/results/2026/11-08/stay-comparison-attempt-1.json', bytes: 544111,
+    sha256: '4003303b52b001eee35cf2f5e66cf94f369a36a6d691034799c0c01238d923d5', gitBlob: '2749f49bdf635c0afa3cd26fcf51a7250bb7c311' },
+  { path: 'docs/results/2026/11-08/stay-comparison-attempt-1.log', bytes: 564559,
+    sha256: 'ffeec2c80f4183abba6e7b099ffbcbf456d7ff5f922e16839e1f57dfe4363812', gitBlob: '796157d6fe3df0b5d1cd678b2e241ab16717e722' },
+  { path: 'docs/results/2026/11-08/stay-comparison-attempt-1.md', bytes: 3953,
+    sha256: '907fc4f28031695d6bf830c4a63add865491f99810d671d5ce95b69d5ad69a8f', gitBlob: 'a49a42d92b5be05d89f435338fac71796de45f97' }
+];
 const ADDED = [SPEC, 'tests/scripts/run-stay-comparison-checks.mjs', 'docs/proposals/stay-comparison-checks.md',
-  'docs/proposals/stay-comparison.workflow.yml.example'].sort();
+  'docs/proposals/stay-comparison.workflow.yml.example', ...RETAINED_FAILURES.map(file => file.path)].sort();
 const ORIGIN = 'https://trippin-theta.vercel.app';
 const CASES = [
   { id: 'S01', profile: 'desktop-chromium', title: 'desktop stay cash time bounds and same-day comparison preserve the private workspace',
@@ -78,7 +86,7 @@ const env = {
   TRIPPIN_STAY_NONCE: nonce, TRIPPIN_STAY_PLAYWRIGHT_ROOT: path.join(tools, 'node_modules/@playwright/test'), SOURCE_COMMIT: sourceCommit,
 };
 const report = {
-  schemaVersion: 'trippin.stay-comparison.v1', candidateAttempt: 1, sourceCommit, workflowCommit, canonicalBaseCommit: BASE_COMMIT,
+  schemaVersion: 'trippin.stay-comparison.v1', candidateAttempt: 2, sourceCommit, workflowCommit, canonicalBaseCommit: BASE_COMMIT,
   expectedDeployment: deployment, expectedDeploymentSourceCommit: BASE_COMMIT, origin: ORIGIN,
   status: 'failed', startedAtUtc: new Date().toISOString(),
   runtime: { node: process.version, platform: process.platform, architecture: process.arch },
@@ -92,6 +100,10 @@ const report = {
     setupElapsedMs: enteredAt - jobStartedAt, admittedWorkMs: admittedWorkEnd - enteredAt, cleanupReservedMs: 90000,
     jobOutputAndStartupMarginMs: 30000, workDeadlineAtUtc: new Date(admittedWorkEnd).toISOString() },
   commands: [], guards: [], errors: [], sourceFiles: [],
+  historicalFirstFailure: { status: 'failed', accepted: false, sourceCommit: 'c8606d6dae0603d1db629ae87bd77fe86d0cc15a',
+    workflowCommit: '127a6e40382ab337d985500da514100533ba3c4a', runId: 42446727355, jobId: 128627103580,
+    originalFiles: RETAINED_FAILURES, checksCarriedIntoCurrentAcceptance: false, acceptedCasesCarried: 0,
+    qualification: 'S01 completed inside the failed first packet and is not carried. Both profiles must pass afresh; the prior composite selector timeout did not establish the original DOM state.' },
   proofLimits: [
     'Two focused browser-client journeys over built-in authored demo data and a disposable same-day trip, not server/database/provider, physical-device, account or full product acceptance.',
     'Preparation source differs from the served runtime Git commit; every prior application blob/mode stays baseline-exact except reviewed AGENTS and suite-contract documentation. Owner READY/source metadata and actual sole-DPL HTML observations remain separate evidence.',
@@ -341,6 +353,11 @@ async function guard(label, cleanup = false, postScratch = false) {
     const value = fileVector(name); need(index.get(name)?.mode === item.mode && index.get(name)?.gitBlob === item.gitBlob
       && value.mode === item.mode && value.gitBlob === item.gitBlob, 'full_tracked_source_changed'); vector.push(value);
   }
+  for (const expected of RETAINED_FAILURES) {
+    const actual = vector.find(file => file.path === expected.path);
+    need(actual?.mode === '100644' && actual.bytes === expected.bytes && actual.sha256 === expected.sha256 && actual.gitBlob === expected.gitBlob,
+      'first_failed_original_changed');
+  }
   need((await run(label + '_status', 'git', ['status', '--porcelain=v1', '-z', '--untracked-files=all'], 10, options)).output[0].length === 0, 'worktree_not_clean');
   await run(label + '_diff', 'git', ['-c', 'core.filemode=true', 'diff', '--no-ext-diff', '--no-textconv', '--quiet', '--exit-code', 'HEAD', '--'], 10, options);
   const ignored = (await run(label + '_ignored', 'git', ['status', '--porcelain=v1', '-z', '--ignored=matching', '--untracked-files=normal'], 10, options)).output[0];
@@ -348,7 +365,7 @@ async function guard(label, cleanup = false, postScratch = false) {
   if (!baseline) { baseline = vector; report.sourceFiles = vector; }
   need(isDeepStrictEqual(vector, baseline), 'source_vector_changed');
   Object.assign(result, { passed: true, trackedFiles: vector.length, sourceBytes: vector.reduce((sum, file) => sum + file.bytes, 0),
-    vectorSha256: sha(JSON.stringify(vector)), fullHeadIndexModesAndBytes: true, noUntrackedOrIgnoredOutput: true, priorApplicationInputsUnchanged: true });
+    vectorSha256: sha(JSON.stringify(vector)), fullHeadIndexModesAndBytes: true, noUntrackedOrIgnoredOutput: true, priorApplicationInputsUnchanged: true, retainedFirstFailureOriginalsExact: true });
 }
 function validIntegrity(value) {
   if (typeof value !== 'string') return false;
@@ -532,6 +549,16 @@ function validateEdits(observation) {
   ]), 'actual_dialog_readiness');
   validateCalculator(observation.nightlyIgnored, NIGHTLY_IGNORED, 1, 0, [2000, 3900]);
 }
+function validateNavigationControls(observation) {
+  const rows = observation.navigationControls;
+  need(Array.isArray(rows) && rows.length === 1, 'actual_navigation_observation_count');
+  const row = rows[0];
+  need(row.view === 'itinerary' && row.count === 1 && row.visible === true && row.tagName === 'BUTTON'
+    && typeof row.innerText === 'string' && row.innerText.length <= 80 && /^My trips(?:\s*\d{2})?$/.test(row.innerText)
+    && typeof row.textContent === 'string' && row.textContent.length <= 80 && /^My trips\s*04$/.test(row.textContent)
+    && row.ariaLabel === null && row.countBadgeText === '04' && typeof row.countBadgeDisplay === 'string'
+    && /^[a-z-]{1,32}$/.test(row.countBadgeDisplay) && typeof row.countBadgeVisible === 'boolean', 'actual_navigation_button_identity');
+}
 function browserResults(bytes) {
   report.browser = { raw: compressed(bytes), accepted: false };
   need(bytes.length <= BROWSER_LIMIT && Buffer.from(bytes.toString('utf8')).equals(bytes), 'browser_output_bound_or_utf8');
@@ -573,7 +600,7 @@ function browserResults(bytes) {
     const expected = expectedWorkspaces(decoded[0].value, tripId, dayId);
     need(observation.finalBaselineByteExact === true && observation.baselineSha256 === sha(decoded[0].bytes)
       && observation.finalSha256 === sha(decoded[11].bytes), 'authored_identity_and_final_readback');
-    validateEdits(observation);
+    validateEdits(observation); validateNavigationControls(observation);
     for (let stage = 0; stage < STAGES.length; stage++) {
       const row = observation.snapshots[stage], item = decoded[stage], serialized = Buffer.from(JSON.stringify(expected[stage]));
       rawBytes += row.raw.bytes; gzipBytes += row.raw.compressedBytes;
@@ -601,7 +628,7 @@ function browserResults(bytes) {
         || /^\/images\/(?:munich|lisbon|copenhagen|barcelona)\.jpg$/.test(name) || ['/images/world.svg', '/icon.svg', '/favicon.ico'].includes(name)), 'allowed_static_observations');
     report.browser.independentCases.push({ id: actual.id, profile: actual.profile, snapshotsDecoded: 12, actualRootNavigationObservations: 4,
       wholeWorkspaceTransitionsAndUntouchedValues: true, originalWorkspaceNonmutation: true, authoredTripId: tripId, authoredDayId: dayId,
-      newTripCreatedAndRemovedByVisibleUI: true, finalRawEqualsBaseline: true, actualInputEdits: 42, uniqueVisibleDialogReadiness: 2,
+      newTripCreatedAndRemovedByVisibleUI: true, finalRawEqualsBaseline: true, actualInputEdits: 42, uniqueVisibleDialogReadiness: 2, actualNavigationControls: 1,
       completeOptionGoldenCents: GOLDEN_TOTAL_CENTS, dailyZeroNightsAndNightlyIgnored: true, halfCentGolden: { a: 101, b: 3906, difference: 3805 },
       zeroFatalBoundaries: true });
   }

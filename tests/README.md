@@ -76,3 +76,10 @@ provider/API refusal, original HOME, bounded original outputs, strict source
 guards and normal owned browser/process/scratch closure. No local heavy runtime
 is permitted below Storage Guard. Preparation/source parsing is not acceptance;
 no backend, live prices/assistant, physical-device or full-product proof follows.
+
+The [first S01/S02 packet failed](../docs/results/2026/11-08/stay-comparison-attempt-1.md)
+at the narrow My trips composite wait. Preserve all first originals. The changed
+candidate adds a precise optional-count matcher plus actual bounded button/badge
+observations. Its independent supervisor keeps every original fixture, golden,
+raw-workspace, network and cleanup gate and pins the three failed originals.
+Both cases run afresh; the earlier desktop pass is not carried into acceptance.

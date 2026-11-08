@@ -136,3 +136,21 @@ account, paid service or server write. Only disposable authored browser-local
 trip changes are allowed. Storage Guard prohibits local heavy runtime below
 reserve; no local exception is granted. The zero-night assistant-tool schema
 has source/build coverage only, without a live tool/model turn.
+
+### Changed second stay candidate
+
+The [first stay attempt failed](docs/results/2026/11-08/stay-comparison-attempt-1.md);
+keep its exact receipt, log and human record. The source-derived responsive
+badge mismatch motivates a precise optional-count My trips matcher and one
+bounded actual unique-visible button/badge observation. It does not supply
+missing first-run DOM evidence. All trip/rounding/network/closure requirements
+remain; both S01/S02 must pass in the new invocation without carried acceptance.
+
+Standing autonomous/check approval covers this changed candidate once. Its
+checked source is a sibling of the first preparation, directly based on runtime
+`64faf1ca70ee2989b06a1444595b2d00304b5825`, with the same four checker paths,
+two append-only docs and three hash-pinned first-failure originals. Retain it on
+the owned `qa/trippin-stay-20261108` bookmark; the main merge/active workflow is
+separate. Preserve the first commit/history and disable/retire the temporary
+workflow after its terminal attempt. Application bytes, budgets, tools and
+local Storage Guard limits remain unchanged; no local runtime exception.

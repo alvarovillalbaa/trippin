@@ -1,4 +1,38 @@
-# Stay comparison: source and focused browser contract
+# Stay comparison: changed second candidate
+
+The [first attempt failed](../results/2026/11-08/stay-comparison-attempt-1.md):
+S01 desktop completed, while S02 narrow reached ten snapshots and all 42
+calculator edits, then timed out waiting for a My trips name with mandatory
+two-digit count. No old target-count/DOM observation was retained. Source CSS
+separately hides that badge at narrow widths; this motivates the changed
+selector without proving the exact first-run accessibility-tree cause.
+
+Candidate 2 permits precisely `My trips` with an optional two-digit count. It
+still requires a unique visible BUTTON and performs the real activation,
+heading, selected-trip, authored deletion and final raw-baseline gates. One
+bounded observation records actual innerText/textContent, badge text/display
+and visibility. All twelve stages, 42 input edits, four root navigations and
+two real dialogs per profile remain required. Both cases run afresh together;
+the first passing desktop case supplies no carried acceptance.
+
+The checked second source is a direct child of the unchanged runtime `64faf`,
+a sibling of the first `c8606d6d` preparation. Its only differences from that
+runtime are append-only AGENTS/tests documentation, the four declared checker
+paths and the three byte-exact first-failure `.json`/`.log`/`.md` originals.
+The supervisor pins all three originals by byte length, SHA256 and Git blob.
+The owner retains the checked source on `qa/trippin-stay-20261108`; a later
+main merge/active workflow preserves the first attempt's history and remains
+outside the checked source. One changed public job, same fifteen-minute cap
+and immutable source/runtime/deployment inputs, is authorized by standing
+approval. No application, dependency, model or provider change is proposed.
+
+The original preparation contract follows, preserving its earlier timing and
+pending statements. The source-layout paragraph above amends only its
+four-new-path count to include the three retained failed originals.
+
+---
+
+# Stay comparison: original source and focused browser contract
 
 Preparation, 8 November 2026. No passing result is claimed by this contract.
 The owner's standing "I approve everything / Keep going / Do all the work"

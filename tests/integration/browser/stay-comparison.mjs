@@ -267,8 +267,27 @@ function calculated(values, days, nights) {
 async function showView(state, name, heading) {
   if (!await state.page.getByRole('heading', { name: heading, exact: true }).isVisible()) {
     const navigation = state.page.getByRole('navigation', { name: 'Main navigation', exact: true });
-    await activate(state, name === 'My trips' ? navigation.getByRole('button', { name: /^My trips\s*\d{2}$/ })
-      : navigation.getByRole('button', { name, exact: true }));
+    if (name === 'My trips') {
+      const control = navigation.getByRole('button', { name: /^My trips(?:\s*\d{2})?$/ });
+      const row = { view: 'itinerary', count: await bounded(control.count(), budget(state), 'navigation_count_timeout'), visible: false,
+        tagName: null, innerText: null, textContent: null, ariaLabel: null, countBadgeText: null, countBadgeDisplay: null, countBadgeVisible: null };
+      state.row.observations.navigationControls.push(row);
+      need(row.count === 1, 'itinerary_navigation_not_unique');
+      row.visible = await bounded(control.isVisible(), budget(state), 'navigation_visibility_timeout');
+      Object.assign(row, await bounded(control.evaluate(element => {
+        const normalize = value => value.replace(/\s+/g, ' ').trim(), badge = element.querySelector(':scope > span');
+        return { tagName: element.tagName, innerText: normalize(element.innerText), textContent: normalize(element.textContent ?? ''), ariaLabel: element.getAttribute('aria-label'),
+          countBadgeText: badge ? normalize(badge.textContent ?? '') : null,
+          countBadgeDisplay: badge ? getComputedStyle(badge).display : null,
+          countBadgeVisible: badge ? badge.getClientRects().length > 0 && getComputedStyle(badge).visibility !== 'hidden' : false };
+      }), budget(state), 'navigation_metadata_timeout'));
+      need(row.visible && row.tagName === 'BUTTON' && typeof row.innerText === 'string' && row.innerText.length <= 80
+        && /^My trips(?:\s*\d{2})?$/.test(row.innerText) && typeof row.textContent === 'string' && row.textContent.length <= 80
+        && /^My trips\s*04$/.test(row.textContent) && row.ariaLabel === null && row.countBadgeText === '04'
+        && typeof row.countBadgeDisplay === 'string' && /^[a-z-]{1,32}$/.test(row.countBadgeDisplay)
+        && typeof row.countBadgeVisible === 'boolean', 'itinerary_navigation_identity');
+      await activate(state, control);
+    } else await activate(state, navigation.getByRole('button', { name, exact: true }));
   }
   await poll(state, async () => await state.page.getByRole('heading', { name: heading, exact: true }).isVisible(), 'view_not_ready');
 }
@@ -487,7 +506,7 @@ async function runCase(definition, row) {
     row.observations.fixture = { source: 'application-authored-private-demo-and-visible-authored-trip', originalTripId: TRIP,
       noImportOrStorageSeed: true, originalTripCount: 3, authoredTitle: AUTHORED_TITLE, destinationId: 'munich', date: DATE, budget: 850 };
     row.observations.identities = { tripId: null, dayId: null }; row.observations.baselineSha256 = sha(baseline.raw);
-    row.observations.dialogReadiness = []; row.observations.inputEdits = [];
+    row.observations.dialogReadiness = []; row.observations.inputEdits = []; row.observations.navigationControls = [];
     row.observations.viewport = await bounded(state.page.evaluate(() => ({ innerWidth, innerHeight, devicePixelRatio,
       maxTouchPoints: navigator.maxTouchPoints, clientWidth: document.documentElement.clientWidth, scrollWidth: document.documentElement.scrollWidth })), budget(state), 'viewport_observation_timeout');
     need(row.observations.viewport.innerWidth === definition.viewport.width && row.observations.viewport.innerHeight === definition.viewport.height
@@ -539,7 +558,7 @@ async function runCase(definition, row) {
     row.observations.finalBaselineByteExact = true; row.observations.finalSha256 = final.raw.sha256;
     need(row.observations.rootNavigations.length === 4 && row.observations.snapshots.length === STAGES.length
       && row.observations.snapshots.every((item, index) => item.stage === STAGES[index]), 'journey_scope_mismatch');
-    need(row.observations.dialogReadiness.length === 2 && row.observations.inputEdits.length === 42
+    need(row.observations.dialogReadiness.length === 2 && row.observations.navigationControls.length === 1 && row.observations.inputEdits.length === 42
       && row.observations.inputEdits.every(item => item.completed), 'input_observation_scope');
     await drain(state.guard); healthy(state.guard); budget(state); row.accepted = true; row.error = null; row.observations.stage = 'complete';
   } catch (error) { row.error = finite(error); row.diagnostic = diagnostic(error); }
