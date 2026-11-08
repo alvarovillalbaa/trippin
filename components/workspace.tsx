@@ -646,7 +646,7 @@ export default function Workspace(){
 </button>
 </div>)}</div>
 <p className="estimate-note">EUR planning estimates. CSV imports stay in your browser. Use positive expense amounts and headers title,amount,date,category. Bank connections require approved provider setup; no bank credentials are collected.</p>
-<StayComparison nights={Math.max(1,trip.days.length-1)} days={trip.days.length}/>
+<StayComparison nights={Math.max(0,trip.days.length-1)} days={trip.days.length}/>
 <BankPreferences onApply={(food,transport)=>{setState(s=>({...s,profile:{...s.profile,dailyFoodBudget:food,dailyTransportBudget:transport}}));notify('Daily preferences updated from Sandbox estimates.')}}/>
 </div>}
       {view==='bookings'&&<div className="content-page">

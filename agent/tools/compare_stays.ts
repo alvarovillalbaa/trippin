@@ -8,7 +8,7 @@ export default defineTool({
     "Compare accommodation costs including center commutes and the traveler's optional value of time. Every price and commute duration must be supplied; does not search inventory or check availability.",
   inputSchema: z.object({
     currency: z.string().length(3),
-    nights: z.number().int().min(1).max(365),
+    nights: z.number().int().min(0).max(365),
     daysWithCenterCommute: z.number().int().min(0).max(366),
     travelers: z.number().int().min(1).max(50),
     valueOfOneHourPerPerson: z.number().finite().min(0).max(10_000),
