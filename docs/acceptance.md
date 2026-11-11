@@ -1,6 +1,6 @@
 # Delivery coverage
 
-Last updated: 2026-11-08
+Last updated: 2026-11-11
 
 This release builds the product with provider credentials deferred at Alvaro's request. Passing a build does not prove live provider behavior.
 
@@ -15,7 +15,7 @@ This release builds the product with provider credentials deferred at Alvaro's r
 | Airbnb, Meetup, Luma, Strava | Provider discovery links and manual capture, documented API constraints | Source/build and official documentation; no unauthorized provider imports. |
 | Open trips/join requests | Redis directory, publishing capability, request/contact privacy, accept/decline, unpublish; independent browser management entries survive workspace replacement | Source/build; unconfigured writes return503. The [management receipt](results/2026/10-28/community-management.md) records focused authored callback/storage checks. Configured Redis and new browser flows are not exercised. |
 | Personalization | Profile/interests, explicit event preferences consumed by discovery, daily spending, CSV expenses, optional Plaid Sandbox aggregate preview | The 5 November packet verifies EUR import and explicit USD/blank/duplicate-currency rejection without loss, plus profile edit/backup replacement and full durable hashes. Preferences stay local until shared with AI. Earlier Plaid missing-config refusal remains separate; production bank linking is not provided. |
-| Badges/social profile | Derived country/activity and individual-event badges, deduplicated by provider/event identity; downloadable travel story overlay | Source/build; completion is self-reported, not organizer or location verification. Browser interaction and download remain unverified. |
+| Badges/social profile | Derived country/activity and individual-event badges, deduplicated by provider/event identity; downloadable travel story overlay | [Two story/profile browser journeys](results/2026/11-11/story-profile.md) passed on desktop and narrow touch-emulated Chromium. Same-place counting, country/event badge transitions, reload, four actual 1080 by 1350 PNG downloads and exact baseline restoration passed. Exports matched across profiles and were visually inspected. Completion is self-reported. Copied-event deduplication, physical devices and external font rendering remain unverified. |
 | AI with EVE | Real agent, arithmetic/stay tools, streaming hook, consent for limited context, cancellation, explicit setup state | EVE build and health verified; disabled sessions return401. No live model/Workflow turn. |
 | GitHub + Vercel | Public repository, Git-backed Node24 production deployment, public alias | GitHub commit state, Vercel READY/build logs, public HTTP200, bounded receipts in deployment-verification.json. |
 

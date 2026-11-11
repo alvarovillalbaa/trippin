@@ -1,5 +1,12 @@
 # Focused browser-client integration contract
 
+The [story and profile packet](../docs/results/2026/11-11/story-profile.md)
+accepts two new desktop/narrow journeys at `a0ac95b2`, run `42988063370`.
+They cover saved completion, unique-place counts, country/event badges and
+actual 1080 by 1350 PNG downloads, followed by UI undo and exact restoration.
+The earlier itinerary, wallet, stay and portability scopes retain their
+original evidence. The temporary workflow is disabled.
+
 L01/L02 [passed their first invocation](../docs/results/2026/11-07/itinerary-lifecycle-attempt-1.md)
 at preparation `562876d25a59e91fba22a5a009729e0dcb26cc1b`, against the
 separately pinned baseline production deployment. Do not repeat these closed

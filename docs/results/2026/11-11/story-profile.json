@@ -1,0 +1,245 @@
+{
+  "schemaVersion": 1,
+  "status": "passed",
+  "repository": "alvarovillalbaa/trippin",
+  "sourceCommit": "a0ac95b2237a0be1ffefec3427e2a14bc06f40cd",
+  "runtimeCommit": "c4103cade48221d264aeaedbcde7ac0c879f072e",
+  "deployment": "dpl_8aMRSmgz8FGEvfdSVdfZCU3eyM7W",
+  "workflowCommit": "ec814677a6cccb11ab9c1ac789f711127677c680",
+  "runId": 42988063370,
+  "workflowId": 414409401,
+  "runtime": {
+    "node": "24.21.0",
+    "playwright": "1.65.0",
+    "chromium": "158.0.8127.18"
+  },
+  "sourceFilesVerified": 134,
+  "sourceVectorSha256": "3d11909530274d0657d013af87c88c5b286abb7160f097acf4f8fd11bda19475",
+  "sourceCheckSha256": "833459c1a722aff7ee61189cd995876db49e6af8765bad5a17b35ca1a66d8173",
+  "stats": {
+    "startTime": "2026-11-11T08:34:35.818Z",
+    "duration": 8077.817,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "journeys": [
+    {
+      "runtime": "c4103cade48221d264aeaedbcde7ac0c879f072e",
+      "deployment": "dpl_8aMRSmgz8FGEvfdSVdfZCU3eyM7W",
+      "browserVersion": "158.0.8127.18",
+      "profile": "desktop",
+      "stages": [
+        {
+          "stage": "baseline",
+          "sha256": "729fadd635b75484c70805f2e238a499baf24857bc749313c3da0b35575ec8c8"
+        },
+        {
+          "stage": "baseline-export-preserved",
+          "sha256": "729fadd635b75484c70805f2e238a499baf24857bc749313c3da0b35575ec8c8"
+        },
+        {
+          "stage": "two-moments-one-place",
+          "sha256": "1e8a9e3c7c381f7bfe48dc49e37fc7216a96d6e3ab3d661ebe1bf03b3657efd7"
+        },
+        {
+          "stage": "event-completed",
+          "sha256": "d60a8c5586a8689237f1c467d2b7fad8bf801f7785cbb5e75e6dc8774c1a3920"
+        },
+        {
+          "stage": "completion-reloaded",
+          "sha256": "d60a8c5586a8689237f1c467d2b7fad8bf801f7785cbb5e75e6dc8774c1a3920"
+        },
+        {
+          "stage": "completed-export-preserved",
+          "sha256": "d60a8c5586a8689237f1c467d2b7fad8bf801f7785cbb5e75e6dc8774c1a3920"
+        },
+        {
+          "stage": "event-undone",
+          "sha256": "1e8a9e3c7c381f7bfe48dc49e37fc7216a96d6e3ab3d661ebe1bf03b3657efd7"
+        },
+        {
+          "stage": "restored",
+          "sha256": "729fadd635b75484c70805f2e238a499baf24857bc749313c3da0b35575ec8c8"
+        },
+        {
+          "stage": "restored-reloaded",
+          "sha256": "729fadd635b75484c70805f2e238a499baf24857bc749313c3da0b35575ec8c8"
+        }
+      ],
+      "roots": [
+        {
+          "bytes": 41950,
+          "sha256": "2c22bdb029d07088ec86d0ae01cd4ee79553897d0479172954644d3e502f4636",
+          "deployment": "dpl_8aMRSmgz8FGEvfdSVdfZCU3eyM7W"
+        },
+        {
+          "bytes": 41950,
+          "sha256": "2c22bdb029d07088ec86d0ae01cd4ee79553897d0479172954644d3e502f4636",
+          "deployment": "dpl_8aMRSmgz8FGEvfdSVdfZCU3eyM7W"
+        },
+        {
+          "bytes": 41950,
+          "sha256": "2c22bdb029d07088ec86d0ae01cd4ee79553897d0479172954644d3e502f4636",
+          "deployment": "dpl_8aMRSmgz8FGEvfdSVdfZCU3eyM7W"
+        }
+      ],
+      "downloads": [
+        {
+          "stage": "before-completion",
+          "bytes": 2692292,
+          "sha256": "32552379d25e6ecbc074e30e246e70fccee15c28feabb881bb3560759d0d5799",
+          "width": 1080,
+          "height": 1350
+        },
+        {
+          "stage": "after-completion",
+          "bytes": 2692700,
+          "sha256": "3cda1c89ad2e5f99bf8882d1506f79b79e495011ece9234eb65b9cf05770f629",
+          "width": 1080,
+          "height": 1350
+        }
+      ],
+      "closed": true,
+      "blocked": {
+        "api": 3,
+        "weather": 3,
+        "tiles": 135,
+        "fonts": 3
+      },
+      "failures": [],
+      "pending": 0,
+      "routeJobs": 0
+    },
+    {
+      "runtime": "c4103cade48221d264aeaedbcde7ac0c879f072e",
+      "deployment": "dpl_8aMRSmgz8FGEvfdSVdfZCU3eyM7W",
+      "browserVersion": "158.0.8127.18",
+      "profile": "narrow",
+      "stages": [
+        {
+          "stage": "baseline",
+          "sha256": "729fadd635b75484c70805f2e238a499baf24857bc749313c3da0b35575ec8c8"
+        },
+        {
+          "stage": "baseline-export-preserved",
+          "sha256": "729fadd635b75484c70805f2e238a499baf24857bc749313c3da0b35575ec8c8"
+        },
+        {
+          "stage": "two-moments-one-place",
+          "sha256": "1e8a9e3c7c381f7bfe48dc49e37fc7216a96d6e3ab3d661ebe1bf03b3657efd7"
+        },
+        {
+          "stage": "event-completed",
+          "sha256": "d60a8c5586a8689237f1c467d2b7fad8bf801f7785cbb5e75e6dc8774c1a3920"
+        },
+        {
+          "stage": "completion-reloaded",
+          "sha256": "d60a8c5586a8689237f1c467d2b7fad8bf801f7785cbb5e75e6dc8774c1a3920"
+        },
+        {
+          "stage": "completed-export-preserved",
+          "sha256": "d60a8c5586a8689237f1c467d2b7fad8bf801f7785cbb5e75e6dc8774c1a3920"
+        },
+        {
+          "stage": "event-undone",
+          "sha256": "1e8a9e3c7c381f7bfe48dc49e37fc7216a96d6e3ab3d661ebe1bf03b3657efd7"
+        },
+        {
+          "stage": "restored",
+          "sha256": "729fadd635b75484c70805f2e238a499baf24857bc749313c3da0b35575ec8c8"
+        },
+        {
+          "stage": "restored-reloaded",
+          "sha256": "729fadd635b75484c70805f2e238a499baf24857bc749313c3da0b35575ec8c8"
+        }
+      ],
+      "roots": [
+        {
+          "bytes": 41950,
+          "sha256": "2c22bdb029d07088ec86d0ae01cd4ee79553897d0479172954644d3e502f4636",
+          "deployment": "dpl_8aMRSmgz8FGEvfdSVdfZCU3eyM7W"
+        },
+        {
+          "bytes": 41950,
+          "sha256": "2c22bdb029d07088ec86d0ae01cd4ee79553897d0479172954644d3e502f4636",
+          "deployment": "dpl_8aMRSmgz8FGEvfdSVdfZCU3eyM7W"
+        },
+        {
+          "bytes": 41950,
+          "sha256": "2c22bdb029d07088ec86d0ae01cd4ee79553897d0479172954644d3e502f4636",
+          "deployment": "dpl_8aMRSmgz8FGEvfdSVdfZCU3eyM7W"
+        }
+      ],
+      "downloads": [
+        {
+          "stage": "before-completion",
+          "bytes": 2692292,
+          "sha256": "32552379d25e6ecbc074e30e246e70fccee15c28feabb881bb3560759d0d5799",
+          "width": 1080,
+          "height": 1350
+        },
+        {
+          "stage": "after-completion",
+          "bytes": 2692700,
+          "sha256": "3cda1c89ad2e5f99bf8882d1506f79b79e495011ece9234eb65b9cf05770f629",
+          "width": 1080,
+          "height": 1350
+        }
+      ],
+      "closed": true,
+      "blocked": {
+        "api": 3,
+        "weather": 3,
+        "tiles": 16,
+        "fonts": 3
+      },
+      "failures": [],
+      "pending": 0,
+      "routeJobs": 0
+    }
+  ],
+  "images": [
+    {
+      "profile": "desktop",
+      "kind": "before-completion",
+      "bytes": 2692292,
+      "sha256": "32552379d25e6ecbc074e30e246e70fccee15c28feabb881bb3560759d0d5799",
+      "file": "story-before-completion.png"
+    },
+    {
+      "profile": "desktop",
+      "kind": "after-completion",
+      "bytes": 2692700,
+      "sha256": "3cda1c89ad2e5f99bf8882d1506f79b79e495011ece9234eb65b9cf05770f629",
+      "file": "story-after-completion.png"
+    },
+    {
+      "profile": "desktop",
+      "kind": "profile",
+      "bytes": 567799,
+      "sha256": "6415b6484baa9dbeaa89243da4c25839d99e6c4169838e5c358538392c10ef62",
+      "file": "desktop-profile.png"
+    },
+    {
+      "profile": "narrow",
+      "kind": "profile",
+      "bytes": 412052,
+      "sha256": "135db1e17cdbffd58a5981b88d77ff950506e294081ea0794c82b0a516982f77",
+      "file": "narrow-profile.png"
+    }
+  ],
+  "cleanup": {
+    "ownedProcessesRemaining": [],
+    "sourceHashesVerified": true
+  },
+  "originalReport": {
+    "bytes": 1319511,
+    "sha256": "03aa10ce2f0b18a1fceb0211f6780905367a8b85f31d12d7ecb5b664410b8b0d",
+    "artifactId": 13840237729,
+    "artifactName": "trippin-story-profile-42988063370",
+    "retentionDays": 1
+  },
+  "proofScope": "Two actual hosted private-browser journeys, with blocked APIs, weather, map tiles and external fonts. Saved-state observations use the app-authored sample. Desktop exports are retained here; narrow exports matched the same hashes. The original runner report remains in its temporary GitHub artifact. This receipt projects verified observations from that report."
+}
