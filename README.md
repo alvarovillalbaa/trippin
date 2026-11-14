@@ -15,6 +15,12 @@ Live app: **[trippin-theta.vercel.app](https://trippin-theta.vercel.app/)**.
 
 `npm run build` creates the production application. `npm run check` checks the TypeScript contracts. Read [the product contract](docs/product.md), [integration availability](docs/integrations.md), [travel API setup](docs/providers.md), [Sandbox bank setup](docs/bank.md), and [EVE setup](docs/eve.md).
 
+Dependencies are locked for `npm ci`. The [dependency repair](docs/results/2026/11-14/dependency-review.md)
+upgrades Eve to0.88.1 with patched Undici8.12.3 and migrates the assistant to
+native v27 messages, interactions and usage limits. The recorded graph audits
+clean;13 focused authored checks, TypeScript and both builds pass remotely.
+Live AI and browser acceptance remain separate.
+
 Create trips worldwide with city search; edit dates, budget, and daily stops; skip or swap plans; compare stays by price and commute; track reservations and actual expenses; export a travel story card. Choose the events you are open to, discover them within your trip dates, and confirm an editable itinerary stop and EUR admission estimate. Completed events earn individual badges alongside country milestones. Trips, itinerary choices, reservations, expenses and your profile persist in your browser. Stay-comparison inputs are temporary scratch estimates and reset when the calculator remounts or the page reloads. Export a backup before clearing site data. The Munich trip and community previews are sample data. Prices are planning estimates and provider purchases happen externally.
 
 CSV expenses use EUR; an explicit foreign, blank or ambiguous currency column is rejected. Compact backups preserve private workspace data and restore within the existing workspace limit; oversized or unsupported in-memory data remains exportable as a recovery archive. Restore validates the file and saves it before replacing current trips. See the [CSV/backup repair](docs/results/2026/10-27/csv-backup-repair.md) and [ten passing hosted desktop/narrow Chromium cases](docs/results/2026/11-05/csv-backup-checks.md), including actual download/restore/reload and safe navigation during map zoom.

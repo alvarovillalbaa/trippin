@@ -32,3 +32,8 @@ No private workspace, provider/model/bank call, account, purchase, database,
 production Auth setting, paid plan or local heavy environment. Local Storage
 Guard reports2.3GiB versus34GiB required, so no local install/build is allowed.
 Build/lock/audit evidence does not prove browser or live-provider behavior.
+
+The [result](../results/2026/11-14/dependency-review.md) closes the three terminal
+jobs: baseline advisory inspection, failed12/13 fixture qualification and the
+corrected13/13 clean-graph/install/type/build qualification. The workflow is
+disabled and its active file removed; no routine unchanged rerun is planned.
