@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "qualifiedSource": "dfa2ee20c98d322b3e4bfa1d22a7bb6c6f58ad05",
+  "releaseSource": "cc01af38a5f748da37ad5211e0261fe70faf9b49",
+  "releaseTree": "5d2e8770e7ebe4ccd7ea104770151464adee6b38",
+  "files": 158,
+  "bytes": 14892617,
+  "preview": {
+    "id": "dpl_ErmZnKAdBfNLYD9tLeSrn9bGdQ4P",
+    "source": "6829635fb17a7c834c7c3297cf91956af7271378",
+    "state": "READY",
+    "buildLogFacts": [
+      "found 0 vulnerabilities",
+      "Compiled successfully",
+      "Finished TypeScript",
+      "Deployment completed"
+    ]
+  },
+  "production": {
+    "id": "dpl_H1TosFithqcfKCtAwo3woruLRYbE",
+    "source": "cc01af38a5f748da37ad5211e0261fe70faf9b49",
+    "state": "READY",
+    "canonicalAlias": "trippin-theta.vercel.app"
+  },
+  "publicReadOnlyProbes": [
+    {
+      "path": "/",
+      "status": 200,
+      "bytes": 41950,
+      "sha256": "e88dea9e1b6477ff84b3ae9eb73fad03bceec090a4113291c60e1c4552da124e"
+    },
+    {
+      "path": "/eve/v1/health",
+      "status": 200,
+      "bytes": 72,
+      "sha256": "f0659998451dee06164647c05954391885c80d3f933e51cf37f5c0dfcc15b0e4",
+      "json": {
+        "ok": true,
+        "status": "ready",
+        "workflowId": "workflow//eve//workflowEntry"
+      }
+    },
+    {
+      "path": "/api/assistant-config",
+      "status": 200,
+      "bytes": 128,
+      "sha256": "6b78783bf6ff827c575e61939c28c2733152159765df9eea98e336d0881b9f59",
+      "json": {
+        "enabled": false,
+        "reason": "disabled",
+        "message": "The travel assistant is awaiting activation. Your trip tools are ready to use."
+      }
+    }
+  ],
+  "retirement": {
+    "workflowId": 418502477,
+    "workflowState": "disabled_manually",
+    "activeFileInMain": false,
+    "qaBranch": "qa/trippin-dependencies-20261114",
+    "remoteMatchingRefs": 0,
+    "localQaBranchRemovedWithMergedAncestryCheck": true,
+    "allThreeRunsTerminal": true
+  },
+  "limits": [
+    "GET health proves service readiness only, not a model or durable Workflow turn",
+    "Assistant remains disabled; no activation, provider credentials, model/account/booking/bank/DB or paid action",
+    "13 authored native-selector/component checks are not React lifecycle, DOM, browser or physical-device acceptance",
+    "Qualified runtime and lock bytes preserved through evidence-only commits",
+    "An attempted nested gh ownership read failed local DNS; direct native API metadata and merged local ancestry verified independently"
+  ]
+}

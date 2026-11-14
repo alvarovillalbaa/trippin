@@ -54,5 +54,13 @@ The initial archive redirect and convenience workflow-disable commands failed
 local DNS; native artifact download and API disable/readback succeeded. No
 permission bypass, credential, account, paid plan or production Auth change.
 
-Preview/production release evidence follows separately after the final source
-is reviewed and built. Full Trippin/portfolio acceptance remains unfinished.
+[PR #2](https://github.com/alvarovillalbaa/trippin/pull/2) merged as cc01af38
+after exact-head preview dpl_ErmZnKAdBfNLYD9tLeSrn9bGdQ4P passed compilation,
+TypeScript and its actual zero-vulnerability install. Exact-merge production
+dpl_H1TosFithqcfKCtAwo3woruLRYbE is READY and owns trippin-theta.vercel.app.
+Actual anonymous homepage, Eve health and assistant-readiness GETs returned200.
+The service reports ready; the assistant remains disabled. Those reads prove
+readiness and delivery, not model execution. The [release receipt](dependency-release.json)
+records body hashes, source binding and QA retirement. The merged task branch
+is absent remotely and locally, and all three jobs are terminal. Full
+Trippin/portfolio acceptance remains unfinished.
