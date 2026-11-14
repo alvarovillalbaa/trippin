@@ -1,5 +1,15 @@
 # Focused browser-client integration contract
 
+Last updated: 2026-11-14
+
+The T2 [flight-clock checks](unit/flight-times.test.mjs) run with
+`node --test --test-reporter=tap tests/unit/flight-times.test.mjs` on Node24+.
+Eight authored native Intl/view-model identities cover airport zones, overnight
+dates, DST transitions, half-hour offsets, fallback/missing times and independent
+schedule/estimate/actual presentation. Run under UTC and America/Los_Angeles;
+profiles overlap and are not additive identities. No provider, browser or React
+render executes. [Result and initial failure](../docs/results/2026/11-14/flight-times.md).
+
 The [story and profile packet](../docs/results/2026/11-11/story-profile.md)
 accepts two new desktop/narrow journeys at `a0ac95b2`, run `42988063370`.
 They cover saved completion, unique-place counts, country/event badges and

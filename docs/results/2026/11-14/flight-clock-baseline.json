@@ -1,0 +1,22 @@
+{
+  "source": "components/provider-panel.tsx",
+  "base": "d36c24cc01ea23e5e8719a7a00eddb2b49dc2f03",
+  "sha256": "6b9af873ee7d03c96363c2232d2b9f8fc9e26423c46f17665e6c93c4bddb377b",
+  "legacyExpressions": [
+    "scheduledDeparture",
+    "estimatedArrival"
+  ],
+  "proofLimit": "Source-derived Date expression demonstration; no browser/provider execution",
+  "observations": [
+    {
+      "hostTimezone": "UTC",
+      "legacy": "15/01/2026, 08:00:00",
+      "airport": "15 Jan 2026, 09:00"
+    },
+    {
+      "hostTimezone": "America/Los_Angeles",
+      "legacy": "15/01/2026, 00:00:00",
+      "airport": "15 Jan 2026, 09:00"
+    }
+  ]
+}

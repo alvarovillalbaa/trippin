@@ -1,5 +1,7 @@
 # Optional live provider lookups
 
+Last updated: 2026-11-14
+
 `GET /api/providers` reports configuration presence only. A configured status does not prove a valid credential, provider entitlement, or successful live request. Credentials remain server-side: `FLIGHTAWARE_API_KEY` and `TICKETMASTER_API_KEY`.
 
 `POST /api/providers` accepts JSON and requires an `Origin` equal to the request URL's origin. Each operation makes at most one upstream request, with an eight-second timeout, a bounded response, no retries, and no pagination. Missing credentials return HTTP 503 with `code: setup_required`. Errors are sanitized; upstream bodies and request URLs are never forwarded. Successful responses include `source`, `mode: live`, and `fetchedAt`. No error or missing configuration falls back to sample data.
@@ -9,6 +11,15 @@
 Request: `{ "provider": "flightaware", "identifier": "LH1801", "date": "2026-10-20" }`. Omit `date` for the provider's recent and scheduled results. Date filters use the entire UTC day; the supported range is nine days ago through tomorrow, keeping both bounds inside AeroAPI's recent-data window. ICAO identifiers such as `DLH1801` avoid IATA ambiguity.
 
 The adapter calls AeroAPI `GET /flights/{ident}` with `ident_type=designator`, `max_pages=1`, and `x-apikey`. An optional date becomes inclusive `start` and exclusive `end`. It returns up to 12 normalized `flights`, preserving multiple matches instead of assuming one is the traveler's booking. Summaries contain identifiers, status, airports, scheduled/estimated/actual gate times (with runway-time fallback), and cancellation/diversion flags. Null means the provider did not supply the field. `moreAvailable` indicates that this bounded lookup omitted more pages.
+
+The flight panel uses each normalized airport's time zone: origin for departures,
+destination for arrivals. Dates and numeric UTC offsets disambiguate overnight
+arrivals and daylight-saving transitions. Scheduled times always remain visible;
+actual times supersede estimates independently for each end of the flight. Missing
+times say Unavailable. Missing or unsupported airport zones fall back explicitly
+to UTC, never the viewer's local clock. The lookup date control is labeled UTC to
+match the unchanged request window. Formatting uses the explicit `timeZone` option
+documented by [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat).
 
 Source: [FlightAware's official OpenAPI, version 4.17.1 inspected 2026-10-20](https://www.flightaware.com/commercial/aeroapi/resources/aeroapi-openapi.yml). Account access, billing, and a valid key are external prerequisites. This lookup neither books flights nor changes reservations.
 

@@ -1,6 +1,6 @@
 # trippin
 
-Last updated: 2026-11-11
+Last updated: 2026-11-14
 
 A flexible travel workspace for the days you have, and the things you stumble into.
 
@@ -54,6 +54,12 @@ existing publishing access keeps its current key. Clearing browser data still
 loses that access. See the [management repair and proof limits](docs/results/2026/10-28/community-management.md).
 
 EVE needs model credentials and the Vercel Workflow runtime for durable hosted execution. The public trip directory and requests need `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`. Missing integrations display explicit setup states. Never put provider secrets into browser environment variables.
+
+Flight results show departure times in the origin airport's time zone and arrival
+times in the destination's, with the date and UTC offset visible. Scheduled times
+remain alongside the latest estimate or actual time. Missing airport zones use a
+labeled UTC fallback. The optional lookup date is a UTC day. See the
+[flight-clock repair and verification limits](docs/results/2026/11-14/flight-times.md).
 
 The [story and profile checks](docs/results/2026/11-11/story-profile.md) pass desktop
 and narrow touch-emulated journeys for saved completion, country/event badges
