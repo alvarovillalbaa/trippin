@@ -23,12 +23,28 @@ on Node26.8.2, using authored normalized flights and actual Intl. These are eigh
 identities across two host profiles, not sixteen distinct tests. Both first
 profiles passed7/8: their exact UTC-name expectation rejected this runtime's
 valid GMT+0 spelling. Only that assertion changed to allow GMT or GMT+0; the
-application was unchanged. Both normalized first streams are retained alongside
-the successful TAP. Exact original streams/source are retained in the local
+application was unchanged. Both normalized first streams are retained as JSON
+strings alongside the successful TAP; decoded failed TAP bytes are unchanged.
+The original TAP version also remains in bb2dda22 history. Its four indented blank
+lines failed the final staged whitespace check; JSON wrapping preserves those
+bytes without disabling checks. Exact original streams/source remain in the local
 handoff; published streams replace only the absolute repository prefix with
 `<repo>`. Node's existing typeless-module warning remains visible.
 
-Release-build and hosting evidence will be recorded after the preview completes.
+[PR #1](https://github.com/alvarovillalbaa/trippin/pull/1) merged as2960a648
+after source bb2dda22 preview dpl_8gdap5o3mWGHPqXVk67bAYQrrSuK passed the
+existing Next16.4.2 release build, including TypeScript. No separate
+`npm run check` was invoked. Production dpl_593eN2wtVbcxzciajG344vCUcwyk is
+READY at the exact merge and owns trippin-theta.vercel.app. Actual anonymous
+document, eight script downloads and configuration GET returned200. The served
+application chunk contains the UTC date label and explicit airport-zone fallback;
+this is compiled delivery, not a browser-render test. Both providers remain
+setup_required; no live provider request was made. The first Python-child chunk
+request failed DNS before a body; direct native curl completed the observation.
+See [hosting details and build excerpts](flight-times-hosting.json). Vercel's
+existing install reports two dependency vulnerabilities; versions are unchanged
+and vulnerability investigation is outside this flight-clock repair.
+
 No local dependency installation/build/server/browser occurred below Storage
 Guard. Native/view-model evidence does not establish React layout, browser
 integration, live FlightAware status/entitlement/quality, physical devices or

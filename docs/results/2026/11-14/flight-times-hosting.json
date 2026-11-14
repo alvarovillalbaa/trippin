@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "bb2dda225d0319ad04be5a57f66482ca1bd4ee36",
+  "mergeCommit": "2960a6482d351c25dc500aa18dd8094a9f09cb58",
+  "pullRequest": "https://github.com/alvarovillalbaa/trippin/pull/1",
+  "tree": "fc4f0186c0584cb8e2a0ef845a8492c4c7b646cb",
+  "preview": {
+    "id": "dpl_8gdap5o3mWGHPqXVk67bAYQrrSuK",
+    "state": "READY",
+    "buildEventsQuery": {
+      "builds": 1,
+      "limit": 200
+    },
+    "relevantBuildEvents": [
+      {
+        "created": 1794677548005,
+        "text": "2 vulnerabilities (1 moderate, 1 high)"
+      },
+      {
+        "created": 1794677548048,
+        "text": "Running \"npm run build\""
+      },
+      {
+        "created": 1794677553584,
+        "text": "✓ Compiled successfully in 4.0s"
+      },
+      {
+        "created": 1794677553591,
+        "text": "  Running TypeScript ..."
+      },
+      {
+        "created": 1794677557836,
+        "text": "  Finished TypeScript in 4.2s ..."
+      },
+      {
+        "created": 1794677564780,
+        "text": "Build Completed in /vercel/output [21s]"
+      },
+      {
+        "created": 1794677569192,
+        "text": "Deployment completed"
+      }
+    ]
+  },
+  "production": {
+    "id": "dpl_593eN2wtVbcxzciajG344vCUcwyk",
+    "state": "READY",
+    "commit": "2960a6482d351c25dc500aa18dd8094a9f09cb58",
+    "aliases": [
+      "trippin-theta.vercel.app",
+      "trippin-my-team-4f230354.vercel.app",
+      "trippin-git-main-my-team-4f230354.vercel.app"
+    ]
+  },
+  "nativeVerification": {
+    "identities": 8,
+    "profiles": [
+      "UTC",
+      "America/Los_Angeles"
+    ],
+    "node": "26.8.2",
+    "actualPublicRequests": 10,
+    "providerReadiness": {
+      "flightaware": "setup_required",
+      "ticketmaster": "setup_required"
+    }
+  },
+  "limits": [
+    "Native Intl/view-model acceptance; no React/DOM/browser/live FlightAware execution",
+    "Actual public document and eight scripts returned200; compiled app contains UTC date label/explicit airport-zone fallback, not browser proof",
+    "Anonymous GET configuration only; no provider POST/credential/account/model/private trip operation",
+    "First Python-child HTTP script failed DNS before any chunk body; direct native curl completed the10-body public observation",
+    "Vercel npm install reported2 existing dependency vulnerabilities (1 moderate,1 high); no dependency version changed or audit investigation in this repair",
+    "Release build is Next build including TypeScript; separate npm run check was not invoked",
+    "Original7/8 assertion profiles retained; successful profiles overlap"
+  ]
+}
