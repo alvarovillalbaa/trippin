@@ -7,7 +7,7 @@ A flexible travel workspace for the days you have, and the things you stumble in
 Built with Next.js, React, Leaflet/OpenStreetMap, and Vercel EVE. Node 24 is required by EVE.
 
 ```sh
-npm install
+npm ci
 npm run dev
 ```
 

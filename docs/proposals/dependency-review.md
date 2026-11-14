@@ -17,11 +17,16 @@ command errors fail the job rather than being treated as clean.
 After reading advisory-backed affected/fixed ranges, prepare only necessary
 supported updates and retain the first lock to avoid unrelated resolutions.
 A changed manifest with that baseline lock may run a second job: resolve/audit,
-then, only if the audit is clean, fresh `npm ci`, the EVE/Next builds and
+then, only if the audit is clean, fresh `npm ci`, thirteen focused migration
+checks (five usage boundaries/eight authored component cases), the EVE/Next builds and
 `npm run check`. Its generated lock is accepted only if the committed bytes
 match the artifact and manifest exactly. Do not run earlier accepted travel
 suites. Preserve failures, source guards and owned runner cleanup; retire the
-temporary workflow and branch after terminal qualification/publication.
+temporary workflow and branch after terminal qualification/publication. The
+component cases execute actual component body/callbacks and installed native
+Eve selectors, with React hooks/messages authored; no DOM, React lifecycle,
+hook transport or browser proof. Capture any generated Next env declaration,
+then restore the tracked input before checking source preservation.
 
 No private workspace, provider/model/bank call, account, purchase, database,
 production Auth setting, paid plan or local heavy environment. Local Storage

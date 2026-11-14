@@ -1,13 +1,12 @@
 import { defineAgent } from "eve";
+import { tripSessionLimitReached } from "./lib/usage-limits";
 
 export default defineAgent({
   model: "openai/gpt-6-luna-fast",
   defaultTools: false,
   tool: false,
   limits: {
-    maxInputTokensPerSession: 30_000,
-    maxOutputTokensPerSession: 5_000,
-    maxTokenCostUsdPerSession: 0.25,
+    sessionUsage: tripSessionLimitReached,
     sessionTimeoutMs: 2 * 60 * 60 * 1_000,
   },
   experimental: {

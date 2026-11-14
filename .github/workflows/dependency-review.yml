@@ -53,7 +53,7 @@ jobs:
             if baseline:
               assert audit.returncode==0 and receipt['vulnerabilities']['total']==0,'Patched graph must be clean before installation'
               shutil.copyfile(task/'package-lock.json',repo/'package-lock.json')
-              for name,args in [('ci',['npm','ci','--no-audit','--no-fund']),('check',['npm','run','check']),('agent-build',['npm','run','agent:build']),('build',['npm','run','build'])]:
+              for name,args in [('ci',['npm','ci','--no-audit','--no-fund']),('migration',['node','--test','--test-reporter=tap','tests/unit/session-usage.test.mjs','tests/integration/ai-chat-v27.test.mjs']),('check',['npm','run','check']),('agent-build',['npm','run','agent:build']),('build',['npm','run','build'])]:
                 assert run(name,args,repo).returncode==0,name+' failed'
               assert (repo/'package-lock.json').read_bytes()==lock,'Build changed locked graph'
             generated=(repo/'next-env.d.ts').read_bytes();receipt['generatedNextEnvChanged']=generated!=next_env

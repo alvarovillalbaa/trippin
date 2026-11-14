@@ -1,5 +1,7 @@
 # EVE travel assistant
 
+Last updated: 2026-11-14
+
 Trippin uses the real `eve` runtime, `withEve` from `eve/next`, and the browser
 `useEveAgent` hook from `eve/react`. The single agent lives in `agent/`. Browser
 requests use same-origin `/eve/v1/*` routes. On Vercel, `withEve` generates the
@@ -51,10 +53,19 @@ Default shell, filesystem, web, and delegation tools are disabled. No sandbox,
 provider search, purchases, trip mutations, bank connections, or messaging tools
 are enabled. AI proposals are applied manually by the traveler.
 
-Each session has a two-hour lifetime, a 30,000 input-token window, 5,000 output
+Eve0.88.1 carries patched Undici8.12.3. The native v27 hook supplies `messages`
+and `view`; Trippin renders its native tool parts and interaction IDs directly.
+An open turn remains stoppable while waiting for a person. Closing waits for
+the cancellation delivery to settle before detaching. No legacy event reducer
+or locally persisted assistant session is introduced.
+
+Each session has a two-hour idle timeout, a 30,000 input-token window, 5,000 output
 tokens, and a $0.25 provider-reported token-cost window. EVE checks these after
 model calls and can ask the user to continue with another window. These are not
-global spending caps, rate limits, or infrastructure budgets. Set provider and
+global spending caps, rate limits, or infrastructure budgets. The authored
+`sessionUsage` function preserves all three thresholds, counting all input
+tokens in the window, including cache reads. Eve's native idle timeout restarts
+after a settled turn; it is not an absolute two-hour lifetime. Set provider and
 Vercel project budgets before activating a public deployment. The runtime
 requests zero retention on completed Workflow runs; this does not delete model
 provider records or all metadata, and the Workflow host must support retention.
