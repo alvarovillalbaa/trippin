@@ -15,6 +15,7 @@ const turnFacts = [
   {type: 'session.started', data: {}},
   {type: 'delivery.admitted', data: {deliveryId: 'authored-delivery'}},
   {type: 'turn.started', scope: {turnId}, data: {turnId, follows: null, cause: {deliveryId: 'authored-delivery'}}},
+  {type: 'delivery.consumed', scope: {turnId}, data: {deliveryId: 'authored-delivery', turnId, parts: [{kind: 'text', text: 'Authored planning request'}]}},
 ];
 function viewOf(facts) {
   return events.foldEvents(events.emptySessionView(), JSON.parse(JSON.stringify(facts)).map((fact, line) => ({...fact, meta: {at: '2026-11-14T12:00:00.000Z', position: {line, index: 0}, endOfLine: true}})));
@@ -22,10 +23,14 @@ function viewOf(facts) {
 function paused(kind = 'budget') {
   return viewOf([...turnFacts,
     {type: 'interaction.opened', scope: {turnId}, data: {interactionId: 'authored-choice', subject: {turnId}, request: {kind, prompt: 'Authored planning choice', options: [{id: 'approve', label: 'Continue'}, {id: 'deny', label: 'Stop'}]}}},
-    {type: 'turn.paused', scope: {turnId}, data: {turnId}},
+    {type: 'turn.paused', scope: {turnId}, data: {turnId, awaiting: [{interactionId: 'authored-choice'}]}},
+    {type: 'delivery.settled', scope: {turnId}, data: {deliveryId: 'authored-delivery', turnId, outcome: 'handled'}},
   ]);
 }
-const completed = () => viewOf([...turnFacts, {type: 'turn.settled', scope: {turnId}, data: {turnId, outcome: 'completed', reply: []}}]);
+const completed = () => viewOf([...turnFacts,
+  {type: 'turn.settled', scope: {turnId}, data: {turnId, outcome: 'completed', reply: []}},
+  {type: 'delivery.settled', scope: {turnId}, data: {deliveryId: 'authored-delivery', turnId, outcome: 'handled'}},
+]);
 const tick = () => new Promise(resolve => setImmediate(resolve));
 const wire = value => JSON.parse(JSON.stringify(value));
 

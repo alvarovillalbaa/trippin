@@ -2,7 +2,7 @@ name: Trippin dependency review
 on:
   push:
     branches: [qa/trippin-dependencies-20261114]
-    paths: [package.json, .github/workflows/dependency-review.yml]
+    paths: [package.json, .github/workflows/dependency-review.yml, tests/integration/ai-chat-v27.test.mjs]
 permissions:
   contents: read
 concurrency:
