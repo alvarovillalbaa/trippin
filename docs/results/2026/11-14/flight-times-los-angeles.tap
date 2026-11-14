@@ -1,0 +1,62 @@
+TAP version 13
+# (node:32885) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/lib/flight-times.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to <repo>/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: departure and arrival use their own airport dates, including next-day arrival
+ok 1 - departure and arrival use their own airport dates, including next-day arrival
+  ---
+  duration_ms: 12.964875
+  type: 'test'
+  ...
+# Subtest: airport daylight saving follows the instant across the spring jump
+ok 2 - airport daylight saving follows the instant across the spring jump
+  ---
+  duration_ms: 0.174666
+  type: 'test'
+  ...
+# Subtest: repeated autumn local hour is disambiguated by its offset
+ok 3 - repeated autumn local hour is disambiguated by its offset
+  ---
+  duration_ms: 0.141834
+  type: 'test'
+  ...
+# Subtest: half-hour zones and midnight retain the calendar date and 24-hour clock
+ok 4 - half-hour zones and midnight retain the calendar date and 24-hour clock
+  ---
+  duration_ms: 0.102125
+  type: 'test'
+  ...
+# Subtest: missing and unsupported airport zones explicitly fall back to UTC
+ok 5 - missing and unsupported airport zones explicitly fall back to UTC
+  ---
+  duration_ms: 0.267958
+  type: 'test'
+  ...
+# Subtest: absent or invalid times are unavailable instead of a date or crash
+ok 6 - absent or invalid times are unavailable instead of a date or crash
+  ---
+  duration_ms: 0.089
+  type: 'test'
+  ...
+# Subtest: estimates keep schedules and use the matching airport zone
+ok 7 - estimates keep schedules and use the matching airport zone
+  ---
+  duration_ms: 0.266459
+  type: 'test'
+  ...
+# Subtest: actual times supersede estimates independently while schedules remain visible
+ok 8 - actual times supersede estimates independently while schedules remain visible
+  ---
+  duration_ms: 0.372333
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 82.04275

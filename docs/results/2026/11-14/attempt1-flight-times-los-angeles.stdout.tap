@@ -1,0 +1,85 @@
+TAP version 13
+# (node:32859) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/lib/flight-times.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to <repo>/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: departure and arrival use their own airport dates, including next-day arrival
+ok 1 - departure and arrival use their own airport dates, including next-day arrival
+  ---
+  duration_ms: 13.82175
+  type: 'test'
+  ...
+# Subtest: airport daylight saving follows the instant across the spring jump
+ok 2 - airport daylight saving follows the instant across the spring jump
+  ---
+  duration_ms: 0.176667
+  type: 'test'
+  ...
+# Subtest: repeated autumn local hour is disambiguated by its offset
+ok 3 - repeated autumn local hour is disambiguated by its offset
+  ---
+  duration_ms: 0.142292
+  type: 'test'
+  ...
+# Subtest: half-hour zones and midnight retain the calendar date and 24-hour clock
+ok 4 - half-hour zones and midnight retain the calendar date and 24-hour clock
+  ---
+  duration_ms: 0.103666
+  type: 'test'
+  ...
+# Subtest: missing and unsupported airport zones explicitly fall back to UTC
+not ok 5 - missing and unsupported airport zones explicitly fall back to UTC
+  ---
+  duration_ms: 0.536625
+  type: 'test'
+  location: '<repo>/tests/unit/flight-times.test.mjs:33:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + '15 Jan 2026, 08:00 GMT+0 · UTC (airport time zone unavailable)'
+    - '15 Jan 2026, 08:00 GMT · UTC (airport time zone unavailable)'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '15 Jan 2026, 08:00 GMT · UTC (airport time zone unavailable)'
+  actual: '15 Jan 2026, 08:00 GMT+0 · UTC (airport time zone unavailable)'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file://<repo>/tests/unit/flight-times.test.mjs:35:12)
+    Test.runInAsyncScope (node:async_hooks:226:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: absent or invalid times are unavailable instead of a date or crash
+ok 6 - absent or invalid times are unavailable instead of a date or crash
+  ---
+  duration_ms: 0.077416
+  type: 'test'
+  ...
+# Subtest: estimates keep schedules and use the matching airport zone
+ok 7 - estimates keep schedules and use the matching airport zone
+  ---
+  duration_ms: 0.254958
+  type: 'test'
+  ...
+# Subtest: actual times supersede estimates independently while schedules remain visible
+ok 8 - actual times supersede estimates independently while schedules remain visible
+  ---
+  duration_ms: 0.382667
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 7
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 86.932791

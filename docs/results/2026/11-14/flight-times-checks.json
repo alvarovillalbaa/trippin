@@ -1,0 +1,45 @@
+{
+  "recordedAt": "2026-11-14T17:30:29.291082+00:00",
+  "dataTier": "T2 authored normalized flights",
+  "identities": 8,
+  "profiles": [
+    {
+      "timezone": "UTC",
+      "node": "v26.8.2",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "tests/unit/flight-times.test.mjs"
+      ],
+      "exitCode": 0,
+      "rawStdoutBytes": 2233,
+      "rawStdoutSha256": "b6ced83ece6376ebfc82f6c3c576de60907a4c284eb7ebeb105aa09704268049",
+      "normalizedStdoutSha256": "a765ce24fd4893dc601b88ecd05d576cfd47aba36f93a496452a12fc36274af6",
+      "stderrBytes": 0,
+      "summary": "1..8\n# tests 8\n# suites 0\n# pass 8\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 82.934583"
+    },
+    {
+      "timezone": "America/Los_Angeles",
+      "node": "v26.8.2",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "tests/unit/flight-times.test.mjs"
+      ],
+      "exitCode": 0,
+      "rawStdoutBytes": 2231,
+      "rawStdoutSha256": "7b3688fef58e15f4bd111ceb0d865aed22c406a316e5e51179be9671af4d4d6b",
+      "normalizedStdoutSha256": "64cf58845b98e012fed87387dc94434ca6733c7b4542552c45e6b46b4c95b6e2",
+      "stderrBytes": 0,
+      "summary": "1..8\n# tests 8\n# suites 0\n# pass 8\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 82.04275"
+    }
+  ],
+  "initialFailure": "Both first profiles passed7/8; strict UTC-name expectation rejected ICU GMT+0. Corrected assertion permits GMT and GMT+0 only; application unchanged. Exact original streams/test/helper retained locally.",
+  "normalization": "Published TAP replaces only the absolute repository prefix with <repo>; exact original SHA256 recorded.",
+  "limits": [
+    "Native Intl/view model, no React/DOM/browser/live provider acceptance",
+    "Repeated timezone profiles are not additive test identities"
+  ]
+}
