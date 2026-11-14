@@ -1,0 +1,589 @@
+{
+  "schemaVersion": 1,
+  "scope": "Patched Eve/Undici dependency graph and native v27 caller migration; no model or browser execution",
+  "base": "914b731dd281a01ca45543e67db9b30ce3b0ae87",
+  "qualifiedSource": "dfa2ee20c98d322b3e4bfa1d22a7bb6c6f58ad05",
+  "lockSha256": "6a78c5a4d88576a04aa871c84210d76b9c782024a413633c06f228c00e9dc25d",
+  "manifestSha256": "b087a73b8b27a8e425e0a11e995f7fd3380d5131c441642ce813de3b7d8e5fac",
+  "graph": {
+    "entriesBefore": 119,
+    "entriesAfter": 119,
+    "added": [],
+    "removed": [],
+    "changed": [
+      {
+        "path": "",
+        "before": "0.1.0",
+        "after": "0.1.0"
+      },
+      {
+        "path": "node_modules/eve",
+        "before": "0.81.1",
+        "after": "0.88.1"
+      },
+      {
+        "path": "node_modules/eve/node_modules/undici",
+        "before": "8.10.2",
+        "after": "8.12.3"
+      }
+    ]
+  },
+  "checks": {
+    "distinctIdentities": 13,
+    "passedTogetherInQualification2": true,
+    "firstQualification": "12/13; incomplete authored delivery fixture, not carried acceptance",
+    "dataTier": "T2 authored component/usage state plus native installed Eve selectors; no React lifecycle/DOM/hook transport/browser/model/provider",
+    "sourceGuardAndCleanupInQualification2": true
+  },
+  "workflowRetirement": {
+    "id": 418502477,
+    "state": "disabled_manually",
+    "activeFileRemoval": "In the subsequent evidence commit"
+  },
+  "sources": [
+    "https://github.com/vercel/eve/releases/tag/eve%400.88.1",
+    "https://github.com/vercel/eve/blob/eve%400.88.1/docs/concepts/upgrade-to-v27-events.md",
+    "https://github.com/vercel/eve/releases/tag/eve%400.82.0",
+    "https://github.com/vercel/eve/releases/tag/eve%400.87.0",
+    "https://github.com/nodejs/undici/releases/tag/v8.12.2",
+    "https://registry.npmjs.org/eve/0.88.1"
+  ],
+  "records": [
+    {
+      "stage": "baseline",
+      "runUrl": "https://github.com/alvarovillalbaa/trippin/actions/runs/43623021000",
+      "artifactId": 14124543995,
+      "providerReportedArchiveDigest": "sha256:9ad428f225916c08763ea55aed2dd3ffb38178082049c6dcf8f46c74cf23b6d1",
+      "archiveDigestVerified": false,
+      "receipt": {
+        "source": "8319f57b4656fc85f58c4807a6bdcdf2dc7e7c6e",
+        "node": "v24.21.0",
+        "npm": "11.19.0",
+        "startedAt": "2026-11-14T17:47:49.149646+00:00",
+        "manifestSha256": "65a789e1badf5ad0a5f268df6bef9153cdda032ca7c03a00fc40b6db34b17144",
+        "baselineLockPresent": false,
+        "commands": [
+          {
+            "name": "resolve",
+            "argv": [
+              "npm",
+              "install",
+              "--package-lock-only",
+              "--ignore-scripts",
+              "--no-audit",
+              "--no-fund"
+            ],
+            "exitCode": 0,
+            "stdoutSha256": "96ac9cdcdcf0b44f3777a125563513c77371f535c603331a4cae91ec825d3002",
+            "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "audit",
+            "argv": [
+              "npm",
+              "audit",
+              "--json",
+              "--package-lock-only",
+              "--ignore-scripts"
+            ],
+            "exitCode": 1,
+            "stdoutSha256": "d1adf1e78bc428273fcc6cc4c6fe31d3035c5bdea95bb82e7141692402c90301",
+            "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "cleanup": true,
+        "lockSha256": "e92785c9aa2abae3003b12a55177e85488550e1fa31eec8c05df33bdb47fbd30",
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 1,
+          "high": 1,
+          "critical": 0,
+          "total": 2
+        },
+        "auditExitCode": 1,
+        "generatedNextEnvChanged": false,
+        "sourceUnchangedExceptGeneratedLock": true,
+        "endedAt": "2026-11-14T17:47:56.334759+00:00"
+      },
+      "audit": {
+        "auditReportVersion": 2,
+        "vulnerabilities": {
+          "eve": {
+            "name": "eve",
+            "severity": "moderate",
+            "isDirect": true,
+            "via": [
+              "undici"
+            ],
+            "effects": [],
+            "range": "0.27.12 - 0.88.0",
+            "nodes": [
+              "node_modules/eve"
+            ],
+            "fixAvailable": {
+              "name": "eve",
+              "version": "1.0.0-rc.18",
+              "isSemVerMajor": true
+            }
+          },
+          "undici": {
+            "name": "undici",
+            "severity": "high",
+            "isDirect": false,
+            "via": [
+              {
+                "source": 1243077,
+                "name": "undici",
+                "dependency": "undici",
+                "title": "undici vulnerable to Denial of Service via unbounded memory in the EventSource parser",
+                "url": "https://github.com/advisories/GHSA-4qv8-2p9j-2685",
+                "severity": "moderate",
+                "cwe": [
+                  "CWE-770"
+                ],
+                "cvss": {
+                  "score": 5.9,
+                  "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+                },
+                "range": ">=8.0.0 <8.12.2"
+              },
+              {
+                "source": 1243080,
+                "name": "undici",
+                "dependency": "undici",
+                "title": "undici vulnerable to Subresource Integrity bypass via non-lowercase algorithm tokens",
+                "url": "https://github.com/advisories/GHSA-f72v-6w45-q472",
+                "severity": "moderate",
+                "cwe": [
+                  "CWE-178"
+                ],
+                "cvss": {
+                  "score": 5.9,
+                  "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:H/A:N"
+                },
+                "range": ">=8.0.0 <8.12.2"
+              },
+              {
+                "source": 1243112,
+                "name": "undici",
+                "dependency": "undici",
+                "title": "undici vulnerable to Denial of Service via unhandled error on excessive content-encodings",
+                "url": "https://github.com/advisories/GHSA-xjj6-f33q-929c",
+                "severity": "high",
+                "cwe": [
+                  "CWE-248",
+                  "CWE-459"
+                ],
+                "cvss": {
+                  "score": 7.5,
+                  "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+                },
+                "range": ">=8.0.0 <8.12.2"
+              },
+              {
+                "source": 1243472,
+                "name": "undici",
+                "dependency": "undici",
+                "title": "undici vulnerable to cache poisoning and cross-user disclosure via cross-origin redirects",
+                "url": "https://github.com/advisories/GHSA-4w7w-5xrc-9h26",
+                "severity": "high",
+                "cwe": [
+                  "CWE-346",
+                  "CWE-524"
+                ],
+                "cvss": {
+                  "score": 7.4,
+                  "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N"
+                },
+                "range": ">=8.0.0 <8.12.2"
+              },
+              {
+                "source": 1243474,
+                "name": "undici",
+                "dependency": "undici",
+                "title": "undici vulnerable to TLS certificate validation bypass via dropped tls options in Agent",
+                "url": "https://github.com/advisories/GHSA-2m5v-pch6-74hx",
+                "severity": "high",
+                "cwe": [
+                  "CWE-295"
+                ],
+                "cvss": {
+                  "score": 7.4,
+                  "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N"
+                },
+                "range": ">=8.0.0 <8.12.2"
+              },
+              {
+                "source": 1243477,
+                "name": "undici",
+                "dependency": "undici",
+                "title": "undici vulnerable to Denial of Service via TLS 1.2 certificate-changing renegotiation",
+                "url": "https://github.com/advisories/GHSA-qrxm-fqhp-jwvm",
+                "severity": "high",
+                "cwe": [
+                  "CWE-248",
+                  "CWE-617"
+                ],
+                "cvss": {
+                  "score": 7.5,
+                  "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+                },
+                "range": ">=8.0.0 <8.12.2"
+              },
+              {
+                "source": 1243480,
+                "name": "undici",
+                "dependency": "undici",
+                "title": "undici WebSocket client vulnerable to Denial of Service via unbounded automatic PONG buffering",
+                "url": "https://github.com/advisories/GHSA-9fm3-97px-rjf6",
+                "severity": "moderate",
+                "cwe": [
+                  "CWE-400",
+                  "CWE-405",
+                  "CWE-770"
+                ],
+                "cvss": {
+                  "score": 5.9,
+                  "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+                },
+                "range": ">=8.0.0 <8.12.2"
+              },
+              {
+                "source": 1243483,
+                "name": "undici",
+                "dependency": "undici",
+                "title": "undici vulnerable to Denial of Service via unhandled exception in the decompress interceptor",
+                "url": "https://github.com/advisories/GHSA-55wc-3pg8-jfw6",
+                "severity": "moderate",
+                "cwe": [
+                  "CWE-248"
+                ],
+                "cvss": {
+                  "score": 5.9,
+                  "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+                },
+                "range": ">=8.0.0 <8.12.2"
+              }
+            ],
+            "effects": [
+              "eve"
+            ],
+            "range": "8.0.0 - 8.12.1",
+            "nodes": [
+              "node_modules/eve/node_modules/undici"
+            ],
+            "fixAvailable": {
+              "name": "eve",
+              "version": "1.0.0-rc.18",
+              "isSemVerMajor": true
+            }
+          }
+        },
+        "metadata": {
+          "vulnerabilities": {
+            "info": 0,
+            "low": 0,
+            "moderate": 1,
+            "high": 1,
+            "critical": 0,
+            "total": 2
+          },
+          "dependencies": {
+            "prod": 53,
+            "dev": 6,
+            "optional": 60,
+            "peer": 0,
+            "peerOptional": 0,
+            "total": 118
+          }
+        }
+      },
+      "originalStreamsVerifiedAgainstReceipt": true,
+      "streams": {
+        "resolve.stdout": "\nup to date in 6s\n",
+        "resolve.stderr": "",
+        "audit.stdout": "{\n  \"auditReportVersion\": 2,\n  \"vulnerabilities\": {\n    \"eve\": {\n      \"name\": \"eve\",\n      \"severity\": \"moderate\",\n      \"isDirect\": true,\n      \"via\": [\n        \"undici\"\n      ],\n      \"effects\": [],\n      \"range\": \"0.27.12 - 0.88.0\",\n      \"nodes\": [\n        \"node_modules/eve\"\n      ],\n      \"fixAvailable\": {\n        \"name\": \"eve\",\n        \"version\": \"1.0.0-rc.18\",\n        \"isSemVerMajor\": true\n      }\n    },\n    \"undici\": {\n      \"name\": \"undici\",\n      \"severity\": \"high\",\n      \"isDirect\": false,\n      \"via\": [\n        {\n          \"source\": 1243077,\n          \"name\": \"undici\",\n          \"dependency\": \"undici\",\n          \"title\": \"undici vulnerable to Denial of Service via unbounded memory in the EventSource parser\",\n          \"url\": \"https://github.com/advisories/GHSA-4qv8-2p9j-2685\",\n          \"severity\": \"moderate\",\n          \"cwe\": [\n            \"CWE-770\"\n          ],\n          \"cvss\": {\n            \"score\": 5.9,\n            \"vectorString\": \"CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H\"\n          },\n          \"range\": \">=8.0.0 <8.12.2\"\n        },\n        {\n          \"source\": 1243080,\n          \"name\": \"undici\",\n          \"dependency\": \"undici\",\n          \"title\": \"undici vulnerable to Subresource Integrity bypass via non-lowercase algorithm tokens\",\n          \"url\": \"https://github.com/advisories/GHSA-f72v-6w45-q472\",\n          \"severity\": \"moderate\",\n          \"cwe\": [\n            \"CWE-178\"\n          ],\n          \"cvss\": {\n            \"score\": 5.9,\n            \"vectorString\": \"CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:H/A:N\"\n          },\n          \"range\": \">=8.0.0 <8.12.2\"\n        },\n        {\n          \"source\": 1243112,\n          \"name\": \"undici\",\n          \"dependency\": \"undici\",\n          \"title\": \"undici vulnerable to Denial of Service via unhandled error on excessive content-encodings\",\n          \"url\": \"https://github.com/advisories/GHSA-xjj6-f33q-929c\",\n          \"severity\": \"high\",\n          \"cwe\": [\n            \"CWE-248\",\n            \"CWE-459\"\n          ],\n          \"cvss\": {\n            \"score\": 7.5,\n            \"vectorString\": \"CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H\"\n          },\n          \"range\": \">=8.0.0 <8.12.2\"\n        },\n        {\n          \"source\": 1243472,\n          \"name\": \"undici\",\n          \"dependency\": \"undici\",\n          \"title\": \"undici vulnerable to cache poisoning and cross-user disclosure via cross-origin redirects\",\n          \"url\": \"https://github.com/advisories/GHSA-4w7w-5xrc-9h26\",\n          \"severity\": \"high\",\n          \"cwe\": [\n            \"CWE-346\",\n            \"CWE-524\"\n          ],\n          \"cvss\": {\n            \"score\": 7.4,\n            \"vectorString\": \"CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N\"\n          },\n          \"range\": \">=8.0.0 <8.12.2\"\n        },\n        {\n          \"source\": 1243474,\n          \"name\": \"undici\",\n          \"dependency\": \"undici\",\n          \"title\": \"undici vulnerable to TLS certificate validation bypass via dropped tls options in Agent\",\n          \"url\": \"https://github.com/advisories/GHSA-2m5v-pch6-74hx\",\n          \"severity\": \"high\",\n          \"cwe\": [\n            \"CWE-295\"\n          ],\n          \"cvss\": {\n            \"score\": 7.4,\n            \"vectorString\": \"CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N\"\n          },\n          \"range\": \">=8.0.0 <8.12.2\"\n        },\n        {\n          \"source\": 1243477,\n          \"name\": \"undici\",\n          \"dependency\": \"undici\",\n          \"title\": \"undici vulnerable to Denial of Service via TLS 1.2 certificate-changing renegotiation\",\n          \"url\": \"https://github.com/advisories/GHSA-qrxm-fqhp-jwvm\",\n          \"severity\": \"high\",\n          \"cwe\": [\n            \"CWE-248\",\n            \"CWE-617\"\n          ],\n          \"cvss\": {\n            \"score\": 7.5,\n            \"vectorString\": \"CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H\"\n          },\n          \"range\": \">=8.0.0 <8.12.2\"\n        },\n        {\n          \"source\": 1243480,\n          \"name\": \"undici\",\n          \"dependency\": \"undici\",\n          \"title\": \"undici WebSocket client vulnerable to Denial of Service via unbounded automatic PONG buffering\",\n          \"url\": \"https://github.com/advisories/GHSA-9fm3-97px-rjf6\",\n          \"severity\": \"moderate\",\n          \"cwe\": [\n            \"CWE-400\",\n            \"CWE-405\",\n            \"CWE-770\"\n          ],\n          \"cvss\": {\n            \"score\": 5.9,\n            \"vectorString\": \"CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H\"\n          },\n          \"range\": \">=8.0.0 <8.12.2\"\n        },\n        {\n          \"source\": 1243483,\n          \"name\": \"undici\",\n          \"dependency\": \"undici\",\n          \"title\": \"undici vulnerable to Denial of Service via unhandled exception in the decompress interceptor\",\n          \"url\": \"https://github.com/advisories/GHSA-55wc-3pg8-jfw6\",\n          \"severity\": \"moderate\",\n          \"cwe\": [\n            \"CWE-248\"\n          ],\n          \"cvss\": {\n            \"score\": 5.9,\n            \"vectorString\": \"CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H\"\n          },\n          \"range\": \">=8.0.0 <8.12.2\"\n        }\n      ],\n      \"effects\": [\n        \"eve\"\n      ],\n      \"range\": \"8.0.0 - 8.12.1\",\n      \"nodes\": [\n        \"node_modules/eve/node_modules/undici\"\n      ],\n      \"fixAvailable\": {\n        \"name\": \"eve\",\n        \"version\": \"1.0.0-rc.18\",\n        \"isSemVerMajor\": true\n      }\n    }\n  },\n  \"metadata\": {\n    \"vulnerabilities\": {\n      \"info\": 0,\n      \"low\": 0,\n      \"moderate\": 1,\n      \"high\": 1,\n      \"critical\": 0,\n      \"total\": 2\n    },\n    \"dependencies\": {\n      \"prod\": 53,\n      \"dev\": 6,\n      \"optional\": 60,\n      \"peer\": 0,\n      \"peerOptional\": 0,\n      \"total\": 118\n    }\n  }\n}\n",
+        "audit.stderr": ""
+      }
+    },
+    {
+      "stage": "qualification1",
+      "runUrl": "https://github.com/alvarovillalbaa/trippin/actions/runs/43624154399",
+      "artifactId": 14125546527,
+      "providerReportedArchiveDigest": "sha256:f48758be883a2ef814d250b73d2010e63348c22d9a0cef54f13685df1b0b5e54",
+      "archiveDigestVerified": false,
+      "receipt": {
+        "source": "144484cd7bb2a808eb3bdc1b88bf2cc0aca77f04",
+        "node": "v24.21.0",
+        "npm": "11.19.0",
+        "startedAt": "2026-11-14T18:00:37.254612+00:00",
+        "manifestSha256": "b087a73b8b27a8e425e0a11e995f7fd3380d5131c441642ce813de3b7d8e5fac",
+        "baselineLockPresent": true,
+        "commands": [
+          {
+            "name": "resolve",
+            "argv": [
+              "npm",
+              "install",
+              "--package-lock-only",
+              "--ignore-scripts",
+              "--no-audit",
+              "--no-fund"
+            ],
+            "exitCode": 0,
+            "stdoutSha256": "efe78ec389e858f841736590d7c9526ac3a3f434a6e03674ba158f7f4cc1dd9f",
+            "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "audit",
+            "argv": [
+              "npm",
+              "audit",
+              "--json",
+              "--package-lock-only",
+              "--ignore-scripts"
+            ],
+            "exitCode": 0,
+            "stdoutSha256": "ecfa59ff96629a256665f99febcc1282decf96a19f4271f884bdbcb22eb60723",
+            "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "ci",
+            "argv": [
+              "npm",
+              "ci",
+              "--no-audit",
+              "--no-fund"
+            ],
+            "exitCode": 0,
+            "stdoutSha256": "0d3dcdb4590838c5630a02b0cdcc4f0beefc8ea814d0c841f1a0ff94d8300b03",
+            "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "migration",
+            "argv": [
+              "node",
+              "--test",
+              "--test-reporter=tap",
+              "tests/unit/session-usage.test.mjs",
+              "tests/integration/ai-chat-v27.test.mjs"
+            ],
+            "exitCode": 1,
+            "stdoutSha256": "2aac97ee52f7ae88020b7c68ce32d8190582a13ad815a99f967deef39e0de00e",
+            "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "cleanup": true,
+        "lockSha256": "6a78c5a4d88576a04aa871c84210d76b9c782024a413633c06f228c00e9dc25d",
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "auditExitCode": 0,
+        "endedAt": "2026-11-14T18:01:05.370901+00:00"
+      },
+      "audit": {
+        "auditReportVersion": 2,
+        "vulnerabilities": {},
+        "metadata": {
+          "vulnerabilities": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 0,
+            "critical": 0,
+            "total": 0
+          },
+          "dependencies": {
+            "prod": 53,
+            "dev": 6,
+            "optional": 60,
+            "peer": 0,
+            "peerOptional": 0,
+            "total": 118
+          }
+        }
+      },
+      "originalStreamsVerifiedAgainstReceipt": true,
+      "streams": {
+        "resolve.stdout": "\nup to date in 18s\n",
+        "resolve.stderr": "",
+        "audit.stdout": "{\n  \"auditReportVersion\": 2,\n  \"vulnerabilities\": {},\n  \"metadata\": {\n    \"vulnerabilities\": {\n      \"info\": 0,\n      \"low\": 0,\n      \"moderate\": 0,\n      \"high\": 0,\n      \"critical\": 0,\n      \"total\": 0\n    },\n    \"dependencies\": {\n      \"prod\": 53,\n      \"dev\": 6,\n      \"optional\": 60,\n      \"peer\": 0,\n      \"peerOptional\": 0,\n      \"total\": 118\n    }\n  }\n}\n",
+        "audit.stderr": "",
+        "ci.stdout": "\nadded 66 packages in 9s\n",
+        "ci.stderr": "",
+        "migration.stdout": "TAP version 13\n# Subtest: native v27 message and completed tool parts render without a legacy data wrapper\nok 1 - native v27 message and completed tool parts render without a legacy data wrapper\n  ---\n  duration_ms: 4.461772\n  type: 'test'\n  ...\n# Subtest: approval, budget and question controls send native interaction IDs\nok 2 - approval, budget and question controls send native interaction IDs\n  ---\n  duration_ms: 10.409968\n  type: 'test'\n  ...\n# Subtest: following stays open for a paused native turn and stops at idle completion\nnot ok 3 - following stays open for a paused native turn and stops at idle completion\n  ---\n  duration_ms: 2.440699\n  type: 'test'\n  location: '<repo>/tests/integration/ai-chat-v27.test.mjs:85:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    false !== true\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: true\n  actual: false\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<repo>/tests/integration/ai-chat-v27.test.mjs:86:33)\n    Test.runInAsyncScope (node:async_hooks:227:14)\n    Test.run (node:internal/test_runner/test:1402:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:974:18)\n    Test.postRun (node:internal/test_runner/test:1542:19)\n    Test.run (node:internal/test_runner/test:1467:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)\n  ...\n# Subtest: closing a paused turn waits for cancellation settlement before detaching\nok 4 - closing a paused turn waits for cancellation settlement before detaching\n  ---\n  duration_ms: 7.540782\n  type: 'test'\n  ...\n# Subtest: failed cancellation leaves the conversation open with a retryable error\nok 5 - failed cancellation leaves the conversation open with a retryable error\n  ---\n  duration_ms: 2.572628\n  type: 'test'\n  ...\n# Subtest: trip context remains opt-in in the native send options\nok 6 - trip context remains opt-in in the native send options\n  ---\n  duration_ms: 2.385667\n  type: 'test'\n  ...\n# Subtest: resuming and pending commands disable choices and refuse a second send\nok 7 - resuming and pending commands disable choices and refuse a second send\n  ---\n  duration_ms: 2.847511\n  type: 'test'\n  ...\n# Subtest: a completed idle conversation closes directly without cancelling a settled turn\nok 8 - a completed idle conversation closes directly without cancelling a settled turn\n  ---\n  duration_ms: 1.269036\n  type: 'test'\n  ...\n# (node:2546) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/agent/lib/usage-limits.ts is not specified and it doesn't parse as CommonJS.\n# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.\n# To eliminate this warning, add \"type\": \"module\" to <repo>/package.json.\n# (Use `node --trace-warnings ...` to show where the warning was created)\n# Subtest: input budget stops at 30000, including cached input\nok 9 - input budget stops at 30000, including cached input\n  ---\n  duration_ms: 0.766497\n  type: 'test'\n  ...\n# Subtest: output budget stops at 5000\nok 10 - output budget stops at 5000\n  ---\n  duration_ms: 0.126383\n  type: 'test'\n  ...\n# Subtest: reported token cost stops at 25 cents\nok 11 - reported token cost stops at 25 cents\n  ---\n  duration_ms: 0.155788\n  type: 'test'\n  ...\n# Subtest: unknown reported cost does not fabricate a charge or erase token limits\nok 12 - unknown reported cost does not fabricate a charge or erase token limits\n  ---\n  duration_ms: 0.121079\n  type: 'test'\n  ...\n# Subtest: an approved continuation uses its new window rather than lifetime totals\nok 13 - an approved continuation uses its new window rather than lifetime totals\n  ---\n  duration_ms: 0.131125\n  type: 'test'\n  ...\n1..13\n# tests 13\n# suites 0\n# pass 12\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 433.748359\n",
+        "migration.stderr": ""
+      }
+    },
+    {
+      "stage": "qualification2",
+      "runUrl": "https://github.com/alvarovillalbaa/trippin/actions/runs/43624437997",
+      "artifactId": 14125861407,
+      "providerReportedArchiveDigest": "sha256:9936095edef59b733cec9a691380606d5279c63f9eb174f921fd13de04128241",
+      "archiveDigestVerified": false,
+      "receipt": {
+        "source": "dfa2ee20c98d322b3e4bfa1d22a7bb6c6f58ad05",
+        "node": "v24.21.0",
+        "npm": "11.19.0",
+        "startedAt": "2026-11-14T18:03:32.504462+00:00",
+        "manifestSha256": "b087a73b8b27a8e425e0a11e995f7fd3380d5131c441642ce813de3b7d8e5fac",
+        "baselineLockPresent": true,
+        "commands": [
+          {
+            "name": "resolve",
+            "argv": [
+              "npm",
+              "install",
+              "--package-lock-only",
+              "--ignore-scripts",
+              "--no-audit",
+              "--no-fund"
+            ],
+            "exitCode": 0,
+            "stdoutSha256": "0f5c51cdd87519bd6212891e4549ba98a9a8d485cb418c0d1078d43120e45296",
+            "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "audit",
+            "argv": [
+              "npm",
+              "audit",
+              "--json",
+              "--package-lock-only",
+              "--ignore-scripts"
+            ],
+            "exitCode": 0,
+            "stdoutSha256": "ecfa59ff96629a256665f99febcc1282decf96a19f4271f884bdbcb22eb60723",
+            "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "ci",
+            "argv": [
+              "npm",
+              "ci",
+              "--no-audit",
+              "--no-fund"
+            ],
+            "exitCode": 0,
+            "stdoutSha256": "dcee08212120afc14985303a65d7ef310514f9521df454db5f9ead083d083ef6",
+            "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "migration",
+            "argv": [
+              "node",
+              "--test",
+              "--test-reporter=tap",
+              "tests/unit/session-usage.test.mjs",
+              "tests/integration/ai-chat-v27.test.mjs"
+            ],
+            "exitCode": 0,
+            "stdoutSha256": "ea942c40a339bdd1bc117dbbb80dc1c62a8e5a3ef09086c70f973e69fc64a86b",
+            "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "check",
+            "argv": [
+              "npm",
+              "run",
+              "check"
+            ],
+            "exitCode": 0,
+            "stdoutSha256": "d0970c9ec56b2955de68300d79c735ca8423c0f4d48b4c4ff0fa0583bac8022e",
+            "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "agent-build",
+            "argv": [
+              "npm",
+              "run",
+              "agent:build"
+            ],
+            "exitCode": 0,
+            "stdoutSha256": "6a6fa6ac0c37cb18f3bb49a0f942a4f441ecb624739cee1d7fe6bba5906c5a4e",
+            "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "build",
+            "argv": [
+              "npm",
+              "run",
+              "build"
+            ],
+            "exitCode": 0,
+            "stdoutSha256": "bde9142c2ec5c7899d449aeed013e77871c13cd1911994565f3f915fa93a736c",
+            "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "cleanup": true,
+        "lockSha256": "6a78c5a4d88576a04aa871c84210d76b9c782024a413633c06f228c00e9dc25d",
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "auditExitCode": 0,
+        "generatedNextEnvChanged": true,
+        "sourceUnchangedExceptGeneratedLock": true,
+        "endedAt": "2026-11-14T18:04:18.841520+00:00"
+      },
+      "audit": {
+        "auditReportVersion": 2,
+        "vulnerabilities": {},
+        "metadata": {
+          "vulnerabilities": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 0,
+            "critical": 0,
+            "total": 0
+          },
+          "dependencies": {
+            "prod": 53,
+            "dev": 6,
+            "optional": 60,
+            "peer": 0,
+            "peerOptional": 0,
+            "total": 118
+          }
+        }
+      },
+      "originalStreamsVerifiedAgainstReceipt": true,
+      "streams": {
+        "resolve.stdout": "\nup to date in 297ms\n",
+        "resolve.stderr": "",
+        "audit.stdout": "{\n  \"auditReportVersion\": 2,\n  \"vulnerabilities\": {},\n  \"metadata\": {\n    \"vulnerabilities\": {\n      \"info\": 0,\n      \"low\": 0,\n      \"moderate\": 0,\n      \"high\": 0,\n      \"critical\": 0,\n      \"total\": 0\n    },\n    \"dependencies\": {\n      \"prod\": 53,\n      \"dev\": 6,\n      \"optional\": 60,\n      \"peer\": 0,\n      \"peerOptional\": 0,\n      \"total\": 118\n    }\n  }\n}\n",
+        "audit.stderr": "",
+        "ci.stdout": "\nadded 66 packages in 8s\n",
+        "ci.stderr": "",
+        "migration.stdout": "TAP version 13\n# Subtest: native v27 message and completed tool parts render without a legacy data wrapper\nok 1 - native v27 message and completed tool parts render without a legacy data wrapper\n  ---\n  duration_ms: 4.418215\n  type: 'test'\n  ...\n# Subtest: approval, budget and question controls send native interaction IDs\nok 2 - approval, budget and question controls send native interaction IDs\n  ---\n  duration_ms: 9.226255\n  type: 'test'\n  ...\n# Subtest: following stays open for a paused native turn and stops at idle completion\nok 3 - following stays open for a paused native turn and stops at idle completion\n  ---\n  duration_ms: 3.261621\n  type: 'test'\n  ...\n# Subtest: closing a paused turn waits for cancellation settlement before detaching\nok 4 - closing a paused turn waits for cancellation settlement before detaching\n  ---\n  duration_ms: 3.002408\n  type: 'test'\n  ...\n# Subtest: failed cancellation leaves the conversation open with a retryable error\nok 5 - failed cancellation leaves the conversation open with a retryable error\n  ---\n  duration_ms: 6.471869\n  type: 'test'\n  ...\n# Subtest: trip context remains opt-in in the native send options\nok 6 - trip context remains opt-in in the native send options\n  ---\n  duration_ms: 2.81318\n  type: 'test'\n  ...\n# Subtest: resuming and pending commands disable choices and refuse a second send\nok 7 - resuming and pending commands disable choices and refuse a second send\n  ---\n  duration_ms: 2.75151\n  type: 'test'\n  ...\n# Subtest: a completed idle conversation closes directly without cancelling a settled turn\nok 8 - a completed idle conversation closes directly without cancelling a settled turn\n  ---\n  duration_ms: 1.369483\n  type: 'test'\n  ...\n# (node:2448) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file://<repo>/agent/lib/usage-limits.ts is not specified and it doesn't parse as CommonJS.\n# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.\n# To eliminate this warning, add \"type\": \"module\" to <repo>/package.json.\n# (Use `node --trace-warnings ...` to show where the warning was created)\n# Subtest: input budget stops at 30000, including cached input\nok 9 - input budget stops at 30000, including cached input\n  ---\n  duration_ms: 1.084764\n  type: 'test'\n  ...\n# Subtest: output budget stops at 5000\nok 10 - output budget stops at 5000\n  ---\n  duration_ms: 0.210277\n  type: 'test'\n  ...\n# Subtest: reported token cost stops at 25 cents\nok 11 - reported token cost stops at 25 cents\n  ---\n  duration_ms: 0.170139\n  type: 'test'\n  ...\n# Subtest: unknown reported cost does not fabricate a charge or erase token limits\nok 12 - unknown reported cost does not fabricate a charge or erase token limits\n  ---\n  duration_ms: 0.179317\n  type: 'test'\n  ...\n# Subtest: an approved continuation uses its new window rather than lifetime totals\nok 13 - an approved continuation uses its new window rather than lifetime totals\n  ---\n  duration_ms: 0.185718\n  type: 'test'\n  ...\n1..13\n# tests 13\n# suites 0\n# pass 13\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 436.420172\n",
+        "migration.stderr": "",
+        "check.stdout": "\n> trippin@0.1.0 check\n> tsc --noEmit\n\n",
+        "check.stderr": "",
+        "agent-build.stdout": "\n> trippin@0.1.0 agent:build\n> eve build\n\neve: initializing 1 sandbox template...\neve: sandbox template \"root\" (default): starting template build container\neve: sandbox template \"root\" (default): preparing base runtime inside container\neve: sandbox template \"root\" (default): stopping template build container\neve: sandbox template \"root\" (default): committing template image \"eve-sandbox-template:4a024a1132f8e86d04835047-02a084fd45a2334e2408\"\neve: initialized 1 sandbox template.\n[success] [nitro] Generated public \u001b[36m.eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/public\u001b[39m\n[info] [nitro] Building server (builder: `rolldown`, preset: `node-server`, compatibility date: `2026-11-14`)\n[info] Generated \u001b[36m.eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/nitro.json\u001b[39m\n[success] [nitro] Server built in 1929ms\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_chunks/compiled-artifacts-instrumentation.mjs (614 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_chunks/node-server.mjs (1.33 MB)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_chunks/storage.mjs (1.39 kB)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_.mjs (835 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_10.mjs (498 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_11.mjs (236 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_12.mjs (235 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_13.mjs (275 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_14.mjs (345 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_15.mjs (262 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_16.mjs (267 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_17.mjs (256 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_18.mjs (266 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_19.mjs (243 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_2.mjs (313 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_20.mjs (243 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_21.mjs (241 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_22.mjs (241 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_23.mjs (241 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_24.mjs (251 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_25.mjs (253 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_26.mjs (244 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_27.mjs (263 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_28.mjs (260 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_29.mjs (255 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_3.mjs (273 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_30.mjs (268 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_31.mjs (267 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_32.mjs (251 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_33.mjs (244 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_34.mjs (308 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_35.mjs (252 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_36.mjs (289 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_37.mjs (307 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_38.mjs (307 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_39.mjs (311 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_4.mjs (312 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_40.mjs (290 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_5.mjs (270 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_6.mjs (294 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_7.mjs (244 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_8.mjs (243 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/_9.mjs (241 B)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/@ai-sdk/gateway+[...].mjs (455 kB)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/ai.mjs (760 kB)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/eve.mjs (6.85 MB)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/h3+rou3+srvx.mjs (57.3 kB)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/hookable.mjs (1.31 kB)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/ufo.mjs (2.39 kB)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/undici.mjs (1.22 MB)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/unstorage.mjs (22.5 kB)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_libs/vercel__oidc.mjs (2.79 kB)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_runtime.mjs (1.8 kB)\u001b[39m\n\u001b[90m  \u251c\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/_virtual/skills.json.mjs (301 B)\u001b[39m\n\u001b[90m  \u2514\u2500 .eve/builds/mwgpsk8h-fdaeb679-a02c-497d-87a3-47b2b5931ffb/output/server/index.mjs (418 B)\u001b[39m\n\u001b[36m\u03a3 Total size:\u001b[39m 10.7 MB\n[success] [nitro] You can preview this build using `npx nitro preview`\n[BUILD] built output at <repo>/.output\n",
+        "agent-build.stderr": "",
+        "build.stdout": "\n> trippin@0.1.0 build\n> next build\n\n\u25b2 Next.js 16.4.2 (Turbopack)\n\u2713 Running next.config.ts took 263ms\n\u26a0 No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache\nAttention: Next.js now collects completely anonymous telemetry regarding usage.\nThis information is used to shape Next.js' roadmap and prioritize features.\nYou can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:\nhttps://nextjs.org/telemetry\n\n\n  Creating an optimized production build ...\n\u2713 Compiled successfully in 5.0s\n  Running TypeScript ...\n  Finished TypeScript in 4.1s ...\n  Collecting page data using 3 workers ...\n  Generating static pages using 3 workers (0/4) ...\n  Generating static pages using 3 workers (1/4) \r\n  Generating static pages using 3 workers (2/4) \r\n  Generating static pages using 3 workers (3/4) \r\n\u2713 Generating static pages using 3 workers (4/4) in 271ms\n  Finalizing page optimization ...\n\nRoute (app)\n\u250c \u25cb /\n\u251c \u25cb /_not-found\n\u251c \u0192 /api/assistant-config\n\u251c \u0192 /api/bank\n\u251c \u0192 /api/community\n\u251c \u0192 /api/health\n\u2514 \u0192 /api/providers\n\n\n\u25cb  (Static)   prerendered as static content\n\u0192  (Dynamic)  server-rendered on demand\n\n",
+        "build.stderr": ""
+      }
+    }
+  ],
+  "limits": [
+    "Audit covers known npm advisories at each recorded query time, not all application security",
+    "Actual model/billing/Workflow turns, hosted/browser controls and devices remain unverified",
+    "13 identities overlap across failed/repaired invocations; not25 distinct passes",
+    "Next generated declaration captured and original restored; no application file changed during final check",
+    "Raw originals retained locally; canonical streams replace only the runner repository prefix",
+    "Artifact server ZIP digests are reported metadata; extracted files and receipt stream checksums were verified",
+    "No local dependency installation/build/server/browser; Guard2.3GiB versus34GiB required"
+  ]
+}

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { openConversationInputs, useEveAgent } from "eve/react";
+import { useEveAgent } from "eve/react";
+import { activeTurn, idle, openInteractions } from "eve/events";
 import { ArrowUp, Check, LoaderCircle, RefreshCw, Sparkles, Square, X } from "lucide-react";
 
 type Availability = { enabled: boolean; message: string };
@@ -22,10 +23,11 @@ export function AiChat({ context, onClose }: { context: string; onClose: () => v
   const endOfMessages = useRef<HTMLDivElement>(null);
   const composer = useRef<HTMLTextAreaElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
-  const agent = useEveAgent({ followIdle: false });
-  const busy = agent.status === "submitted" || agent.status === "streaming";
+  const agent = useEveAgent({ followWhile: view => !idle(view) || activeTurn(view) !== undefined });
+  const busy = agent.status === "busy";
+  const canStop = busy || activeTurn(agent.view) !== undefined;
   const resuming = agent.status === "resuming";
-  const requests = openConversationInputs(agent.data).map((input) => input.request);
+  const requests = openInteractions(agent.view);
 
   async function checkAvailability(signal?: AbortSignal) {
     setChecking(true);
@@ -54,12 +56,18 @@ export function AiChat({ context, onClose }: { context: string; onClose: () => v
 
   useEffect(() => {
     endOfMessages.current?.scrollIntoView({ behavior: "instant", block: "nearest" });
-  }, [agent.data.messages, busy, requests.length]);
+  }, [agent.messages, busy, requests.length]);
+
+  async function cancelTurn() {
+    const delivery = await agent.cancel();
+    const result = await delivery.result();
+    if (result.status !== "completed" && result.status !== "cancelled") throw new Error("Cancellation did not settle.");
+  }
 
   async function close() {
     setClosing(true);
     try {
-      if (busy) await agent.cancel();
+      if (canStop) await cancelTurn();
       onClose();
     } catch {
       setLocalError("We couldn’t stop this reply yet. Try stopping it again before closing.");
@@ -93,7 +101,7 @@ export function AiChat({ context, onClose }: { context: string; onClose: () => v
       </header>
 
       <div className="ai-messages" aria-live="polite" aria-relevant="additions text" role="log" aria-label="Travel assistant conversation">
-        {agent.data.messages.length === 0 && (
+        {agent.messages.length === 0 && (
           <div className="ai-welcome">
             <span className="ai-eyebrow">MAKE ROOM FOR THE UNEXPECTED</span>
             <h3>Less planning.<br />More being there.</h3>
@@ -108,16 +116,16 @@ export function AiChat({ context, onClose }: { context: string; onClose: () => v
           </div>
         )}
 
-        {agent.data.messages.map((message) => (
+        {agent.messages.map((message) => (
           <article className={`ai-message ${message.role === "user" ? "ai-user" : "ai-assistant"}`} key={message.id}>
             <span className="ai-message-label">{message.role === "user" ? "You" : "Trippin AI"}</span>
             {message.parts.map((part, index) => {
               if (part.type === "text") return <p key={part.id ?? index}>{part.text}</p>;
-              if (part.type === "dynamic-tool") {
+              if (part.type === "tool") {
                 return (
                   <span className="ai-tool" key={index}>
-                    {part.state === "output-available" ? <Check size={13} /> : <Sparkles size={13} />}
-                    {part.toolMetadata?.eve?.label ?? "Working through the numbers"}
+                    {part.state === "completed" ? <Check size={13} /> : <Sparkles size={13} />}
+                    {part.label || "Working through the numbers"}
                   </span>
                 );
               }
@@ -127,13 +135,13 @@ export function AiChat({ context, onClose }: { context: string; onClose: () => v
         ))}
 
         {busy && <p className="ai-thinking"><LoaderCircle size={14} className="ai-spin" /> Thinking it through…</p>}
-        {requests.map((request) => (
-          <fieldset className="ai-request" key={request.requestId} disabled={resuming}>
-            <legend>{request.kind === "tool-approval" ? "Approval required" : request.kind === "question" ? "Your choice" : "Planning session limit"}</legend>
-            <p>{request.prompt}</p>
-            {request.options?.map((option) => (
+        {requests.map((interaction) => (
+          <fieldset className="ai-request" key={interaction.interactionId} disabled={resuming || busy || closing}>
+            <legend>{interaction.request.kind === "approval" ? "Approval required" : interaction.request.kind === "question" ? "Your choice" : interaction.request.kind === "budget" ? "Planning session limit" : "Your response"}</legend>
+            <p>{interaction.request.prompt}</p>
+            {interaction.request.options?.map((option) => (
               <button key={option.id} type="button" onClick={() => {
-                void agent.respond([{ requestId: request.requestId, optionId: option.id }]).catch(() => setLocalError("That choice couldn’t be sent. Please try again."));
+                void agent.respond([{ interactionId: interaction.interactionId, optionId: option.id }]).catch(() => setLocalError("That choice couldn’t be sent. Please try again."));
               }}>{option.label}</button>
             ))}
           </fieldset>
@@ -165,9 +173,10 @@ export function AiChat({ context, onClose }: { context: string; onClose: () => v
             onKeyDown={(event) => {
               if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); void send(); }
             }} />
-          {busy ? (
-            <button className="ai-send" type="button" aria-label="Stop reply" onClick={() => void agent.cancel().catch(() => setLocalError("We couldn’t stop the reply. Try again."))}><Square size={15} fill="currentColor" /></button>
-          ) : (
+          {canStop && (
+            <button className="ai-send" type="button" aria-label="Stop reply" disabled={closing || resuming} onClick={() => void cancelTurn().catch(() => setLocalError("We couldn’t stop the reply. Try again."))}><Square size={15} fill="currentColor" /></button>
+          )}
+          {!busy && (
             <button className="ai-send" type="submit" aria-label="Send message" disabled={!draft.trim() || !availability?.enabled || checking || resuming}><ArrowUp size={20} /></button>
           )}
         </form>
