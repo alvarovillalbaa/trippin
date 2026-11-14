@@ -1,0 +1,82 @@
+name: Trippin dependency review
+on:
+  push:
+    branches: [qa/trippin-dependencies-20261114]
+    paths: [package.json, .github/workflows/dependency-review.yml]
+permissions:
+  contents: read
+concurrency:
+  group: trippin-dependency-review
+  cancel-in-progress: false
+jobs:
+  inspect:
+    if: github.repository == 'alvarovillalbaa/trippin' && github.event.repository.private == false && github.ref == 'refs/heads/qa/trippin-dependencies-20261114'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '24.21.0'
+          check-latest: false
+      - name: Resolve exact public graph and inspect advisories
+        shell: bash
+        run: |
+          set -euo pipefail
+          export AUDIT_OUTPUT_DIR="$RUNNER_TEMP/trippin-dependency-output-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          echo "AUDIT_OUTPUT_DIR=$AUDIT_OUTPUT_DIR" >> "$GITHUB_ENV"
+          python3 - <<'PY'
+          import os,json,subprocess,pathlib,tempfile,hashlib,shutil,datetime
+          repo=pathlib.Path.cwd();out=pathlib.Path(os.environ['AUDIT_OUTPUT_DIR']);out.mkdir()
+          task=pathlib.Path(tempfile.mkdtemp(prefix='trippin-dependency-',dir=os.environ['RUNNER_TEMP']))
+          manifest=(repo/'package.json').read_bytes();baseline=(repo/'package-lock.json').is_file();next_env=(repo/'next-env.d.ts').read_bytes()
+          owned_dirs=['node_modules','.next','.eve','.vercel'];owned_files=['tsconfig.tsbuildinfo']
+          assert all(not (repo/x).exists() for x in owned_dirs+owned_files),'Runner checkout already contains unowned build outputs'
+          receipt={'source':os.environ['GITHUB_SHA'],'node':subprocess.check_output(['node','--version'],text=True).strip(),'npm':subprocess.check_output(['npm','--version'],text=True).strip(),'startedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'manifestSha256':hashlib.sha256(manifest).hexdigest(),'baselineLockPresent':baseline,'commands':[],'cleanup':False}
+          env={**os.environ,'npm_config_cache':str(task/'cache'),'npm_config_userconfig':str(task/'empty.npmrc'),'npm_config_registry':'https://registry.npmjs.org/'}
+          (task/'empty.npmrc').write_text('');(task/'package.json').write_bytes(manifest);(out/'package.json').write_bytes(manifest)
+          if baseline:shutil.copyfile(repo/'package-lock.json',task/'package-lock.json')
+          def run(name,args,cwd):
+            result=subprocess.run(args,cwd=cwd,env=env,capture_output=True,timeout=180)
+            (out/(name+'.stdout')).write_bytes(result.stdout);(out/(name+'.stderr')).write_bytes(result.stderr)
+            receipt['commands'].append({'name':name,'argv':args,'exitCode':result.returncode,'stdoutSha256':hashlib.sha256(result.stdout).hexdigest(),'stderrSha256':hashlib.sha256(result.stderr).hexdigest()})
+            return result
+          try:
+            resolve=run('resolve',['npm','install','--package-lock-only','--ignore-scripts','--no-audit','--no-fund'],task);assert resolve.returncode==0,'Lock resolution failed'
+            lock=(task/'package-lock.json').read_bytes();(out/'package-lock.json').write_bytes(lock);receipt['lockSha256']=hashlib.sha256(lock).hexdigest()
+            audit=run('audit',['npm','audit','--json','--package-lock-only','--ignore-scripts'],task);report=json.loads(audit.stdout);assert audit.returncode in [0,1] and not report.get('error'),'Audit query failed'
+            assert report.get('auditReportVersion')==2 and isinstance(report.get('vulnerabilities'),dict) and isinstance(report.get('metadata',{}).get('vulnerabilities'),dict),'Unreadable audit report'
+            receipt['vulnerabilities']=report['metadata']['vulnerabilities'];receipt['auditExitCode']=audit.returncode
+            if baseline:
+              assert audit.returncode==0 and receipt['vulnerabilities']['total']==0,'Patched graph must be clean before installation'
+              shutil.copyfile(task/'package-lock.json',repo/'package-lock.json')
+              for name,args in [('ci',['npm','ci','--no-audit','--no-fund']),('check',['npm','run','check']),('agent-build',['npm','run','agent:build']),('build',['npm','run','build'])]:
+                assert run(name,args,repo).returncode==0,name+' failed'
+              assert (repo/'package-lock.json').read_bytes()==lock,'Build changed locked graph'
+            generated=(repo/'next-env.d.ts').read_bytes();receipt['generatedNextEnvChanged']=generated!=next_env
+            if generated!=next_env:
+              (out/'next-env.generated.txt').write_bytes(generated);(repo/'next-env.d.ts').write_bytes(next_env)
+            assert (repo/'package.json').read_bytes()==manifest,'Manifest changed during review'
+            receipt['sourceUnchangedExceptGeneratedLock']=subprocess.check_output(['git','diff','--name-only'],text=True).splitlines() in [[],['package-lock.json']]
+            assert receipt['sourceUnchangedExceptGeneratedLock'],'Unexpected tracked source mutation'
+          finally:
+            for path in [repo/x for x in owned_dirs]:
+              if path.exists():shutil.rmtree(path)
+            for path in [repo/x for x in owned_files]:
+              if path.exists():path.unlink()
+            if (repo/'next-env.d.ts').read_bytes()!=next_env:
+              (out/'next-env.generated.txt').write_bytes((repo/'next-env.d.ts').read_bytes());(repo/'next-env.d.ts').write_bytes(next_env)
+            shutil.rmtree(task);receipt['cleanup']=not task.exists() and all(not (repo/x).exists() for x in owned_dirs+owned_files);receipt['endedAt']=datetime.datetime.now(datetime.timezone.utc).isoformat()
+            (out/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          PY
+      - name: Retain bounded review evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: trippin-dependency-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ env.AUDIT_OUTPUT_DIR }}
+          if-no-files-found: error
+          retention-days: 7
