@@ -1,5 +1,5 @@
-import { serializeWorkspace } from './trip';
-import type { Expense, WorkspaceState } from './types';
+import { isTrip, serializeWorkspace } from './trip';
+import type { Expense, Trip, WorkspaceState } from './types';
 
 export interface CsvImportTicket {
   tripId: string;
@@ -13,17 +13,32 @@ interface CsvNotice {
   accepted: boolean;
 }
 
+export interface TripEditTicket {
+  tripId: string;
+  identity: number | undefined;
+  requestId: number;
+  epoch: number;
+}
+
+interface TripEditNotice {
+  ticket: TripEditTicket;
+  accepted: boolean;
+  message: string;
+}
+
 /** Runtime metadata stays outside the portable workspace model. */
 export interface WorkspaceEditorState {
   workspace: WorkspaceState;
   tripIdentities: ReadonlyMap<string, number>;
   nextIdentity: number;
   csvNotice: CsvNotice | null;
+  editNotice: TripEditNotice | null;
 }
 
 export type WorkspaceUpdate = WorkspaceState | ((current: WorkspaceState) => WorkspaceState);
 export type WorkspaceAction =
   | { type: 'update'; update: WorkspaceUpdate }
+  | { type: 'trip-edit'; ticket: TripEditTicket; update: (current: Trip) => Trip }
   | { type: 'publication-result'; tripId: string; identity: number | undefined; isPublic: boolean }
   | { type: 'csv-import'; ticket: CsvImportTicket; expenses: Expense[] }
   | { type: 'csv-error'; ticket: CsvImportTicket; message: string };
@@ -34,6 +49,7 @@ export function createWorkspaceEditor(workspace: WorkspaceState): WorkspaceEdito
     tripIdentities: new Map(workspace.trips.map((trip, index) => [trip.id, index + 1])),
     nextIdentity: workspace.trips.length + 1,
     csvNotice: null,
+    editNotice: null,
   };
 }
 
@@ -48,7 +64,49 @@ export function workspaceReducer(current: WorkspaceEditorState, action: Workspac
       const previous = replacing ? undefined : current.tripIdentities.get(trip.id);
       tripIdentities.set(trip.id, previous ?? nextIdentity++);
     }
-    return { workspace, tripIdentities, nextIdentity, csvNotice: replacing ? null : current.csvNotice };
+    return { workspace, tripIdentities, nextIdentity, csvNotice: replacing ? null : current.csvNotice,
+      editNotice: replacing ? null : current.editNotice };
+  }
+
+  if (action.type === 'trip-edit') {
+    const { ticket } = action;
+    const reject = (message: string): WorkspaceEditorState => ({
+      ...current, editNotice: { ticket, accepted: false, message },
+    });
+    if (ticket.identity === undefined || current.tripIdentities.get(ticket.tripId) !== ticket.identity) {
+      return reject('This trip was replaced or removed. Reopen the form before saving.');
+    }
+    const target = current.workspace.trips.find(trip => trip.id === ticket.tripId);
+    if (!target) return reject('This trip was replaced or removed. Reopen the form before saving.');
+    let candidate: unknown;
+    try { candidate = action.update(target); }
+    catch { return reject('These changes could not be applied. Your latest trip is unchanged.'); }
+    if (candidate === target) return reject('This trip changed while the form was open. Review its current details and try again.');
+    if (!isTrip(candidate)) {
+      if (candidate && typeof candidate === 'object') {
+        const invalid = candidate as Partial<Trip>;
+        if (Array.isArray(invalid.expenses) && invalid.expenses.length > 1000) {
+          return reject('Keep up to 1,000 expenses per trip. Your latest trip is unchanged.');
+        }
+        if (Array.isArray(invalid.bookings) && invalid.bookings.length > 100) {
+          return reject('Keep up to 100 reservations per trip. Your latest trip is unchanged.');
+        }
+        if (Array.isArray(invalid.days) && invalid.days.some(day => day && Array.isArray(day.activities) && day.activities.length > 60)) {
+          return reject('Keep up to 60 stops and alternatives in a day. Your latest trip is unchanged.');
+        }
+      }
+      return reject('These changes would make this trip invalid. Review the latest trip details and try again.');
+    }
+    if (candidate.id !== target.id) return reject('This trip’s identity could not be preserved. Reopen the form before saving.');
+    const workspace: WorkspaceState = {
+      ...current.workspace,
+      trips: current.workspace.trips.map(trip => trip.id === target.id ? candidate : trip),
+    };
+    try { serializeWorkspace(workspace, 0); }
+    catch (error) {
+      return reject(`${error instanceof Error ? error.message : 'These changes could not be saved.'} Your latest trip is unchanged.`);
+    }
+    return { ...current, workspace, editNotice: { ticket, accepted: true, message: '' } };
   }
 
   if (action.type === 'publication-result') {

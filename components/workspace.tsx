@@ -1,13 +1,13 @@
 'use client';
 
-import {useCallback,useEffect,useLayoutEffect,useMemo,useReducer,useRef,useState, type FormEvent} from 'react';
+import {useCallback,useEffect,useLayoutEffect,useMemo,useReducer,useRef,useState, type FormEvent, type KeyboardEvent} from 'react';
 import dynamic from 'next/dynamic';
 import {ArrowUpRight,ArrowLeft,ArrowRight,ArrowUp,ArrowDown,Plus,MapPin,CalendarDays,Compass,Wallet,Ticket,ChevronDown,ChevronRight,Check,CheckCircle2,Clock,Footprints,Plane,Building2,Coffee,Sun,CloudSun,Users,Share2,Sparkles,Settings2,Search,Heart,Leaf,Mountain,Music2,Utensils,Landmark,MoreHorizontal,Download,Upload,ExternalLink,Trash2,Map,LayoutList,Pencil,X,Globe,ShieldCheck,Route,BookOpen,Link as LinkIcon} from 'lucide-react';
-import {seedTrips,seedProfile,destinations} from '@/lib/data';
-import {formatMoney,formatDate,getTripCost,getTripDays,getWalkingRoute,getTravelBadges,getEventPreferences,isTrip,makeId,publicTripSnapshot,restoreWorkspace,importSharedPlan,persistWorkspace,MAX_BACKUP_FILE_BYTES,exportWorkspaceBackup,parseWorkspaceBackup} from '@/lib/trip';
+import {destinations} from '@/lib/data';
+import {formatMoney,formatDate,getTripCost,getTripDays,getWalkingRoute,getTravelBadges,getEventPreferences,isTrip,makeId,publicTripSnapshot,importSharedPlan,persistWorkspace,MAX_BACKUP_FILE_BYTES,exportWorkspaceBackup,parseWorkspaceBackup} from '@/lib/trip';
 import type {Trip,Activity,Booking,Expense,Profile,WorkspaceState} from '@/lib/types';
 import {parseExpenseCsv} from '@/lib/csv';
-import {createWorkspaceEditor,workspaceReducer,type WorkspaceUpdate,type CsvImportTicket} from '@/lib/workspace-state';
+import {createWorkspaceEditor,workspaceReducer,type WorkspaceUpdate,type CsvImportTicket,type TripEditTicket} from '@/lib/workspace-state';
 import {COMMUNITY_MANAGEMENT_KEY,type ManagedTrip} from '@/lib/community-management';
 import {readManagedStorage,preserveManagedStorage,reserveManagedPublication,confirmManagedPublicationStorage,snapshotManagedUnpublish,confirmManagedUnpublishStorage} from '@/lib/community-management-storage';
 import Dialog from './dialog';
@@ -21,14 +21,15 @@ import TripSettings from './trip-settings';
 import EventPlanForm from './event-plan-form';
 import EventIdeas from './event-ideas';
 import type {EventPlanDraft} from '@/lib/events';
+import {accountManagedStorage,type AccountUser} from '@/lib/account-workspace';
+import {getGoogleMapsRoutes} from '@/lib/maps';
 
 const TripMap=dynamic(()=>import('./trip-map'),{ssr:false,loading:()=> <div className="map-panel map-loading">
 <Compass size={32}/>
 <span>Finding your bearings…</span>
 </div>});
-const storageKey='trippin.workspace.v1';
 const COMMUNITY_TIMEOUT_MS=20_000;
-type View='itinerary'|'discover'|'budget'|'bookings'|'profile';
+type View='itinerary'|'bookings'|'profile';
 type Modal='trip'|'tripSettings'|'activity'|'event'|'expense'|'booking'|'share'|'settings'|'alternatives'|'join'|null;
 type CommunityRequest={id:string;name:string;message:string;contact:string;status:'pending'|'accepted'|'declined'};
 type CommunityOperation={action:'publish'|'unpublish'|'review'|'decision'|'join';tripId:string;identity:number|undefined;epoch:number;controller:AbortController;timer?:ReturnType<typeof setTimeout>};
@@ -36,22 +37,29 @@ const categories=['culture','food','outdoors','nightlife','community','transport
 const categoryIcon={culture:Landmark,food:Utensils,outdoors:Leaf,nightlife:Music2,community:Users,transport:Plane,stay:Building2,other:Compass};
 const categoryLabel={culture:'Culture',food:'Food & drink',outdoors:'Outdoors',nightlife:'After hours',community:'Meet people',transport:'Transport',stay:'Accommodation',other:'Something else'};
 const interestAliases:Record<string,string[]>={culture:['culture','architecture','art','design'],food:['food','coffee','local food'],outdoors:['outdoors','running','cycling'],nightlife:['nightlife','music'],community:['community','meet people']};
-const initial:WorkspaceState={version:1,trips:seedTrips,profile:seedProfile,selectedTripId:seedTrips[0].id};
 
 function field(form:FormData,name:string){return String(form.get(name)||'').trim()}
 function download(name:string,data:string,type='application/json'){const url=URL.createObjectURL(new Blob([data],{type}));const link=document.createElement('a');link.href=url;link.download=name;link.click();URL.revokeObjectURL(url)}
 function safeUrl(value:string){try{const url=new URL(value);return ['https:','http:'].includes(url.protocol)?url.href:undefined}catch{return undefined}}
 function dayLabel(date:string){return new Date(`${date}T12:00:00`).toLocaleDateString('en-GB',{weekday:'short',day:'numeric'})}
 
-export default function Workspace(){
-  const [workspaceEdit,dispatchWorkspace]=useReducer(workspaceReducer,initial,createWorkspaceEditor);
+export default function Workspace({initialState,storageKey,account,accountError,onCheckAccount,onHome,onLogout,accountBusy,onEmpty,initialSharedPlan}:{
+  initialState:WorkspaceState;storageKey:string;account:AccountUser|null;accountError:string;onHome:()=>void;onLogout:()=>void;accountBusy:boolean;
+  onCheckAccount?:()=>void;
+  onEmpty:(value:WorkspaceState)=>void;initialSharedPlan?:{tripId:string;hash:string};
+}){
+  const localStorage=useMemo(()=>accountManagedStorage(()=>window.localStorage,account),[account]);
+  const storagePrefix=account?`trippin.account.${account.id.toLowerCase()}.`:'';
+  const [workspaceEdit,dispatchWorkspace]=useReducer(workspaceReducer,initialState,createWorkspaceEditor);
   const state=workspaceEdit.workspace;
   const setState=useCallback((update:WorkspaceUpdate)=>dispatchWorkspace({type:'update',update}),[]);
   const [ready,setReady]=useState(false);
   const [view,setView]=useState<View>('itinerary');
+  const [budgetOpen,setBudgetOpen]=useState(false);
   const [dayIndex,setDayIndex]=useState(0);
   const [modal,setModal]=useState<Modal>(null);
   const [editing,setEditing]=useState<Activity|null>(null);
+  const [customAlternativeFor,setCustomAlternativeFor]=useState<Activity|null>(null);
   const [editingBooking,setEditingBooking]=useState<Booking|null>(null);
   const [eventDraft,setEventDraft]=useState<EventPlanDraft|null>(null);
   const [newTripCity,setNewTripCity]=useState<string|undefined>(undefined);
@@ -59,9 +67,10 @@ export default function Workspace(){
   const [mobileMap,setMobileMap]=useState(false);
   const [aiOpen,setAiOpen]=useState(false);
   const [toast,setToast]=useState('');
+  const [saveError,setSaveError]=useState('');
+  const [leaveRequested,setLeaveRequested]=useState(false);
   const [error,setError]=useState('');
-  const [search,setSearch]=useState('');
-  const [filter,setFilter]=useState('all');
+  const [tripEditPending,setTripEditPending]=useState(false);
   const [weather,setWeather]=useState<{temperature:number;code:number}|null>(null);
   const [socialReady,setSocialReady]=useState(false);
   const [publicTrips,setPublicTrips]=useState<Trip[]>([]);
@@ -72,12 +81,20 @@ export default function Workspace(){
   const [managedTrips,setManagedTrips]=useState<ManagedTrip[]>([]);
   const [managementError,setManagementError]=useState('');
   const [shareTripId,setShareTripId]=useState<string|null>(null);
+  const tripPanels=useRef<HTMLDivElement>(null);
+  const mapSwitchRequested=useRef(false);
   const fileInput=useRef<HTMLInputElement>(null);
+  const activityForm=useRef<HTMLFormElement>(null);
+  const customAlternativeTicket=useRef<{tripId:string;identity:number|undefined}|null>(null);
+  const tripEditGeneration=useRef(0);
+  const pendingTripEdit=useRef<{ticket:TripEditTicket;onSuccess:()=>void}|null>(null);
   const csvReadGeneration=useRef(0);
   const backupInput=useRef<HTMLInputElement>(null);
   const backupReadGeneration=useRef(0);
   const initialized=useRef(false);
   const pendingPlan=useRef<{tripId:string;hash:string}|null>(null);
+  const pendingExit=useRef<(()=>void)|null>(null);
+  const departureGeneration=useRef(0);
   const workspaceRef=useRef(workspaceEdit);
   const mountedRef=useRef(true);
   const modalEpoch=useRef(0);
@@ -87,16 +104,39 @@ export default function Workspace(){
   const activities=useMemo(()=>day?.activities.filter(a=>!a.alternativeFor)||[],[day]);
   const cost=getTripCost(trip,state.profile);
   const route=getWalkingRoute(activities);
+  const mapsRoutes=getGoogleMapsRoutes(activities);
   const shareId=shareTripId??trip.id;
   const shareTrip=state.trips.find(item=>item.id===shareId);
   const managedTrip=managedTrips.find(item=>item.id===shareId);
   const notify=(message:string)=>{setToast(message)};
   const selectPlace=useCallback((id:string)=>setSelected(id),[]);
-  const close=()=>{modalEpoch.current++;setModal(null);setError('');setEditing(null);setEditingBooking(null);setEventDraft(null);setShareUrl('');setRequests(null);setShareTripId(null)};
-  const open=(value:Modal,targetId?:string)=>{modalEpoch.current++;setError('');setShareUrl('');setRequests(null);setShareTripId(value==='share'?(targetId??trip.id):null);setModal(value)};
+  const toggleMobileMap=()=>{mapSwitchRequested.current=true;setMobileMap(value=>!value)};
+  const close=()=>{modalEpoch.current++;customAlternativeTicket.current=null;pendingTripEdit.current=null;setTripEditPending(false);setModal(null);setError('');setEditing(null);setCustomAlternativeFor(null);setEditingBooking(null);setEventDraft(null);setShareUrl('');setRequests(null);setShareTripId(null)};
+  const open=(value:Modal,targetId?:string)=>{modalEpoch.current++;customAlternativeTicket.current=null;pendingTripEdit.current=null;setTripEditPending(false);setCustomAlternativeFor(null);setError('');setShareUrl('');setRequests(null);setShareTripId(value==='share'?(targetId??trip.id):null);setModal(value)};
+  const beginCustomAlternative=()=>{if(!editing)return;customAlternativeTicket.current={tripId:trip.id,identity:workspaceEdit.tripIdentities.get(trip.id)};setCustomAlternativeFor(editing);setEditing(null);setError('');setModal('activity')};
   const updateTrip=(updater:(value:Trip)=>Trip)=>setState(s=>({...s,trips:s.trips.map(t=>t.id===trip.id?updater(t):t)}));
+  const commitTripEdit=(update:(current:Trip)=>Trip,onSuccess:()=>void)=>{
+    if(pendingTripEdit.current){setError('Your previous edit is still being applied. Please wait.');return}
+    const ticket:TripEditTicket={tripId:trip.id,identity:workspaceEdit.tripIdentities.get(trip.id),requestId:++tripEditGeneration.current,epoch:modalEpoch.current};
+    pendingTripEdit.current={ticket,onSuccess};setTripEditPending(true);
+    dispatchWorkspace({type:'trip-edit',ticket,update});
+  };
   const updateActivity=(id:string,updater:(a:Activity)=>Activity)=>updateTrip(t=>({...t,days:t.days.map(d=>({...d,activities:d.activities.map(a=>a.id===id?updater(a):a)}))}));
-  const selectTrip=(id:string)=>{modalEpoch.current++;setState(s=>({...s,selectedTripId:id}));setDayIndex(0);setSelected(null);setView('itinerary');setMobileMap(false)};
+  const selectTrip=(id:string)=>{modalEpoch.current++;setState(s=>({...s,selectedTripId:id}));setDayIndex(0);setSelected(null);setView('itinerary');setBudgetOpen(false);setMobileMap(false)};
+  const selectDay=(index:number)=>{setDayIndex(index);setSelected(null)};
+  const handleDayKey=(event:KeyboardEvent<HTMLButtonElement>,index:number)=>{
+    if(event.altKey||event.ctrlKey||event.metaKey)return;
+    let target:number;
+    switch(event.key){
+      case 'ArrowRight':target=(index+1)%trip.days.length;break;
+      case 'ArrowLeft':target=(index+trip.days.length-1)%trip.days.length;break;
+      case 'Home':target=0;break;
+      case 'End':target=trip.days.length-1;break;
+      default:return;
+    }
+    event.preventDefault();selectDay(target);
+    event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[target]?.focus();
+  };
   const refreshManagement=(records:ManagedTrip[])=>{setManagedTrips(records);setManagementError('');return records};
   const preserveManagement=(trips:Trip[])=>refreshManagement(preserveManagedStorage(localStorage,trips));
   const beginCommunity=(action:CommunityOperation['action'],id:string)=>{
@@ -110,7 +150,7 @@ export default function Workspace(){
   const ownerForPublication=(request:CommunityOperation)=>{
     const existing=localStorage.getItem('trippin.owner');if(existing)return existing;
     if(!navigator.locks)throw new Error('This browser cannot safely initialize publishing access. Try an up-to-date browser.');
-    return navigator.locks.request('trippin.owner.initialize',{signal:request.controller.signal},()=>{
+    return navigator.locks.request(storagePrefix+'trippin.owner.initialize',{signal:request.controller.signal},()=>{
       const saved=localStorage.getItem('trippin.owner');if(saved)return saved;
       const owner=crypto.randomUUID()+crypto.randomUUID();localStorage.setItem('trippin.owner',owner);return owner;
     });
@@ -120,14 +160,55 @@ export default function Workspace(){
     fetch(url,{...init,signal:request.controller.signal}).then(async response=>({response,data:await response.json()})),
     new Promise<never>((_,reject)=>{request.timer=setTimeout(()=>{request.controller.abort();reject(new Error('The community response timed out. Its outcome could not be confirmed.'))},COMMUNITY_TIMEOUT_MS)}),
   ]);
+  const persistCurrentWorkspace=(value=workspaceRef.current.workspace)=>{
+    const pending=pendingPlan.current,includesPlan=pending&&value.trips.some(t=>t.id===pending.tripId);
+    const result=persistWorkspace(value,serialized=>{localStorage.setItem(storageKey,serialized);if(localStorage.getItem(storageKey)!==serialized)throw new Error('Save readback failed.')},includesPlan&&pending?()=>{
+      const url=new URL(window.location.href);
+      if(url.hash===pending.hash){url.hash='';window.history.replaceState(window.history.state,'',url.href)}
+    }:undefined);
+    if(result==='unsaved')setSaveError(includesPlan?'This itinerary and your latest edits are only here for this visit. Keep the shared link or download a backup before leaving.':'Your latest changes could not be saved in this browser. Retry the save or download a backup before leaving.');
+    else{
+      setSaveError('');pendingExit.current=null;setLeaveRequested(false);
+      if(pending){
+        if(result==='link-retained')setToast('Shared itinerary saved. The link could not be cleared; open Trippin home before reloading.');
+        else{pendingPlan.current=null;if(includesPlan)setToast('Shared itinerary saved as a new trip in your browser.')}
+      }
+    }
+    return result;
+  };
+  const leaveWorkspace=(action:()=>void)=>{
+    if(pendingTripEdit.current){setError('Your edit is still being applied. Please wait before leaving.');return}
+    if(persistCurrentWorkspace()==='unsaved'){pendingExit.current=action;setLeaveRequested(true);return}
+    departureGeneration.current++;backupReadGeneration.current++;if(backupInput.current)backupInput.current.value='';if(fileInput.current)fileInput.current.value='';
+    action();
+  };
+  const leaveWithoutSaving=()=>{
+    const action=pendingExit.current;pendingExit.current=null;setLeaveRequested(false);
+    if(action){departureGeneration.current++;backupReadGeneration.current++;if(backupInput.current)backupInput.current.value='';if(fileInput.current)fileInput.current.value='';action()}
+  };
+  const exportBackup=()=>{try{const backup=exportWorkspaceBackup(workspaceRef.current.workspace);download(backup.withinWorkspaceLimit?'trippin-backup.json':'trippin-recovery.json',backup.serialized);if(!backup.withinWorkspaceLimit)notify('Recovery archive prepared. Keep the file; it needs repair or a smaller workspace before restoring as a whole.')}catch(e){notify(e instanceof Error?e.message:'Could not export. Keep this tab open.')}};
 
   useLayoutEffect(()=>{workspaceRef.current=workspaceEdit},[workspaceEdit]);
+  useEffect(()=>{
+    const notice=workspaceEdit.editNotice,pending=pendingTripEdit.current;
+    if(!notice||!pending||notice.ticket.requestId!==pending.ticket.requestId)return;
+    pendingTripEdit.current=null;setTripEditPending(false);
+    if(notice.ticket.epoch!==modalEpoch.current)return;
+    if(!notice.accepted){setError(notice.message);return}
+    pending.onSuccess();
+  },[workspaceEdit.editNotice]);
+  useEffect(()=>{if(modal==='activity')activityForm.current?.querySelector<HTMLInputElement>('input:not([disabled])')?.focus()},[modal,customAlternativeFor?.id]);
+  useLayoutEffect(()=>{
+    if(!mapSwitchRequested.current)return;
+    mapSwitchRequested.current=false;
+    tripPanels.current?.scrollIntoView({block:'start'});
+  },[mobileMap]);
   useEffect(()=>{
     mountedRef.current=true;
     return()=>{mountedRef.current=false;modalEpoch.current++;backupReadGeneration.current++;const request=communityRequestRef.current;communityRequestRef.current=null;clearTimeout(request?.timer);request?.controller.abort()};
   },[]);
   useEffect(()=>{
-    const refresh=(event:StorageEvent)=>{if(event.key===null||event.key.startsWith(COMMUNITY_MANAGEMENT_KEY+':')){
+    const refresh=(event:StorageEvent)=>{if(event.key===null||event.key.startsWith(storagePrefix+COMMUNITY_MANAGEMENT_KEY+':')){
       try{refreshManagement(readManagedStorage(localStorage).records)}catch{setManagementError('Management entries could not be read. Existing browser data has been kept.')}
     }};
     window.addEventListener('storage',refresh);
@@ -137,13 +218,12 @@ export default function Workspace(){
   useEffect(()=>{
     if(initialized.current)return;
     initialized.current=true;
-    let restored=initial,notice='';
-    try{restored=restoreWorkspace(localStorage.getItem(storageKey))}catch{notice='Browser storage is unavailable. Export a backup to keep your changes.'}
+    const restored=initialState;let notice='';
     try{preserveManagement(restored.trips)}catch{setManagementError('Public-plan management entries could not be loaded or saved. Existing browser data has been kept; publishing is unavailable until it can be preserved.')}
-    const sharedPlan=importSharedPlan(restored,window.location.href);
+    const sharedPlan=initialSharedPlan?{status:'imported' as const,workspace:restored}:importSharedPlan(restored,window.location.href);
     setState(sharedPlan.workspace);
     if(sharedPlan.status==='imported'){
-      pendingPlan.current={tripId:sharedPlan.workspace.selectedTripId,hash:window.location.hash};
+      pendingPlan.current=initialSharedPlan??{tripId:sharedPlan.workspace.selectedTripId,hash:window.location.hash};
       notice=['Shared itinerary added. Saving it in this browser…',notice].filter(Boolean).join(' ');
     }else if(sharedPlan.status==='full')notice=['Adding this itinerary would exceed this browser’s workspace limit. Your existing trips are unchanged.',notice].filter(Boolean).join(' ');
     else if(sharedPlan.status==='invalid')notice=['This itinerary link is invalid. Your existing trips are unchanged.',notice].filter(Boolean).join(' ');
@@ -154,21 +234,17 @@ export default function Workspace(){
     const epoch=modalEpoch.current;
     if(shared&&/^[a-zA-Z0-9_-]{1,80}$/.test(shared))void fetch(`/api/community?id=${shared}`).then(r=>r.json()).then(data=>{if(mountedRef.current&&modalEpoch.current===epoch&&!communityRequestRef.current&&isTrip(data.trip)){setJoining(data.trip);modalEpoch.current++;setModal('join')}}).catch(()=>{if(mountedRef.current&&modalEpoch.current===epoch)setToast('This shared trip could not be loaded.')});
   },[]);
-  // Save failures run after this notice so an import cannot hide an unsaved-data warning.
   useEffect(()=>{if(workspaceEdit.csvNotice)setToast(workspaceEdit.csvNotice.message)},[workspaceEdit.csvNotice]);
   useEffect(()=>{
     if(!ready)return;
-    const pending=pendingPlan.current,includesPlan=pending&&state.trips.some(t=>t.id===pending.tripId);
-    const result=persistWorkspace(state,serialized=>localStorage.setItem(storageKey,serialized),includesPlan&&pending?()=>{
-      const url=new URL(window.location.href);
-      if(url.hash===pending.hash){url.hash='';window.history.replaceState(window.history.state,'',url.href)}
-    }:undefined);
-    if(result==='unsaved')setToast(includesPlan?'This itinerary is here for this visit, but could not be saved. Keep the shared link or export a backup before leaving.':'Your browser could not save. Export a backup before leaving.');
-    else if(pending){
-      if(result==='link-retained')setToast('Shared itinerary saved. The link could not be cleared; open Trippin home before reloading.');
-      else{pendingPlan.current=null;if(includesPlan)setToast('Shared itinerary saved as a new trip in your browser.')}
-    }
+    persistCurrentWorkspace(state);
   },[state,ready]);
+  useEffect(()=>{
+    if(!saveError&&!tripEditPending)return;
+    const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue=''};
+    window.addEventListener('beforeunload',warn);
+    return()=>window.removeEventListener('beforeunload',warn);
+  },[saveError,tripEditPending]);
   useEffect(()=>{if(!toast)return;const timer=setTimeout(()=>setToast(''),5000);return()=>clearTimeout(timer)},[toast]);
   useEffect(()=>{
     const controller=new AbortController();setWeather(null);
@@ -178,39 +254,86 @@ export default function Workspace(){
 
   const addTrip=(next:Trip)=>{if(state.trips.length>=40){setError('Keep up to 40 trips in this browser. Export a backup to archive older trips.');return}setState(s=>({...s,trips:[...s.trips,next],selectedTripId:next.id}));setDayIndex(0);setSelected(null);setView('itinerary');close();notify('New trip, fresh possibilities. Your itinerary is ready to shape.')};
   const planEvent=(draft:EventPlanDraft)=>{setEventDraft(draft);open('event')};
-  const saveEvent=(activity:Activity,targetDay:number)=>{updateTrip(t=>({...t,days:t.days.map((d,index)=>index===targetDay?{...d,activities:[...d.activities,activity].sort((a,b)=>a.time.localeCompare(b.time))}:d)}));setDayIndex(targetDay);setSelected(activity.id);setView('itinerary');setMobileMap(false);close();notify('Event added to your day and admission budget. Save a linked reservation after booking.')};
+  const saveEvent=(activity:Activity,targetDay:number)=>{const targetId=trip.days[targetDay]?.id;commitTripEdit(current=>{
+    if(!current.days.some(d=>d.id===targetId))throw new Error('This trip day changed. Reopen the event before adding it.');
+    if(activity.event&&current.days.some(d=>d.activities.some(a=>a.event?.provider===activity.event?.provider&&a.event?.id===activity.event?.id)))throw new Error('This event is already in your trip. Edit its stop instead.');
+    return{...current,days:current.days.map(d=>d.id===targetId?{...d,activities:[...d.activities,activity].sort((a,b)=>a.time.localeCompare(b.time))}:d)};
+  },()=>{setDayIndex(targetDay);setSelected(activity.id);setView('itinerary');setMobileMap(false);close();notify('Event added to your day and admission budget. Save a linked reservation after booking.')})};
   const submitActivity=(event:FormEvent<HTMLFormElement>)=>{
-    event.preventDefault();const form=new FormData(event.currentTarget);const lat=Number(form.get('lat')),lng=Number(form.get('lng'));
+    event.preventDefault();setError('');const form=new FormData(event.currentTarget);const lat=Number(form.get('lat')),lng=Number(form.get('lng'));
+    if(customAlternativeFor){const ticket=customAlternativeTicket.current,current=workspaceRef.current;if(!ticket||ticket.identity===undefined||ticket.tripId!==trip.id||current.workspace.selectedTripId!==ticket.tripId||current.tripIdentities.get(ticket.tripId)!==ticket.identity){setError('This trip was replaced or changed. Reopen its alternatives before saving.');return}}
     if(!editing&&day.activities.length>=60){setError('Keep up to 60 stops and alternatives in a day.');return}
-    if(!Number.isFinite(lat)||!Number.isFinite(lng)||Math.abs(lat)>90||Math.abs(lng)>180){setError('Enter valid map coordinates.');return}
+    if(!field(form,'title')||!field(form,'location')){setError('Add a name and place for this stop.');return}
+    if(!field(form,'lat')||!field(form,'lng')||!Number.isFinite(lat)||!Number.isFinite(lng)||Math.abs(lat)>90||Math.abs(lng)>180){setError('Enter valid map coordinates.');return}
+    const duration=Number(form.get('duration')),cost=Number(form.get('cost'));
+    if(!field(form,'duration')||!Number.isInteger(duration)||duration<5||duration>1440){setError('Set a duration between 5 and 1,440 whole minutes.');return}
+    if(!field(form,'cost')||!Number.isFinite(cost)||cost<0||cost>100_000){setError('Set a cost estimate between €0 and €100,000.');return}
+    const url=field(form,'url'),bookingUrl=safeUrl(url);
+    if(url&&!bookingUrl){setError('Use a complete http:// or https:// booking or information URL, or leave it blank.');return}
     const activityId=editing?.id||makeId('activity');
-    const activity:Activity={...editing,id:activityId,title:field(form,'title'),category:field(form,'category') as Activity['category'],description:field(form,'description'),time:field(form,'time'),duration:Number(form.get('duration')),cost:Number(form.get('cost')),lat,lng,location:field(form,'location'),status:editing?.status||'planned',source:editing?.source==='demo'?'demo':'custom',bookingUrl:safeUrl(field(form,'url')),event:form.get('isEvent')?(editing?.event||{provider:'manual',id:`manual-${activityId}`,scheduledDate:day.date}):undefined};
-    if(editing)updateActivity(editing.id,()=>activity);else updateTrip(t=>({...t,days:t.days.map((d,i)=>i===dayIndex?{...d,activities:[...d.activities,activity].sort((a,b)=>a.time.localeCompare(b.time))}:d)}));
-    close();notify(editing?'Plan updated.':'A little more to look forward to.');
+    const activity:Activity={id:activityId,title:field(form,'title'),category:field(form,'category') as Activity['category'],description:field(form,'description'),time:customAlternativeFor?.time||field(form,'time'),duration,cost,lat,lng,location:field(form,'location'),status:editing?.status||'planned',source:editing?.source==='demo'?'demo':'custom',bookingUrl,event:form.get('isEvent')?(editing?.event||{provider:'manual',id:`manual-${activityId}`,scheduledDate:day.date}):undefined};
+    if(customAlternativeFor){chooseAlternative(activity,customAlternativeFor,true);return}
+    const apply=(current:Trip):Trip=>{
+      if(editing&&!current.days.some(d=>d.activities.some(a=>a.id===editing.id)))throw new Error('This stop changed. Reopen it before saving.');
+      if(!editing&&!current.days.some(d=>d.id===day.id))throw new Error('This trip day changed. Reopen it before adding a stop.');
+      return{...current,days:current.days.map(d=>editing?{...d,activities:d.activities.map(a=>a.id===editing.id?{...a,...activity,status:a.status,source:a.source==='demo'?'demo':'custom'}:a)}:d.id===day.id?{...d,activities:[...d.activities,activity].sort((a,b)=>a.time.localeCompare(b.time))}:d)};
+    };
+    if(!isTrip(apply(trip))){setError('Check this stop’s time, category, and details before saving.');return}
+    commitTripEdit(apply,()=>{close();notify(editing?'Plan updated.':'A little more to look forward to.')});
   };
   const submitExpense=(event:FormEvent<HTMLFormElement>)=>{
-    event.preventDefault();
+    event.preventDefault();setError('');
     if(trip.expenses.length>=1000){setError('Keep up to 1,000 expenses per trip. Export a backup to archive them.');return}
     const form=new FormData(event.currentTarget),linked=field(form,'estimate');
-    const expense:Expense={id:makeId('expense'),title:field(form,'title'),category:field(form,'category') as Expense['category'],amount:Number(form.get('amount')),date:field(form,'date'),...(linked.startsWith('booking:')?{bookingId:linked.slice(8)}:linked.startsWith('activity:')?{activityId:linked.slice(9)}:{})};
-    updateTrip(t=>({...t,expenses:[...t.expenses,expense]}));close();notify('Expense recorded. Your budget is up to date.');
+    if(!field(form,'title')){setError('Add a name for this expense.');return}
+    const amount=Number(form.get('amount'));
+    if(!field(form,'amount')||!Number.isFinite(amount)||amount<0.01||amount>1_000_000){setError('Enter an expense between €0.01 and €1,000,000.');return}
+    const expense:Expense={id:makeId('expense'),title:field(form,'title'),category:field(form,'category') as Expense['category'],amount,date:field(form,'date'),...(linked.startsWith('booking:')?{bookingId:linked.slice(8)}:linked.startsWith('activity:')?{activityId:linked.slice(9)}:{})};
+    const apply=(current:Trip):Trip=>({...current,expenses:[...current.expenses,expense]});
+    if(!isTrip(apply(trip))){setError('Check the expense date and category. Use a date in YYYY-MM-DD format.');return}
+    commitTripEdit(apply,()=>{close();notify('Expense recorded. Your budget is up to date.')});
   };
   const submitBooking=(event:FormEvent<HTMLFormElement>)=>{
-    event.preventDefault();
+    event.preventDefault();setError('');
     if(!editingBooking&&trip.bookings.length>=100){setError('Keep up to 100 reservations per trip.');return}
     const form=new FormData(event.currentTarget),activityId=field(form,'activityId')||undefined;
     if(activityId&&trip.bookings.some(b=>b.activityId===activityId&&b.id!==editingBooking?.id)){setError('That activity already has a linked reservation. Edit it instead.');return}
-    const booking:Booking={id:editingBooking?.id||makeId('booking'),activityId,type:field(form,'type') as Booking['type'],title:field(form,'title'),reference:field(form,'reference'),date:field(form,'date'),url:safeUrl(field(form,'url')),cost:Number(form.get('cost')),notes:field(form,'notes'),status:field(form,'status') as Booking['status'],source:'custom'};
-    updateTrip(t=>({...t,bookings:editingBooking?t.bookings.map(b=>b.id===booking.id?booking:b):[...t.bookings,booking]}));close();notify('Reservation saved in your trip wallet.');
+    if(!field(form,'title')){setError('Add a title for this reservation.');return}
+    const cost=Number(form.get('cost'));
+    if(!field(form,'cost')||!Number.isFinite(cost)||cost<0||cost>1_000_000){setError('Set a reservation cost between €0 and €1,000,000.');return}
+    const url=field(form,'url'),bookingUrl=safeUrl(url);
+    if(url&&!bookingUrl){setError('Use a complete http:// or https:// booking or ticket URL, or leave it blank.');return}
+    const booking:Booking={id:editingBooking?.id||makeId('booking'),activityId,type:field(form,'type') as Booking['type'],title:field(form,'title'),reference:field(form,'reference'),date:field(form,'date'),url:bookingUrl,cost,notes:field(form,'notes'),status:field(form,'status') as Booking['status'],source:editingBooking?.source==='demo'?'demo':'custom'};
+    const apply=(current:Trip):Trip=>{
+      if(editingBooking&&!current.bookings.some(b=>b.id===booking.id))throw new Error('This reservation changed. Reopen it before saving.');
+      if(activityId&&current.bookings.some(b=>b.activityId===activityId&&b.id!==booking.id))throw new Error('That activity already has a linked reservation. Edit it instead.');
+      return{...current,bookings:editingBooking?current.bookings.map(b=>b.id===booking.id?{...b,...booking}:b):[...current.bookings,booking]};
+    };
+    if(!isTrip(apply(trip))){setError('Check the reservation date, type, status, and details. Use a date in YYYY-MM-DD format.');return}
+    commitTripEdit(apply,()=>{close();notify('Reservation saved in your trip wallet.')});
   };
   const reorder=(id:string,direction:number)=>{updateTrip(t=>({...t,days:t.days.map((d,i)=>{if(i!==dayIndex)return d;const next=[...d.activities];const visible=next.map((a,index)=>a.alternativeFor?-1:index).filter(index=>index>=0);const index=visible.findIndex(position=>next[position].id===id),target=index+direction;if(index<0||target<0||target>=visible.length)return d;const from=visible[index],to=visible[target];[next[from],next[to]]=[next[to],next[from]];return{...d,activities:next}})}))};
-  const chooseAlternative=(option:Activity)=>{
-    if(!editing)return;
-    const original=editing;
-    const nextId=option.alternativeFor===original.id?option.id:makeId('activity');
-    const replacement:Activity={...option,id:nextId,time:original.time,status:'planned',alternativeFor:undefined};
-    updateTrip(t=>({...t,days:t.days.map(d=>d.activities.some(a=>a.id===original.id)?{...d,activities:d.activities.flatMap(item=>item.id===original.id?[replacement,{...item,status:'skipped' as const,alternativeFor:nextId}]:item.id===option.id&&option.alternativeFor===original.id?[]:[item.alternativeFor===original.id?{...item,alternativeFor:nextId}:item])}:d)}));
-    setSelected(nextId);close();notify('A little change of plan. Your budget and map are updated.');
+  const chooseAlternative=(option:Activity,original=editing,keepOptionId=false)=>{
+    if(!original)return;
+    if(!trip.days.some(d=>d.activities.some(a=>a.id===original.id&&!a.alternativeFor))){setError('This stop is no longer in your agenda. Reopen its alternatives.');return}
+    const nextId=keepOptionId||option.alternativeFor===original.id?option.id:makeId('activity');
+    const apply=(current:Trip):Trip=>{
+      const active=current.days.flatMap(d=>d.activities).find(a=>a.id===original.id&&!a.alternativeFor);
+      if(!active)return current;
+      const replacement:Activity={...option,id:nextId,time:active.time,status:'planned',alternativeFor:undefined};
+      const next:Trip={...current,days:current.days.map(d=>d.activities.some(a=>a.id===original.id)?{...d,activities:d.activities.flatMap(item=>item.id===original.id?[replacement,{...item,status:'skipped' as const,alternativeFor:nextId}]:item.id===option.id&&option.alternativeFor===original.id?[]:[item.alternativeFor===original.id?{...item,alternativeFor:nextId}:item])}:d)};
+      return isTrip(next)?next:current;
+    };
+    if(apply(trip)===trip){setError('Check this alternative’s details. Keep up to 60 stops and alternatives in a day.');return}
+    commitTripEdit(apply,()=>{setSelected(nextId);close();notify('A little change of plan. Your budget and map are updated.')});
+  };
+  const saveTripDetails=(updated:Trip)=>{
+    if(workspaceRef.current.tripIdentities.get(trip.id)!==workspaceEdit.tripIdentities.get(trip.id))throw new Error('This trip was replaced. Reopen its details before saving.');
+    commitTripEdit(current=>{
+      const dates=getTripDays(updated.startDate,updated.endDate);
+      if(dates.length<current.days.length&&JSON.stringify(current.days.slice(dates.length))!==JSON.stringify(trip.days.slice(dates.length)))throw new Error('Activities changed in the days you are removing. Reopen trip details and review them before saving.');
+      return{...current,title:updated.title,startDate:updated.startDate,endDate:updated.endDate,budget:updated.budget,days:dates.map((date,index)=>current.days[index]?{...current.days[index],date}:updated.days[index])};
+    },()=>{setDayIndex(0);setSelected(null);close();notify('Trip details updated. Your agenda is ready to keep moving.')});
   };
   const snapshot=()=>{if(!shareTrip)throw new Error('Open the private trip before sharing its itinerary.');return publicTripSnapshot(shareTrip)};
   const removeBooking=(booking:Booking)=>updateTrip(t=>({...t,bookings:t.bookings.filter(b=>b.id!==booking.id),expenses:t.expenses.map(expense=>expense.bookingId===booking.id&&booking.activityId?{...expense,bookingId:undefined,activityId:booking.activityId}:expense)}));
@@ -285,55 +408,32 @@ export default function Workspace(){
     if(!target||current.tripIdentities.get(trip.id)!==workspaceEdit.tripIdentities.get(trip.id))throw new Error('This trip changed. Reopen its details before deleting it.');
     const records=preserveManagement(current.workspace.trips);
     if(target.isPublic||records.find(item=>item.id===target.id)?.status==='published')throw new Error('Unpublish this trip before deleting it from this browser.');
-    if(current.workspace.trips.length<=1)throw new Error('Keep at least one trip in your workspace.');
+    if(current.workspace.trips.length===1&&records.length)throw new Error('Review public plans in your profile before removing your last private trip.');
+    if(current.workspace.trips.length===1){const empty={...current.workspace,trips:[],selectedTripId:''};if(persistWorkspace(empty,serialized=>{localStorage.setItem(storageKey,serialized);if(localStorage.getItem(storageKey)!==serialized)throw new Error('Save readback failed.')})!=='saved')throw new Error('This trip could not be removed from browser storage.');onEmpty(empty);return}
     setState(s=>{const remaining=s.trips.filter(item=>item.id!==target.id);return{...s,trips:remaining,selectedTripId:remaining[0].id}});
     setDayIndex(0);setSelected(null);close();notify(records.some(item=>item.id===target.id)?'Private trip deleted. Its public-plan management entry stays in Your profile.':'Trip deleted from this browser.');
   };
-  const importCsv=async(file?:File)=>{if(!file)return;const input=fileInput.current,requestId=++csvReadGeneration.current,ticket:CsvImportTicket={tripId:trip.id,identity:workspaceEdit.tripIdentities.get(trip.id),requestId};try{const rows=parseExpenseCsv(await file.text());const expenses=rows.map(row=>({...row,id:makeId('expense'),category:(categories as readonly string[]).includes(row.category)?row.category as Expense['category']:'other' as const}));dispatchWorkspace({type:'csv-import',ticket,expenses})}catch(e){dispatchWorkspace({type:'csv-error',ticket,message:e instanceof Error?e.message:'Could not import CSV.'})}finally{if(input&&fileInput.current===input&&csvReadGeneration.current===requestId)input.value=''}};
+  const importCsv=async(file?:File)=>{if(!file)return;const input=fileInput.current,departure=departureGeneration.current,requestId=++csvReadGeneration.current,ticket:CsvImportTicket={tripId:trip.id,identity:workspaceEdit.tripIdentities.get(trip.id),requestId};try{const text=await file.text();if(departure!==departureGeneration.current||!mountedRef.current)return;const rows=parseExpenseCsv(text);const expenses=rows.map(row=>({...row,id:makeId('expense'),category:(categories as readonly string[]).includes(row.category)?row.category as Expense['category']:'other' as const}));dispatchWorkspace({type:'csv-import',ticket,expenses})}catch(e){if(departure===departureGeneration.current&&mountedRef.current)dispatchWorkspace({type:'csv-error',ticket,message:e instanceof Error?e.message:'Could not import CSV.'})}finally{if(input&&fileInput.current===input&&csvReadGeneration.current===requestId)input.value=''}};
   const budgetPercent=trip.budget>0?Math.min(100,Math.round(cost.total/trip.budget*100)):cost.total>0?100:0;
   const aiContext=JSON.stringify({city:trip.city,country:trip.country,startDate:trip.startDate,endDate:trip.endDate,budget:trip.budget,interests:state.profile.interests,openToEvents:getEventPreferences(state.profile),days:trip.days.map(d=>({date:d.date,activities:d.activities.filter(a=>!a.alternativeFor).map(a=>({title:a.title,time:a.time,cost:a.cost,status:a.status}))}))});
 
-  return <div className="app-shell" inert={!ready} aria-busy={!ready}>
-    <a href="#main-content" className="skip-link">Skip to trip</a>
-    <aside className="sidebar">
-<a className="brand" href="/" aria-label="Trippin home">trippin<span>✳</span>
-</a>
-<div className="workspace-label">A LITTLE FURTHER, A LITTLE FREER.</div>
-      <button className="new-trip-button" onClick={()=>open('trip')}>
-<Plus size={18}/>Create a trip</button>
-      <nav aria-label="Main navigation">
-<span className="nav-label">YOUR SPACE</span>{([{id:'itinerary',icon:Compass,label:'My trips'},{id:'discover',icon:Globe,label:'Discover'},{id:'budget',icon:Wallet,label:'Trip budget'},{id:'bookings',icon:Ticket,label:'Bookings'}] as const).map(item=>
-<button key={item.id} className={`nav-item ${view===item.id?'active':''}`} onClick={()=>setView(item.id)}>
-<item.icon size={19}/>{item.label}{item.id==='itinerary'&&<span>{state.trips.length.toString().padStart(2,'0')}</span>}</button>)}</nav>
-      <div className="trip-nav">
-<span className="nav-label">YOUR NEXT CHAPTERS</span>{state.trips.map(t=>
-<button key={t.id} className={`trip-nav-item ${t.id===trip.id?'selected':''}`} onClick={()=>selectTrip(t.id)}>
-<span className="trip-mini-image" style={{backgroundImage:`url(${t.image})`}}/>
-<span>
-<strong>{t.city}</strong>
-<small>{formatDate(t.startDate)} — {formatDate(t.endDate)}</small>
-</span>{t.id===trip.id&&<span className="trip-dot"/>}</button>)}</div>
-      <div className="sidebar-bottom">
-<div className="little-note">
-<span>✧</span>
-<strong>Leave room for<br/>a little unexpected.</strong>
-<small>The best bits rarely make the plan.</small>
-</div>
-<button className="profile-button" onClick={()=>setView('profile')}>
-<span className="avatar">{state.profile.name.slice(0,1).toUpperCase()}</span>
-<span>
-<strong>{state.profile.name}</strong>
-<small>Always a little curious</small>
-</span>
-<Settings2 size={17}/>
-</button>
-{(managedTrips.length>0||managementError)&&<button className="text-button" onClick={()=>setView('profile')}><ShieldCheck size={15}/>Manage public plans{managedTrips.length?` (${managedTrips.length})`:''}</button>}
-</div>
-    </aside>
-    <main className={`main-area ${view==='itinerary'?'with-map':''}`} id="main-content">
+  return <><div className="app-shell consumer-workspace" inert={!ready||accountBusy} aria-busy={!ready||accountBusy}>
+    <a href="#main-content" className="skip-link" onClick={event=>{event.preventDefault();document.getElementById('main-content')?.focus()}}>Skip to trip</a>
+    <header className="traveler-bar">
+<button className="brand" onClick={()=>leaveWorkspace(onHome)} aria-label="Trippin home">trippin<span>✳</span></button>
+<nav aria-label="Your space"><button onClick={()=>leaveWorkspace(onHome)}>Your trips</button><button aria-current={view==='profile'?'page':undefined} onClick={()=>setView('profile')}>Your profile</button></nav>
+{account?<button className="text-button" disabled={accountBusy} onClick={()=>leaveWorkspace(onLogout)}>Log out</button>:<button className="text-button" onClick={()=>leaveWorkspace(onHome)}>Sign in</button>}
+</header>
+    <main className={`main-area ${view==='itinerary'?'with-map':''}`} id="main-content" tabIndex={-1}>
+      {saveError&&<section className="workspace-save-warning" aria-labelledby="workspace-save-title">
+        <div role="alert"><strong id="workspace-save-title">Your latest changes aren’t saved</strong><p>{saveError}</p></div>
+        <div className="workspace-save-actions"><button className="secondary" onClick={()=>persistCurrentWorkspace()}>Retry save</button><button className="secondary" onClick={()=>exportBackup()}><Download size={16}/>Download backup</button>{leaveRequested&&<button className="text-button" onClick={leaveWithoutSaving}>Leave without saving</button>}</div>
+      </section>}
+      {accountError&&<p className="home-notice home-error" role="alert">{accountError}</p>}
+      {onCheckAccount&&<button className="secondary" disabled={accountBusy} onClick={()=>leaveWorkspace(onCheckAccount)}>Check account status</button>}
       <header className="topbar">
 <div className="breadcrumb">Your space <ChevronRight size={13}/>
-<strong>{view==='itinerary'?trip.city:view==='budget'?'Trip budget':view==='bookings'?'Bookings':view==='profile'?'Your profile':'Discover'}</strong>
+<strong>{view==='profile'?'Your profile':view==='bookings'?`${trip.city} reservations`:trip.city}</strong>
 <select className="trip-switcher" aria-label="Choose your trip" value={trip.id} onChange={e=>selectTrip(e.target.value)}>{state.trips.map(t=><option key={t.id} value={t.id}>{t.city}</option>)}</select>
 </div>
 <div className="top-actions">
@@ -342,10 +442,11 @@ export default function Workspace(){
 <span>How it works</span>
 </button>
 <span className="tiny-divider"/>
-<button className="avatar small" aria-label="Your profile" onClick={()=>setView('profile')}>{state.profile.name.slice(0,1).toUpperCase()}</button>
+<button className="avatar small" aria-label="Your profile" onClick={()=>setView('profile')}>{state.profile.name?state.profile.name.slice(0,1).toUpperCase():<Users size={15}/>}</button>
 </div>
 </header>
-      {view==='itinerary'&&<div className="trip-workspace">
+      <nav className="trip-sections" aria-label="Selected trip"><button aria-current={view==='itinerary'?'page':undefined} onClick={()=>setView('itinerary')}>Itinerary</button><button aria-current={view==='bookings'?'page':undefined} onClick={()=>setView('bookings')}>Reservations</button><button onClick={()=>{setView('itinerary');setBudgetOpen(true)}} aria-expanded={budgetOpen}>Budget for {trip.city}</button><button onClick={()=>open('trip')}><Plus size={15}/>New trip</button></nav>
+      {view==='itinerary'&&<div className="trip-workspace" ref={tripPanels}>
 <div className={`itinerary-panel ${mobileMap?'mobile-hidden':''}`}>
 <section className="trip-heading">
 <div className="eyebrow">
@@ -389,7 +490,7 @@ export default function Workspace(){
 <Compass size={13}/> {getTripDays(trip.startDate,trip.endDate).length} days to make your own</span>
 </section>
       <div className="trip-summary">
-<button onClick={()=>setView('budget')}>
+<button onClick={()=>setBudgetOpen(value=>!value)} aria-expanded={budgetOpen} aria-controls="trip-budget">
 <span className="summary-icon">
 <Wallet size={18}/>
 </span>
@@ -412,6 +513,89 @@ export default function Workspace(){
 <ChevronRight size={15}/>
 </button>
 </div>
+      {budgetOpen&&view==='itinerary'&&<section id="trip-budget" className="trip-budget-section" aria-label={`${trip.city} budget`}>
+<div className="page-eyebrow">LESS GUESSWORK. MORE GOOD DAYS.</div>
+<div className="page-title-line">
+<div>
+<h2>Your trip budget</h2>
+<p className="page-intro">Every flight, little coffee, and unplanned entrance. {trip.city}, all in.</p>
+</div>
+<button className="primary" onClick={()=>open('expense')}>
+<Plus size={16}/>Log expense</button>
+</div>
+<div className="budget-banner">
+<div>
+<span>PROJECTED TRIP COST</span>
+<h2>{formatMoney(cost.total)}<small>of {formatMoney(trip.budget)}</small>
+</h2>
+<p>{cost.total<=trip.budget?`${formatMoney(trip.budget-cost.total)} of breathing room.`:`${formatMoney(cost.total-trip.budget)} above your budget. Time for a few little swaps.`}</p>
+</div>
+<div className="budget-ring" style={{'--progress':`${budgetPercent}%`} as React.CSSProperties}>
+<span>{budgetPercent}%<small>of budget</small>
+</span>
+</div>
+</div>
+<div className="budget-breakdown">{[{title:'Flights, stays & tickets',amount:cost.bookings,icon:Plane},{title:'Things to do',amount:cost.activities,icon:Ticket},{title:'Food & daily travel',amount:cost.food+cost.transport,icon:Coffee},{title:'Other expenses',amount:cost.manual,icon:Wallet}].map(item=>
+<div key={item.title}>
+<item.icon size={20}/>
+<span>{item.title}</span>
+<strong>{formatMoney(item.amount)}</strong>
+</div>)}</div>
+<div className="budget-preferences">
+<div>
+<h3>Your everyday rhythm.</h3>
+<p>Food and transport each have a whole-trip minimum: your daily allowance multiplied by trip days. Known costs replace that minimum when they are higher.</p>
+</div>
+<form key={`${trip.id}:${trip.budget}:${trip.dailyFoodBudget??state.profile.dailyFoodBudget}:${trip.dailyTransportBudget??state.profile.dailyTransportBudget}`} onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);updateTrip(t=>({...t,budget:Number(f.get('budget')),dailyFoodBudget:Number(f.get('food')),dailyTransportBudget:Number(f.get('transport'))}));notify('This trip’s budget and daily allowances are updated.')}}>
+<label>Food / day (€)<input type="number" min="0" max="10000" step="0.01" name="food" defaultValue={trip.dailyFoodBudget??state.profile.dailyFoodBudget} required/>
+</label>
+<label>Transport / day (€)<input type="number" min="0" max="10000" step="0.01" name="transport" defaultValue={trip.dailyTransportBudget??state.profile.dailyTransportBudget} required/>
+</label>
+<label>Trip budget (€)<input type="number" min="1" max="1000000" step="0.01" name="budget" defaultValue={trip.budget} required/>
+</label>
+<button className="primary" type="submit">Save</button>
+</form>
+</div>
+<div className="section-heading">
+<div>
+<h2>What you’ve actually spent.</h2>
+<p>{formatMoney(cost.spent)} recorded · estimates adjust when you link a booking.</p>
+</div>
+<div className="button-row">
+<button className="secondary" onClick={()=>fileInput.current?.click()}>
+<Upload size={14}/>Import CSV</button>
+<button className="icon-button bordered" aria-label="Download CSV template" onClick={()=>download('trippin-expenses-template.csv','title,amount,date,category\nCoffee,4.50,'+trip.startDate+',food\n','text/csv')}>
+<Download size={16}/>
+</button>
+</div>
+</div>
+<input ref={fileInput} type="file" accept=".csv,text/csv" hidden onChange={e=>void importCsv(e.target.files?.[0])}/>
+<div className="expense-list">{trip.expenses.length===0?<div className="empty-state compact">
+<Wallet size={28}/>
+<h3>No receipts, no worries.</h3>
+<p>Start logging as you go. Your full estimate already includes your daily allowances.</p>
+</div>:trip.expenses.map(expense=>
+<div className="expense-row" key={expense.id}>
+<span className="summary-icon">
+<Coffee size={18}/>
+</span>
+<span>
+<strong>{expense.title}</strong>
+<small>{formatDate(expense.date)} · {categoryLabel[expense.category]}</small>
+</span>
+<b>{formatMoney(expense.amount)}</b>
+<button className="icon-button" aria-label={`Delete expense ${expense.title}`} onClick={()=>updateTrip(t=>({...t,expenses:t.expenses.filter(x=>x.id!==expense.id)}))}>
+<Trash2 size={14}/>
+</button>
+</div>)}</div>
+<p className="estimate-note">EUR planning estimates. CSV imports stay in your browser. Use positive expense amounts and headers title,amount,date,category. Bank connections require approved provider setup; no bank credentials are collected.</p>
+<StayComparison nights={Math.max(0,trip.days.length-1)} days={trip.days.length}/>
+<BankPreferences onApply={(food,transport)=>{updateTrip(t=>({...t,dailyFoodBudget:food,dailyTransportBudget:transport}));notify('This trip’s allowances are updated from Sandbox estimates.')}}/>
+</section>}
+      <details className="trip-events"><summary>Events during your trip</summary>
+<ProviderPanel key={trip.id} mode="events" city={trip.city} countryCode={trip.countryCode||destinations.find(destination=>destination.city===trip.city&&destination.country===trip.country)?.countryCode} startDate={trip.startDate} endDate={trip.endDate} preferences={getEventPreferences(state.profile)} onAddEvent={planEvent}/>
+<EventIdeas trip={trip} preferences={getEventPreferences(state.profile)} onAdd={planEvent}/>
+      </details>
       <div className="itinerary-title">
 <div>
 <h2>Your itinerary<span className="green-dot"/>
@@ -421,8 +605,8 @@ export default function Workspace(){
 <button className="text-button" onClick={()=>{setEditing(null);open('activity')}}>
 <Plus size={15}/>Add a stop</button>
 </div>
-      <div className="day-tabs" role="tablist" aria-label="Trip days">{trip.days.map((d,i)=>
-<button key={d.id} id={`day-tab-${i}`} role="tab" aria-controls="day-plan" aria-selected={i===dayIndex} className={i===dayIndex?'active':''} onClick={()=>{setDayIndex(i);setSelected(null)}}>
+      <div className="day-tabs" role="tablist" aria-label="Trip days" aria-orientation="horizontal">{trip.days.map((d,i)=>
+<button key={d.id} id={`day-tab-${i}`} role="tab" aria-controls="day-plan" aria-selected={i===dayIndex} tabIndex={i===dayIndex?0:-1} className={i===dayIndex?'active':''} onClick={()=>selectDay(i)} onKeyDown={event=>handleDayKey(event,i)}>
 <strong>Day {i+1}</strong>
 <span>{dayLabel(d.date)}</span>
 </button>)}</div>
@@ -434,7 +618,7 @@ export default function Workspace(){
 <span className="walking-total">
 <Footprints size={15}/>{route.distanceKm.toFixed(1)} km est.</span>
 </div>
-      <div className="timeline" id="day-plan" role="tabpanel" aria-labelledby={`day-tab-${dayIndex}`}>
+      <div className="timeline" id="day-plan" role="tabpanel" aria-labelledby={`day-tab-${dayIndex}`} tabIndex={0}>
       {activities.length===0&&<div className="empty-state">
 <Compass size={32}/>
 <h3>A day with a blank page.</h3>
@@ -493,161 +677,20 @@ export default function Workspace(){
 </button>
 </div>
       </div>
-<div className={`map-column ${mobileMap?'show-mobile-map':''}`}>
+<div id="trip-map-panel" className={`map-column ${mobileMap?'show-mobile-map':''}`}>
 <TripMap trip={trip} activities={activities} selected={selected} onSelect={selectPlace}/>
 <div className="map-bottom-tip">
 <Sparkles size={17}/>
 <div>
 <strong>A little room for serendipity.</strong>
 <p>Tap a stop to see where the day takes you.</p>
+<div className="day-map-links">{mapsRoutes.map(link=><a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer"><Route size={15}/>{mapsRoutes.length===1?'Open day in Google Maps':`Maps · stops ${link.first}–${link.last}`}<ArrowUpRight size={13}/></a>)}</div>
 </div>
 <button className="icon-button" aria-label="Open travel assistant" onClick={()=>setAiOpen(true)}>
 <ArrowUpRight size={18}/>
 </button>
 </div>
 </div>
-</div>}
-      {view==='discover'&&<div className="content-page">
-<div className="page-eyebrow">GOOD PLACES. GOOD COMPANY.</div>
-<h1>A little further.</h1>
-<p className="page-intro">Find your next city, your kind of people, or an excuse to stay out a little longer.</p>
-<div className="discovery-toolbar">
-<label className="search-box">
-<Search size={18}/>
-<input aria-label="Search destinations" placeholder="Where’s your curiosity taking you?" value={search} onChange={e=>setSearch(e.target.value)}/>
-</label>
-<div className="filter-pills">{['all','culture','outdoors','food'].map(c=>
-<button key={c} className={filter===c?'active':''} onClick={()=>setFilter(c)}>{c==='all'?'All moods':categoryLabel[c as keyof typeof categoryLabel]}</button>)}</div>
-</div>
-<div className="destination-grid">{destinations.filter(d=>d.city.toLowerCase().includes(search.toLowerCase())&&(filter==='all'||JSON.stringify(d).toLowerCase().includes(filter))).map(destination=>
-<button className="destination-card" key={destination.city} onClick={()=>{setNewTripCity(destination.city);open('trip')}}>
-<img src={destination.image} alt={destination.city} loading="lazy"/>
-<span className="destination-days">A few days well spent</span>
-<div>
-<small>{destination.country}</small>
-<h2>{destination.city}<ArrowUpRight size={21}/>
-</h2>
-</div>
-</button>)}</div>
-<div className="section-heading">
-<div>
-<h2>Better with a few new faces.</h2>
-<p>Public trips open to join requests.</p>
-</div>
-<button className="text-button" onClick={()=>open('share')}>Open your trip <Plus size={15}/>
-</button>
-</div>{!socialReady&&<div className="integration-notice">
-<Users size={20}/>
-<div>
-<strong>Community is being connected.</strong>
-<p>Public trips and real join requests need the shared community service. You can share an itinerary link today.</p>
-</div>
-<button className="text-button" onClick={()=>open('share')}>Share a plan <ArrowRight size={15}/>
-</button>
-</div>}<div className="community-grid">{publicTrips.map(t=>
-<article className="community-card" key={t.id}>
-<span className="category">
-<Globe size={12}/>Open trip</span>
-<h3>{t.title}</h3>
-<p>{t.city} · {formatDate(t.startDate)} – {formatDate(t.endDate)}</p>
-<button className="primary" onClick={()=>{setJoining(t);open('join')}}>Request to join <ArrowUpRight size={15}/>
-</button>
-</article>)}</div>
-<div className="section-heading">
-<div>
-<h2>Find something happening.</h2>
-<p>Browse events directly with the people who run them.</p>
-</div>
-</div>
-<div className="provider-grid">{[{name:'Meetup',copy:'Local communities & shared interests',url:`https://www.meetup.com/find/?keywords=${encodeURIComponent(trip.city)}`},{name:'Luma',copy:'Small gatherings, big connections',url:'https://luma.com/discover'},{name:'Strava',copy:'Find your next club or group run',url:'https://www.strava.com/clubs/search'},{name:'Ticketmaster',copy:'Music, culture & a night to remember',url:`https://www.ticketmaster.com/search?q=${encodeURIComponent(trip.city)}`}].map(p=>
-<a className="provider-card" target="_blank" rel="noreferrer" href={p.url} key={p.name}>
-<span>
-<strong>{p.name}</strong>
-<small>{p.copy}</small>
-</span>
-<ArrowUpRight size={19}/>
-</a>)}</div>
-<ProviderPanel key={trip.id} mode="events" city={trip.city} countryCode={trip.countryCode||destinations.find(destination=>destination.city===trip.city&&destination.country===trip.country)?.countryCode} startDate={trip.startDate} endDate={trip.endDate} preferences={getEventPreferences(state.profile)} onAddEvent={planEvent}/>
-<EventIdeas trip={trip} preferences={getEventPreferences(state.profile)} onAdd={planEvent}/>
-</div>}
-      {view==='budget'&&<div className="content-page">
-<div className="page-eyebrow">LESS GUESSWORK. MORE GOOD DAYS.</div>
-<div className="page-title-line">
-<div>
-<h1>The whole picture.</h1>
-<p className="page-intro">Every flight, little coffee, and unplanned entrance. {trip.city}, all in.</p>
-</div>
-<button className="primary" onClick={()=>open('expense')}>
-<Plus size={16}/>Log expense</button>
-</div>
-<div className="budget-banner">
-<div>
-<span>PROJECTED TRIP COST</span>
-<h2>{formatMoney(cost.total)}<small>of {formatMoney(trip.budget)}</small>
-</h2>
-<p>{cost.total<=trip.budget?`${formatMoney(trip.budget-cost.total)} of breathing room.`:`${formatMoney(cost.total-trip.budget)} above your budget. Time for a few little swaps.`}</p>
-</div>
-<div className="budget-ring" style={{'--progress':`${budgetPercent}%`} as React.CSSProperties}>
-<span>{budgetPercent}%<small>of budget</small>
-</span>
-</div>
-</div>
-<div className="budget-breakdown">{[{title:'Flights, stays & tickets',amount:cost.bookings,icon:Plane},{title:'Things to do',amount:cost.activities,icon:Ticket},{title:'Food & daily travel',amount:cost.food+cost.transport,icon:Coffee},{title:'Other expenses',amount:cost.manual,icon:Wallet}].map(item=>
-<div key={item.title}>
-<item.icon size={20}/>
-<span>{item.title}</span>
-<strong>{formatMoney(item.amount)}</strong>
-</div>)}</div>
-<div className="budget-preferences">
-<div>
-<h3>Your everyday rhythm.</h3>
-<p>Daily allowances fill gaps around the costs you’ve already planned.</p>
-</div>
-<form key={`${trip.id}:${trip.budget}:${state.profile.dailyFoodBudget}:${state.profile.dailyTransportBudget}`} onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);setState(s=>({...s,profile:{...s.profile,dailyFoodBudget:Number(f.get('food')),dailyTransportBudget:Number(f.get('transport'))},trips:s.trips.map(t=>t.id===trip.id?{...t,budget:Number(f.get('budget'))}:t)}));notify('Daily spending and trip budget updated.')}}>
-<label>Food / day (€)<input type="number" min="0" max="10000" name="food" defaultValue={state.profile.dailyFoodBudget} required/>
-</label>
-<label>Transport / day (€)<input type="number" min="0" max="10000" name="transport" defaultValue={state.profile.dailyTransportBudget} required/>
-</label>
-<label>Trip budget (€)<input type="number" min="1" max="1000000" name="budget" defaultValue={trip.budget} required/>
-</label>
-<button className="primary" type="submit">Save</button>
-</form>
-</div>
-<div className="section-heading">
-<div>
-<h2>What you’ve actually spent.</h2>
-<p>{formatMoney(cost.spent)} recorded · estimates adjust when you link a booking.</p>
-</div>
-<div className="button-row">
-<button className="secondary" onClick={()=>fileInput.current?.click()}>
-<Upload size={14}/>Import CSV</button>
-<button className="icon-button bordered" aria-label="Download CSV template" onClick={()=>download('trippin-expenses-template.csv','title,amount,date,category\nCoffee,4.50,'+trip.startDate+',food\n','text/csv')}>
-<Download size={16}/>
-</button>
-</div>
-</div>
-<input ref={fileInput} type="file" accept=".csv,text/csv" hidden onChange={e=>void importCsv(e.target.files?.[0])}/>
-<div className="expense-list">{trip.expenses.length===0?<div className="empty-state compact">
-<Wallet size={28}/>
-<h3>No receipts, no worries.</h3>
-<p>Start logging as you go. Your full estimate already includes your daily allowances.</p>
-</div>:trip.expenses.map(expense=>
-<div className="expense-row" key={expense.id}>
-<span className="summary-icon">
-<Coffee size={18}/>
-</span>
-<span>
-<strong>{expense.title}</strong>
-<small>{formatDate(expense.date)} · {categoryLabel[expense.category]}</small>
-</span>
-<b>{formatMoney(expense.amount)}</b>
-<button className="icon-button" aria-label={`Delete expense ${expense.title}`} onClick={()=>updateTrip(t=>({...t,expenses:t.expenses.filter(x=>x.id!==expense.id)}))}>
-<Trash2 size={14}/>
-</button>
-</div>)}</div>
-<p className="estimate-note">EUR planning estimates. CSV imports stay in your browser. Use positive expense amounts and headers title,amount,date,category. Bank connections require approved provider setup; no bank credentials are collected.</p>
-<StayComparison nights={Math.max(0,trip.days.length-1)} days={trip.days.length}/>
-<BankPreferences onApply={(food,transport)=>{setState(s=>({...s,profile:{...s.profile,dailyFoodBudget:food,dailyTransportBudget:transport}}));notify('Daily preferences updated from Sandbox estimates.')}}/>
 </div>}
       {view==='bookings'&&<div className="content-page">
 <div className="page-eyebrow">THE DETAILS, TAKEN CARE OF.</div>
@@ -720,7 +763,7 @@ export default function Workspace(){
 <Icon size={16}/>{categoryLabel[c as keyof typeof categoryLabel]}</span>
 </label>})}</div>
 <h3>What events would you be open to?</h3>
-<p className="form-note">These choices filter event ideas. Use All events in Discover whenever you want to try something different.</p>
+<p className="form-note">These choices filter events within each trip. You can change them whenever you want to try something different.</p>
 <div className="interest-picker">{(['culture','food','outdoors','nightlife','community'] as const).map(category=>{const Icon=categoryIcon[category];return <label key={category}><input type="checkbox" name="eventType" value={category} defaultChecked={getEventPreferences(state.profile).includes(category)}/><span><Icon size={16}/>{categoryLabel[category]}</span></label>})}</div>
 <button className="primary" type="submit">Save your profile <Check size={16}/>
 </button>
@@ -733,6 +776,30 @@ export default function Workspace(){
 </div>
 <div className="badges">{getTravelBadges(state.trips).map(badge=><div key={badge.id} className={badge.earned?'':'locked'}><span>{badge.icon==='flag'?'◎':badge.icon==='users'?'✳':badge.icon==='ticket'?<Ticket size={32}/>:'✺'}</span><strong>{badge.title}</strong><small>{badge.description}</small></div>)}</div>
 <TripRecap trip={trip} profile={state.profile}/>
+<div className="section-heading">
+<div>
+<h2>Better with a few new faces.</h2>
+<p>Public trips open to join requests.</p>
+</div>
+<button className="text-button" onClick={()=>open('share')}>Open your trip <Plus size={15}/>
+</button>
+</div>{!socialReady&&<div className="integration-notice">
+<Users size={20}/>
+<div>
+<strong>Community is being connected.</strong>
+<p>Public trips and real join requests need the shared community service. You can share an itinerary link today.</p>
+</div>
+<button className="text-button" onClick={()=>open('share')}>Share a plan <ArrowRight size={15}/>
+</button>
+</div>}<div className="community-grid">{publicTrips.map(t=>
+<article className="community-card" key={t.id}>
+<span className="category">
+<Globe size={12}/>Open trip</span>
+<h3>{t.title}</h3>
+<p>{t.city} · {formatDate(t.startDate)} – {formatDate(t.endDate)}</p>
+<button className="primary" onClick={()=>{setJoining(t);open('join')}}>Request to join <ArrowUpRight size={15}/>
+</button>
+</article>)}</div>
 <section className="dialog-form" aria-label="Public plans you manage">
 <h3>Public plans you manage</h3>
 <p className="form-note">These management entries stay in this browser when you restore a workspace or remove a private trip. Publishing access is not included in workspace backups; clearing browser data loses it.</p>
@@ -751,15 +818,15 @@ export default function Workspace(){
 <strong>Your travels, in your hands.</strong>
 <p>Profiles, expenses, and reservations save in this browser. Export a backup to take them with you.</p>
 </div>
-<button className="secondary" onClick={()=>{try{const backup=exportWorkspaceBackup(state);download(backup.withinWorkspaceLimit?'trippin-backup.json':'trippin-recovery.json',backup.serialized);if(!backup.withinWorkspaceLimit)notify('Recovery archive prepared. Keep the file; it needs repair or a smaller workspace before restoring as a whole.')}catch(e){notify(e instanceof Error?e.message:'Could not export. Keep this tab open.')}}}>
+<button className="secondary" onClick={()=>exportBackup()}>
 <Download size={15}/>Export backup</button>
 </div>
 <button className="text-button" onClick={()=>backupInput.current?.click()}>
 <Upload size={14}/>Restore a Trippin backup</button>
-<input ref={backupInput} type="file" accept="application/json,.json" hidden onChange={async e=>{const input=e.currentTarget,file=input.files?.[0],generation=++backupReadGeneration.current;if(!file)return;try{if(file.size>MAX_BACKUP_FILE_BYTES)throw new Error('Choose a backup of 16 MiB or smaller. Your current trips are unchanged.');const bytes=new Uint8Array(await file.arrayBuffer());if(generation!==backupReadGeneration.current)return;const restored=parseWorkspaceBackup(bytes);preserveManagement([...workspaceRef.current.workspace.trips,...restored.trips]);if(persistWorkspace(restored,serialized=>localStorage.setItem(storageKey,serialized))!=='saved')throw new Error('The backup could not be saved in this browser. Your current trips are unchanged; keep the backup file.');pendingPlan.current=null;setState(restored);setDayIndex(0);setSelected(null);notify('Backup restored and saved in this browser. Public-plan management entries are kept in Your profile.')}catch(e){if(generation===backupReadGeneration.current)notify(e instanceof Error?e.message:'This is not a valid Trippin backup. Your current trips are unchanged.')}finally{if(generation===backupReadGeneration.current)input.value=''}}}/>
+<input ref={backupInput} type="file" accept="application/json,.json" hidden onChange={async e=>{const input=e.currentTarget,file=input.files?.[0],generation=++backupReadGeneration.current;if(!file)return;try{if(file.size>MAX_BACKUP_FILE_BYTES)throw new Error('Choose a backup of 16 MiB or smaller. Your current trips are unchanged.');const bytes=new Uint8Array(await file.arrayBuffer());if(generation!==backupReadGeneration.current)return;const restored=parseWorkspaceBackup(bytes);const retained=preserveManagement([...workspaceRef.current.workspace.trips,...restored.trips]);if(restored.trips.length===0&&retained.length)throw new Error('Review public plans in your profile before restoring an empty travel space.');if(persistWorkspace(restored,serialized=>{localStorage.setItem(storageKey,serialized);if(localStorage.getItem(storageKey)!==serialized)throw new Error('Save readback failed.')})!=='saved')throw new Error('The backup could not be saved in this browser. Your current trips are unchanged; keep the backup file.');close();pendingPlan.current=null;if(restored.trips.length===0){onEmpty(restored);return}setState(restored);setDayIndex(0);setSelected(null);notify('Backup restored and saved in this browser. Public-plan management entries are kept in Your profile.')}catch(e){if(generation===backupReadGeneration.current)notify(e instanceof Error?e.message:'This is not a valid Trippin backup. Your current trips are unchanged.')}finally{if(generation===backupReadGeneration.current)input.value=''}}}/>
 </div>}
     </main>
-    {view==='itinerary'&&<button className="mobile-map-toggle primary" onClick={()=>setMobileMap(!mobileMap)}>{mobileMap?<>
+    {view==='itinerary'&&<button type="button" className="mobile-map-toggle primary" aria-expanded={mobileMap} aria-controls="trip-map-panel" onClick={toggleMobileMap}>{mobileMap?<>
 <LayoutList size={17}/>Show itinerary</>:<>
 <Map size={17}/>Show map</>}</button>}
     {toast&&<div className="toast" role="status">
@@ -767,19 +834,20 @@ export default function Workspace(){
 <X size={15}/>
 </button>
 </div>}
-    {modal&&<Dialog title={modal==='trip'?'A new chapter.':modal==='event'?'Make it part of your trip.':modal==='activity'?(editing?'Change the plan.':'A good little detour.'):modal==='expense'?'A little expense.':modal==='booking'?'Keep the details close.':modal==='share'?'Good plans are worth sharing.':modal==='alternatives'?'A different kind of good.':modal==='join'?'A few new faces.':'A few helpful details.'} onClose={close} wide={modal==='settings'}>
+    {modal&&<Dialog title={modal==='trip'?'A new chapter.':modal==='event'?'Make it part of your trip.':modal==='activity'?(customAlternativeFor?'A new alternative.':editing?'Change the plan.':'A good little detour.'):modal==='expense'?'A little expense.':modal==='booking'?'Keep the details close.':modal==='share'?'Good plans are worth sharing.':modal==='alternatives'?'A different kind of good.':modal==='join'?'A few new faces.':'A few helpful details.'} onClose={close} wide={modal==='settings'}>
       {error&&<div role="alert" className="form-error">{error}</div>}
       {modal==='trip'&&<NewTripForm onCreate={addTrip} initialCity={newTripCity}/>}
-      {modal==='event'&&eventDraft&&<EventPlanForm draft={eventDraft} trip={trip} onSave={saveEvent}/>}
-      {modal==='tripSettings'&&<TripSettings trip={trip} canDelete={state.trips.length>1} publicationStatus={managedTrips.find(item=>item.id===trip.id)?.status} onSave={updated=>{if(workspaceRef.current.tripIdentities.get(trip.id)!==workspaceEdit.tripIdentities.get(trip.id))throw new Error('This trip was replaced. Reopen its details before saving.');updateTrip(current=>({...updated,isPublic:current.isPublic}));setDayIndex(0);setSelected(null);close();notify('Trip details updated. Your agenda is ready to keep moving.')}} onDelete={deleteTrip}/>}
-      {modal==='activity'&&<form className="dialog-form" onSubmit={submitActivity}>
+      {modal==='event'&&eventDraft&&<EventPlanForm draft={eventDraft} trip={trip} busy={tripEditPending} onSave={saveEvent}/>}
+      {modal==='tripSettings'&&<TripSettings trip={trip} busy={tripEditPending} canDelete={state.trips.length>1||managedTrips.length===0} publicationStatus={managedTrips.find(item=>item.id===trip.id)?.status} onSave={saveTripDetails} onDelete={deleteTrip}/>}
+      {modal==='activity'&&<form ref={activityForm} className="dialog-form" onSubmit={submitActivity}>
+{customAlternativeFor&&<p className="form-note">Replace “{customAlternativeFor.title}” at {customAlternativeFor.time}. Your original stop stays available to swap back; its reservations and recorded expenses stay linked to it.</p>}
 <label>What’s the plan?<input name="title" defaultValue={editing?.title} required maxLength={140} placeholder="Coffee, then see where we end up"/>
 </label>
 <div className="form-grid">
 <label>Kind of moment<select name="category" defaultValue={editing?.category||'culture'}>{categories.map(c=>
 <option value={c} key={c}>{categoryLabel[c]}</option>)}</select>
 </label>
-<label>Start time<input name="time" type="time" defaultValue={editing?.time||'10:00'} required/>
+<label>Start time<input name="time" type="time" defaultValue={customAlternativeFor?.time||editing?.time||'10:00'} readOnly={Boolean(customAlternativeFor)} required/>
 </label>
 </div>
 <label>Little details<textarea name="description" defaultValue={editing?.description} maxLength={600} placeholder="Why it caught your eye…"/>
@@ -805,7 +873,7 @@ export default function Workspace(){
 </label>
 <small>New stops start at the city center. Adjust coordinates for an accurate pin.</small>
 </details>
-<button className="primary" type="submit">{editing?'Save changes':'Add to my day'} <Check size={16}/>
+<button className="primary" type="submit" disabled={tripEditPending}>{tripEditPending?'Applying…':customAlternativeFor?'Use this alternative':editing?'Save changes':'Add to my day'} <Check size={16}/>
 </button>
 </form>}
       {modal==='expense'&&<form className="dialog-form" onSubmit={submitExpense}>
@@ -824,7 +892,7 @@ export default function Workspace(){
 <option value="">No, it’s a separate expense</option>{trip.bookings.map(b=>
 <option key={b.id} value={`booking:${b.id}`}>Reservation · {b.title}</option>)}{trip.days.flatMap(d=>d.activities).filter(a=>!a.alternativeFor).map(a=><option key={a.id} value={`activity:${a.id}`}>Activity · {a.title}</option>)}</select>
 </label>
-<button className="primary" type="submit">Log expense <Check size={16}/>
+<button className="primary" type="submit" disabled={tripEditPending}>{tripEditPending?'Applying…':'Log expense'} <Check size={16}/>
 </button>
 </form>}
       {modal==='booking'&&<form className="dialog-form" onSubmit={submitBooking}>
@@ -856,7 +924,7 @@ export default function Workspace(){
 </label>
 <label>Anything else?<textarea name="notes" defaultValue={editingBooking?.notes} maxLength={800} placeholder="Check-in time, seat number, a little reminder…"/>
 </label>
-<button className="primary" type="submit">Save reservation <Ticket size={16}/>
+<button className="primary" type="submit" disabled={tripEditPending}>{tripEditPending?'Applying…':'Save reservation'} <Ticket size={16}/>
 </button>
 </form>}
       {modal==='share'&&<div className="dialog-form">
@@ -895,7 +963,7 @@ export default function Workspace(){
 <small>{a.duration} min · {a.cost===0?'Free':formatMoney(a.cost)+' est.'}</small>
 </span>
 <ArrowRight size={16}/>
-</button>})}<button className="secondary" onClick={()=>setModal('activity')}>
+</button>})}<button className="secondary" onClick={beginCustomAlternative}>
 <Plus size={15}/>Make your own alternative</button>
 </div>}
       {modal==='join'&&joining&&<form className="dialog-form" onSubmit={sendJoin}>
@@ -963,5 +1031,5 @@ export default function Workspace(){
 </div>}
     </Dialog>}
     {aiOpen&&<AiChat context={aiContext} onClose={()=>setAiOpen(false)}/>}
-  </div>;
+</div>{accountBusy&&<p className="workspace-account-pending" role="status">Updating your account. Keeping your saved space ready…</p>}</>;
 }

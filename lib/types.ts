@@ -104,6 +104,9 @@ export interface Trip {
   image: string;
   description: string;
   budget: number;
+  /** Per-trip allowances; older backups fall back to the saved profile values. */
+  dailyFoodBudget?: number;
+  dailyTransportBudget?: number;
   currency: "EUR";
   days: TripDay[];
   expenses: Expense[];

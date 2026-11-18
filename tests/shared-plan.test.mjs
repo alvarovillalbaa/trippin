@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { legacyWorkspace } from './factories/legacy-workspace.mjs';
 import { registerHooks } from 'node:module';
 
 const tripModule = new URL('../lib/trip.ts', import.meta.url).href;
@@ -13,7 +14,7 @@ registerHooks({
 const { initialWorkspace, importSharedPlan, isTrip, isWorkspace, persistWorkspace, restoreWorkspace, serializeWorkspace } = await import(tripModule);
 
 function workspaceWith(count = 1) {
-  const workspace = initialWorkspace();
+  const workspace = legacyWorkspace();
   const template = workspace.trips[0];
   workspace.trips = Array.from({ length: count }, (_, index) => ({ ...structuredClone(template), id: `owned-trip-${index}` }));
   workspace.selectedTripId = workspace.trips.at(-1).id;

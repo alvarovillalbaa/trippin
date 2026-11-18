@@ -6,9 +6,9 @@ import {getTripDays,isTrip,makeId} from '@/lib/trip';
 import type {Trip,TripDay} from '@/lib/types';
 import type {ManagedTrip} from '@/lib/community-management';
 
-type Props={trip:Trip;onSave:(trip:Trip)=>void;onDelete:()=>void;canDelete:boolean;publicationStatus?:ManagedTrip['status']};
+type Props={trip:Trip;onSave:(trip:Trip)=>void;onDelete:()=>void;canDelete:boolean;busy?:boolean;publicationStatus?:ManagedTrip['status']};
 
-export default function TripSettings({trip,onSave,onDelete,canDelete,publicationStatus}:Props){
+export default function TripSettings({trip,onSave,onDelete,canDelete,busy=false,publicationStatus}:Props){
   const published=trip.isPublic||publicationStatus==='published';
   const [title,setTitle]=useState(trip.title);
   const [startDate,setStartDate]=useState(trip.startDate);
@@ -34,7 +34,7 @@ export default function TripSettings({trip,onSave,onDelete,canDelete,publication
   const extraDays=Math.max(0,range.dates.length-trip.days.length);
 
   function save(event:FormEvent<HTMLFormElement>){
-    event.preventDefault();setError('');
+    event.preventDefault();if(busy)return;setError('');
     try{
       const name=title.trim();
       if(!name||name.length>200)throw new Error('Give your trip a name with 1–200 characters.');
@@ -55,7 +55,7 @@ export default function TripSettings({trip,onSave,onDelete,canDelete,publication
   function remove(){
     setError('');
     if(published){setError('Unpublish this trip before deleting it from this browser.');return}
-    if(!canDelete){setError('Keep at least one trip in your workspace. Create another trip before deleting this one.');return}
+    if(!canDelete){setError('Review public plans in Your profile before removing your last private trip.');return}
     if(!deleteConfirmed){setError('Confirm that you want to delete this trip from this browser.');return}
     try{onDelete()}catch(caught){setError(caught instanceof Error?caught.message:'This trip could not be deleted. Please try again.')}
   }
@@ -80,12 +80,12 @@ export default function TripSettings({trip,onSave,onDelete,canDelete,publication
         </label>}
       </div>}
       {published&&<p className="form-note">These edits update your saved trip. Publish it again to update the public plan.</p>}
-      <button className="primary" type="submit">Save trip <Check size={16}/></button>
+      <button className="primary" type="submit" disabled={busy}>{busy?'Applying…':'Save trip'} <Check size={16}/></button>
     </form>
     <section className="dialog-form" style={{borderTop:'1px solid #dfe5d6',paddingTop:20}} aria-label="Delete trip">
       <h3>Delete this trip</h3>
       {published?<p className="form-note">Unpublish this trip before deleting it. This keeps its public plan and join requests from being left behind.</p>
-        :!canDelete?<p className="form-note">Keep at least one trip in your workspace. Create another trip before deleting this one.</p>
+        :!canDelete?<p className="form-note">Review public plans in Your profile before removing your last private trip. Their management entries need to stay accessible.</p>
         :<>
           <p className="form-note">This removes its itinerary, reservations, and recorded expenses from this browser. Export a backup first if you want to keep a copy.</p>
           {publicationStatus==='uncertain'&&<p className="form-note">A publication could not be confirmed. Deleting this private copy keeps its public-plan management entry in Your profile.</p>}
@@ -94,7 +94,7 @@ export default function TripSettings({trip,onSave,onDelete,canDelete,publication
             <span>Delete this trip from this browser.</span>
           </label>
         </>}
-      <button type="button" className="secondary" style={{color:'#a34735',alignSelf:'flex-start'}} disabled={!canDelete||published||!deleteConfirmed} onClick={remove}><Trash2 size={15}/>Delete trip</button>
+      <button type="button" className="secondary" style={{color:'#a34735',alignSelf:'flex-start'}} disabled={busy||!canDelete||published||!deleteConfirmed} onClick={remove}><Trash2 size={15}/>Delete trip</button>
     </section>
   </div>;
 }

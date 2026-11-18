@@ -61,7 +61,7 @@ export function readManagedStorage(storage: ManagedStorage): ManagedSnapshot {
 }
 
 /** Legacy flags are references, not fresh server acknowledgments or publish attempts. */
-export function preserveManagedStorage(storage: ManagedStorage, trips: readonly Trip[]): ManagedTrip[] {
+export function preserveManagedStorage(storage: ManagedStorage, trips: readonly Pick<Trip, 'id' | 'title' | 'city' | 'isPublic'>[]): ManagedTrip[] {
   const existing = new Set(readManagedStorage(storage).records.map(record => record.id));
   for (const trip of trips) {
     if (!trip.isPublic || existing.has(trip.id)) continue;

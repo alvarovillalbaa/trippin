@@ -2,6 +2,7 @@
 // adapter executes no React, DOM, browser, backend, model or network operation.
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { legacyWorkspace } from './factories/legacy-workspace.mjs';
 import { readFileSync } from 'node:fs';
 import { createRequire, registerHooks } from 'node:module';
 import { createHash } from 'node:crypto';
@@ -92,7 +93,7 @@ const factorySource = `module.exports = (state, workspaceEdit) => {
   const categories = ${moduleVariables.get('categories').getText(ast)};
   const notify = ${arrow('notify')};
   const setState = ${reducerMode ? arrow('setState') : 'baselineStateSetter'};
-  ${['refreshManagement', 'preserveManagement'].filter(name => local.has(name)).map(name => `const ${name} = ${arrow(name)};`).join('\n  ')}
+  ${['refreshManagement', 'preserveManagement', 'persistCurrentWorkspace'].filter(name => local.has(name)).map(name => `const ${name} = ${arrow(name)};`).join('\n  ')}
   const updateTrip = ${arrow('updateTrip')};
   const importCsv = ${arrow('importCsv')};
   return { importCsv, updateTrip, setState,
@@ -113,7 +114,7 @@ function sameWorkspace(actual, expected, message = 'The complete workspace must 
   assert.equal(digest(actual), digest(expected), message);
 }
 function workspace(expenseCount = 0, tripCount = 2) {
-  const value = tripApi.initialWorkspace(), template = value.trips[0];
+  const value = legacyWorkspace(), template = value.trips[0];
   value.profile.name = 'Authored CSV owner';
   value.trips = Array.from({ length: tripCount }, (_, index) => ({
     ...structuredClone(template), id: `csv-owned-trip-${index}`, city: `Authored City ${index}`,
@@ -180,7 +181,7 @@ function editorSnapshot(editor) {
 }
 function harness(initial = workspace()) {
   let editor = reducerMode ? editorApi.createWorkspaceEditor(plain(initial)) : { workspace: plain(initial) };
-  let durable = JSON.stringify(initial), toast = '', failStorage = false;
+  let durable = JSON.stringify(initial), toast = '', saveError = '', failStorage = false;
   const queue = [], input = { files: [], value: '' }, backup = { files: [], value: '' };
   const calls = { notices: [], writes: [], transitions: [], effectOrder: [] };
   const key = 'trippin.workspace.v1';
@@ -192,10 +193,12 @@ function harness(initial = workspace()) {
     dispatchWorkspace: action => queue.push({ kind: 'action', action }),
     setToast, fileInput: { current: input }, csvReadGeneration: { current: 0 },
     backupInput: { current: backup }, backupReadGeneration: { current: 0 }, pendingPlan: { current: null },
+    departureGeneration: { current: 0 }, mountedRef: { current: true }, pendingExit: { current: null },
+    setSaveError: message => { saveError = message; }, setLeaveRequested() {},
     workspaceRef: { current: editor },
     setManagedTrips() {}, setManagementError() {},
     ready: true, storageKey: key, Uint8Array, TextEncoder, TextDecoder, Error, JSON,
-    setDayIndex() {}, setSelected() {}, fetch: forbidden,
+    setDayIndex() {}, setSelected() {}, close() {}, fetch: forbidden,
     localStorage: {
       length: 0,
       key() { return null; },
@@ -250,7 +253,9 @@ function harness(initial = workspace()) {
   return {
     calls, input, render, flush,
     get workspace() { return editor.workspace; }, get editor() { return editor; },
-    get durable() { return durable; }, get toast() { return toast; },
+    get durable() { return durable; }, get toast() { return toast; }, get saveError() { return saveError; },
+    depart() { context.departureGeneration.current++; },
+    unmount() { context.mountedRef.current = false; },
     start(file, from = render()) {
       input.files = [file]; input.value = file.name;
       return from.importCsv(file);
@@ -270,6 +275,24 @@ const importedNotices = h => h.calls.notices.filter(message => /\bexpenses impor
 const target = h => h.workspace.trips.find(item => item.id === 'csv-owned-trip-0');
 function durableMatches(h) { sameWorkspace(JSON.parse(h.durable), h.workspace, 'The durable workspace must match the accepted UI workspace.'); }
 function accepted(h, value) { if (reducerMode) assert.equal(h.editor.csvNotice?.accepted, value); }
+
+for (const departure of ['depart', 'unmount']) for (const failure of [false, true]) {
+  test(`a pending CSV ${failure ? 'error' : 'completion'} cannot change a space after ${departure}`, async () => {
+    const initial = workspace(), h = harness(initial), gate = deferred();
+    const pending = h.start(csvFile('departed-read', 1, { gate, failure }));
+    h[departure](); gate.resolve(); await pending; h.flush();
+    sameWorkspace(h.workspace, initial); sameWorkspace(JSON.parse(h.durable), initial);
+    assert.equal(h.calls.transitions.length, 0); assert.deepEqual(h.calls.notices, []);
+  });
+}
+
+test('a new CSV selection can succeed after returning from an unsuccessful departure', async () => {
+  const h = harness(), gate = deferred(), pending = h.start(csvFile('cancelled-read', 1, { gate }));
+  h.depart(); gate.resolve(); await pending; h.flush();
+  await h.start(csvFile('new-intent', 1)); h.flush();
+  assert.equal(target(h).expenses.length, 1); assert.match(target(h).expenses[0].title, /new-intent/);
+  durableMatches(h);
+});
 
 test('overlapping 980 plus 15 plus 15 reads accept only the first completion in either order', async () => {
   const scenarios = [];
@@ -452,13 +475,13 @@ test('actual reducer or functional updater replay is deterministic and produces 
   durableMatches(h);
 });
 
-test('the actual persistence effect leaves quota failure as the final visible notice', async () => {
+test('the actual persistence effect keeps quota failure separate from the temporary import notice', async () => {
   const initial = workspace(2), h = harness(initial), durable = h.durable;
   h.setStorageFailure();
   await h.start(csvFile('quota', 1)); h.flush();
   assert.equal(target(h).expenses.length, 3);
   assert.equal(h.durable, durable);
-  assert.match(h.toast, /could not save|export.*backup/i);
+  assert.match(h.saveError, /could not be saved|download.*backup/i);
   assert.ok(h.calls.writes.length > 0);
   if (reducerMode) assert.deepEqual(h.calls.effectOrder, ['notice', 'persist']);
 });

@@ -1,3 +1,3 @@
-import Workspace from '@/components/workspace';
+import TravelApp from '@/components/travel-app';
 
-export default function Home() { return <Workspace />; }
+export default function Home() { return <TravelApp />; }

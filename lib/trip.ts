@@ -1,4 +1,4 @@
-import { destinations, seedProfile, seedTrips } from "./data";
+import { destinations } from "./data";
 import type {
   Activity, ActivityCategory, ActivityEvent, Badge, Booking, DemoPerson, Destination, Expense,
   JoinRequest, Profile, Trip, TripCost, TripDay, WorkspaceState,
@@ -73,6 +73,8 @@ export function publicTripSnapshot(trip: Trip): Trip {
     startDate: trip.startDate, endDate: trip.endDate, lat: trip.lat, lng: trip.lng,
     image: allowedImages.has(trip.image) ? trip.image : "/images/world.svg",
     description: trip.description, budget: trip.budget, currency: trip.currency, isPublic: false,
+    ...(trip.dailyFoodBudget === undefined ? {} : { dailyFoodBudget: trip.dailyFoodBudget }),
+    ...(trip.dailyTransportBudget === undefined ? {} : { dailyTransportBudget: trip.dailyTransportBudget }),
     bookings: [], expenses: [], joinRequests: [], companions: [],
     days: trip.days.map((day) => ({
       id: day.id, date: day.date, label: day.label,
@@ -94,7 +96,11 @@ export function formatDate(value: string, options: Intl.DateTimeFormatOptions = 
   return new Intl.DateTimeFormat("en-GB", { ...options, timeZone: "UTC" }).format(new Date(`${value}T12:00:00.000Z`));
 }
 
-const roundMoney = (amount: number): number => Math.round((amount + Number.EPSILON) * 100) / 100;
+const roundMoney = (amount: number): number => {
+  const cents = Math.abs(amount) * 100;
+  const rounded = Math.round(cents + Math.max(1, cents) * Number.EPSILON);
+  return rounded === 0 ? 0 : (amount < 0 ? -1 : 1) * rounded / 100;
+};
 
 /** Flight/stay estimates and linked actual expenses contribute once, never twice. */
 export function getTripCost(trip: Trip, profile: Profile): TripCost {
@@ -138,8 +144,8 @@ export function getTripCost(trip: Trip, profile: Profile): TripCost {
   }
 
   const days = trip.days.length;
-  const food = Math.max(knownFood, profile.dailyFoodBudget * days);
-  const transport = Math.max(knownTransport, profile.dailyTransportBudget * days);
+  const food = Math.max(knownFood, (trip.dailyFoodBudget ?? profile.dailyFoodBudget) * days);
+  const transport = Math.max(knownTransport, (trip.dailyTransportBudget ?? profile.dailyTransportBudget) * days);
   const total = roundMoney(activities + bookings + food + transport + manual);
   const spent = roundMoney(trip.expenses.reduce((sum, item) => sum + item.amount, 0));
   return {
@@ -172,9 +178,10 @@ export function getWalkingRoute(activities: Activity[]) {
   };
 }
 
-export function initialWorkspace(): WorkspaceState {
-  const state: WorkspaceState = { version: 1, trips: seedTrips, profile: seedProfile, selectedTripId: seedTrips[0].id };
-  return structuredClone(state);
+export function initialWorkspace(name = ''): WorkspaceState {
+  return { version: 1, trips: [], selectedTripId: '', profile: {
+    name, bio: '', homeCity: '', interests: [], openToEvents: [], dailyFoodBudget: 0, dailyTransportBudget: 0, badges: [],
+  } };
 }
 
 /** Badges describe saved activity completion; they do not verify a physical visit. */
@@ -363,6 +370,8 @@ export function isTrip(value: unknown): value is Trip {
     || !(value.countryCode === undefined || (typeof value.countryCode === "string" && /^[A-Z]{2}$/.test(value.countryCode)))
     || !latitude(value.lat) || !longitude(value.lng) || !imagePath(value.image) || !text(value.description, 4000)
     || !amount(value.budget) || value.currency !== "EUR" || typeof value.isPublic !== "boolean"
+    || !(value.dailyFoodBudget === undefined || amount(value.dailyFoodBudget))
+    || !(value.dailyTransportBudget === undefined || amount(value.dailyTransportBudget))
     || !Array.isArray(value.days) || value.days.length < 1 || value.days.length > 31 || !value.days.every(isDay)
     || !Array.isArray(value.expenses) || value.expenses.length > 1000 || !value.expenses.every(isExpense)
     || !Array.isArray(value.bookings) || value.bookings.length > 100 || !value.bookings.every(isBooking)
@@ -380,10 +389,11 @@ export function isTrip(value: unknown): value is Trip {
 }
 
 export function isWorkspace(value: unknown): value is WorkspaceState {
-  return record(value) && value.version === 1 && Array.isArray(value.trips) && value.trips.length > 0
+  return record(value) && value.version === 1 && Array.isArray(value.trips)
     && value.trips.length <= 40 && value.trips.every(isTrip) && uniqueIds(value.trips)
-    && isProfile(value.profile) && id(value.selectedTripId)
-    && value.trips.some((trip) => trip.id === value.selectedTripId);
+    && isProfile(value.profile)
+    && (value.trips.length === 0 ? value.selectedTripId === '' : id(value.selectedTripId)
+      && value.trips.some((trip) => trip.id === value.selectedTripId));
 }
 
 /** Only fully validated data can enter the workspace from local storage or a backup. */
