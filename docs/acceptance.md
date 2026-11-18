@@ -1,6 +1,24 @@
 # Delivery coverage
 
-Last updated: 2026-11-11
+Last updated: 2026-11-18
+
+The [consumer release status](results/2026/11-16/consumer-release-status.md)
+owns the current qualification, configuration and publication snapshot, with
+immutable links for completed isolated packets. The latest confirmation/recovery
+packet passes 93 controls, Next/Eve builds and both fresh desktop Chromium
+journeys at its recorded source; it is retired after 142 cumulative CI seconds.
+Earlier accepted case identities remain closed at their exact source. Historical
+overlapping control counts must not be added together.
+
+The consumer edition remains unpublished and undeployed. SMTP and the approved
+template correction deliver a fresh direct HTTPS link with SPF/DKIM/DMARC passing.
+The same fresh account is confirmed by password login and `/user`, then locally
+logged out. Its controlled verification found the token already consumed;
+controlled first-click and hosted real-provider application journeys remain pending.
+The historical table below describes the earlier edition and its scoped evidence;
+it does not qualify the changed consumer flows. Operational histories and their
+dependencies are preserved locally rather than automatically included in a
+public release.
 
 This release builds the product with provider credentials deferred at Alvaro's request. Passing a build does not prove live provider behavior.
 

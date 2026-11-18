@@ -1,6 +1,97 @@
-# Focused browser-client integration contract
+# Tests and verification boundaries
 
-Last updated: 2026-11-14
+Last updated: 2026-11-18
+
+The [consumer release status](../docs/results/2026/11-16/consumer-release-status.md)
+owns the current proof and publication snapshot. The latest confirmation/recovery
+packet passes **93 controls**, type generation/checking, Next/Eve builds and both
+[RC-N01/RC-N02 journeys](../docs/results/2026/11-16/consumer-release-status.md#source-and-isolated-qualification)
+on Node 24.21.0. Native Web Locks, file selection and downloads were exercised
+in desktop Chromium with declared authored corruption/guest boundaries. The
+packet and its 142-second CI budget are closed; real-provider hosted app behavior
+remains separate.
+
+The approved SMTP/template check separately verifies actual signed own-mailbox
+delivery with a direct HTTPS confirmation anchor, the same confirmed provider
+identity and local logout. Controlled verification returned `otp_expired` after
+prior token consumption; the first click and hosted application remain unproven.
+Its one-message allowance is closed; do not resend or replay closed QA packets.
+
+Use Node 24, matching `package.json`. These focused frontend checks use existing
+source and dependencies; no browser, provider, account or server is started:
+
+```sh
+node --test tests/unit/travel-entry.test.mjs
+node --test tests/unit/travel-backup-ui.test.mjs tests/workspace-backup-ui.test.mjs
+node --test tests/unit/account-recovery-ui.test.mjs
+node --test tests/unit/trip-costs.test.mjs tests/unit/trip-settings.test.mjs \
+  tests/unit/new-trip-dates.test.mjs tests/unit/travel-navigation.test.mjs
+node --test tests/unit/corrupt-workspace-recovery.test.mjs \
+  tests/unit/workspace-recovery-ui.test.mjs tests/unit/travel-backup-ui.test.mjs \
+  tests/unit/account-confirmation-return.test.mjs
+```
+
+Manual actions run through the real reducer against the latest queued state;
+actual completion effects are exercised separately from input-validation
+fixtures. Accepted edits remain distinct from durable saves. Restore tests
+execute real teardown only after verified persistence. Run these focused controls
+with:
+
+```sh
+node --test tests/unit/manual-trip-edits.test.mjs \
+  tests/unit/manual-trip-edit-ui.test.mjs tests/unit/restore-dialog-intent.test.mjs
+```
+
+The entry checks exercise empty workspaces, guest/account storage separation,
+legacy projection, trip allowances, Maps links and public-plan recovery. The
+backup and recovery checks execute actual callbacks with authored React,
+storage, file and transport boundaries. They do not mount React or prove native
+file selection, layout, application cookies or a real provider. Callback checks
+need the existing TypeScript compiler; `TRIPPIN_TYPESCRIPT_PATH` can select an
+already available compiler when this checkout has no installed dependencies.
+Do not install an environment only to run these commands below Storage Guard's
+reserve. The default shell runtime may differ from the required Node 24; check
+`node --version` before interpreting results.
+
+Allowance, cost, final-trip deletion, date, URL and focus checks use actual
+source with authored boundaries. Alternative/day/map controls exercise real
+callbacks with authored state and DOM; CSS declarations do not prove layout.
+Earlier isolated native packets remain closed at their recorded source and
+budget. Their guest transport and synthetic save-refusal boundaries do not
+qualify production or real Auth. The release status above links their immutable
+public proof without requiring publication of every local operational artifact.
+
+```sh
+node --test tests/unit/custom-alternatives.test.mjs \
+  tests/unit/itinerary-days.test.mjs tests/unit/workspace-map.test.mjs
+```
+
+Run save and form boundaries with the existing compiler on Node 24:
+
+```sh
+node --test --test-reporter=spec \
+  tests/unit/workspace-saving.test.mjs tests/unit/workspace-forms.test.mjs \
+  tests/unit/trip-settings.test.mjs tests/workspace-backup-ui.test.mjs \
+  tests/csv-import-state.test.mjs
+```
+
+Saving checks extract the actual handlers, navigation controls, focus callback
+and unload effect with authored storage/files/DOM and account callbacks. They verify
+durable writes before handoff, explicit unsaved departure, latest-memory exports,
+file-read cancellation and unsupported-draft refusal. A mocked unload event is
+not proof that a real browser will display a prompt or preserve mobile state.
+
+`unit/auth-route.test.mjs` executes the actual server handler with authored
+provider responses. Run it only within an explicitly authorized backend-test
+scope; it does not qualify Supabase, JWT verification or delivered email.
+Temporary QA workflows, budgets and accepted identities remain retired; do not
+reuse them for a new candidate. Builds, broad TypeScript checks and local
+dev/browser checks require the repo's explicit verification scope and storage
+preflight. The [account setup guide](../docs/accounts.md) owns current
+configuration and remaining hosted acceptance gates. Recorded real-provider
+operations are not tests to replay during routine frontend work.
+
+## Historical browser-client packets
 
 The T2 [flight-clock checks](unit/flight-times.test.mjs) run with
 `node --test --test-reporter=tap tests/unit/flight-times.test.mjs` on Node24+.
@@ -19,8 +110,8 @@ original evidence. The temporary workflow is disabled.
 
 L01/L02 [passed their first invocation](../docs/results/2026/11-07/itinerary-lifecycle-attempt-1.md)
 at preparation `562876d25a59e91fba22a5a009729e0dcb26cc1b`, against the
-separately pinned baseline production deployment. Do not repeat these closed
-identities without changed inputs or a concrete concern.
+separately pinned baseline production deployment. These identities are closed;
+a new concern needs a separately reviewed packet rather than an automatic replay.
 
 The existing creation/share and ten CSV/backup/zoom scopes are closed; their
 original receipts under `docs/results/` retain their sources and proof limits.

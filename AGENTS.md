@@ -1,14 +1,74 @@
 # Trippin
 
 Trippin is a Next.js travel workspace with an EVE travel assistant. Use Node 24.
+Read `README.md`, `docs/product.md` and `docs/accounts.md` before changing behavior.
+The dated [consumer release status](docs/results/2026/11-16/consumer-release-status.md)
+is the current navigation for source, provider/configuration and release proof.
+Historical receipts and earlier failed candidates remain unchanged.
 
-- Read `README.md` and `docs/product.md` before changing behavior.
-- Preserve the trip model in `lib/types.ts`; browser state is private to each browser unless explicit sharing is enabled.
-- Never present seeded trips, events, prices, flight statuses, or people as live provider data.
-- Keep provider credentials on the server. Never store bank credentials or payment details.
-- AI suggestions require explicit user application before modifying a trip.
-- Use `npm run check`, `npm run build` when validating a release, and `git diff --check`.
-- Keep integration setup and proof boundaries documented in `docs/`.
+## Current source and release boundaries
+
+- The consumer edition remains undeployed. The approved confirmation/recovery
+  packet passes 93 controls, Next/Eve builds and both fresh Chromium journeys at
+  source `762911fc0f9ba3375dd68bb535de2b71dfcd31ac`, run `44055810000`.
+  Its workflow/ref are retired after142/1200CIseconds. All older packets and
+  unused budgets remain closed; never replay their identities.
+- Approved SMTP/IAM setup and the separately approved one-field confirmation
+  template correction are applied. A fresh own-mailbox email has a direct HTTPS
+  provider link and passing SPF/DKIM/DMARC. Its controlled verification returned
+  `otp_expired`; password login and `/user` confirm the same new account was
+  already confirmed. The prior consumption cause and controlled first click
+  remain unproven. Production publication/deployment retains its owner gate.
+- Assemble a release as an overlay on fresh full main. Never merge the sparse QA
+  tree wholesale or ship its synthetic Vercel deployment refusal. Preserve dirty
+  shared work, unselected main files and history.
+- Use only the dedicated Trippin Auth project `erxeujubtgkxppmuncdy`. Provider
+  signup/confirmation/session qualification, verified production variables and
+  verified return configuration do not prove hosted application acceptance.
+  Preserve confirmation requirements and unrelated settings.
+- The configured sender is `hello@clous.app`; actual own-mailbox delivery passes
+  SPF/DKIM/DMARC. The old tracked-link HTTP failure remains preserved. The new
+  direct-link receipt, confirmed identity and current local logout pass;
+  those do not establish a controlled first click or hosted application.
+  Never change unrelated projects, share their Auth, pause them or upgrade a
+  paid plan to bypass capacity. Missing real checks remain explicitly pending.
+- Preserve private task credentials: ignored `.env.trippin-platform.local`
+  directory700/token600, with per-command `SUPABASE_HOME` and
+  `SUPABASE_NO_KEYRING=1`; ignored `.env.trippin-auth-setup.local` and identity
+  files remain600. Retain the dedicated SMTP credential for the configured
+  service;45 original and33 template-check ephemeral files and current test
+  sessions were removed. Never
+  publish login links, codes, tokens or test credentials.
+  The completed login supersedes the old interactive handoff; inspect its private
+  state before reuse and do not replay codes or restart login automatically.
+
+## Application invariants
+
+- `components/travel-app.tsx` owns entry/account lifecycle, empty spaces and
+  recovery; `components/workspace.tsx` owns the nonempty trip editor. Preserve
+  the trip model in `lib/types.ts` and account/guest namespaces.
+- Fresh users receive no fictional profile or sample trips. Keep labeled
+  historical samples in explicit fixtures. Guest v1 storage and public-plan
+  recovery entries remain preserved; authentication does not establish a
+  server-side community account ACL or cloud trip synchronization.
+- Daily food/transport overrides belong to Trip. Absent overrides retain the
+  older backup's profile defaults. Ordered Maps links exclude skipped/unchosen
+  alternatives and preserve the existing waypoint splitting.
+- Backup and editing callbacks must respect the latest file, navigation,
+  workspace and account intent. Normal corrupt-data overwrite refusal remains
+  intact. Explicit recovery verifies an original archive before replacement,
+  preserves other spaces/public references and refuses stale operations.
+  Automatic recovery is bounded to 40 source trips and 256 final scoped entries.
+- Never present seeded trips, events, prices, flight statuses or people as live
+  provider data. Keep provider credentials server-side. Never store bank
+  credentials or payment details. AI suggestions require explicit application.
+- Use targeted static checks within the authorized scope and `git diff --check`
+  after edits. An explicitly authorized release qualification uses
+  `npm run check` and `npm run build`; full local runtime remains subject to
+  Storage Guard and the workspace's separate execution gates.
+- Keep integration setup and precise proof boundaries in `docs/`. Current public
+  navigation should use the curated release summary, not private operator
+  handoffs or unreviewed raw result trees.
 
 ## Approved portability acceptance — 2026-11-05
 
@@ -168,3 +228,18 @@ its active file is removed in the acceptance publication; the checked QA source
 remains an immutable reproduction bookmark. These identities are closed.
 Provider/build/alias history is separate in the
 [deployment projection](docs/results/2026/11-08/stay-comparison-deployment.json).
+
+## Closed workspace reliability acceptance — 2026-11-16
+
+The owner's explicit “I approve.” authorized the isolated reliability packet.
+Its [source-specific summary](docs/results/2026/11-16/consumer-release-status.md#source-and-isolated-qualification) records passing
+R-N01–R-N04 together, 101 focused controls, Next types/TypeScript and Next/Eve
+builds at source `108fddc18c59b4f683139009e0c9a1f607f69137`, run `43939902941`.
+Independent artifact/source/normal teardown checks pass. Three earlier attempts
+remain failed; do not carry their partial observations as acceptance. Actual
+cumulative CI is 267/1,200 seconds (4m 27s); identities and unused budget are closed.
+The temporary exact-ref push workflow is disabled/removed and the owned QA ref
+deleted, with independent readback, unchanged main `2afbdb70ade0704cf6efd53f884d2a6e6930c1ac`
+and zero QA Vercel deployments. Preserve dirty source and all original failures.
+This loopback Tier 2 packet uses authored guest Auth and a synthetic write-refusal
+boundary; it does not activate production, real-provider Auth, models or purchases.

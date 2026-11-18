@@ -1,8 +1,14 @@
 # trippin
 
-Last updated: 2026-11-14
+Last updated: 2026-11-18
 
 A flexible travel workspace for the days you have, and the things you stumble into.
+
+The current local iteration opens on a consumer landing page with signup/login and an empty travel space. No fictional profile or sample trips are created for new users. Plans, reservations and the full budget live inside the selected trip; daily food/transport allowances are now trip-specific. Each day has ordered, multi-stop Google Maps links. The standalone Discover page and desktop sidebar are removed; trip-specific events and shared-trip management remain available.
+
+The [current release status](docs/results/2026/11-16/consumer-release-status.md#current-status) separates the current source, earlier isolated build/browser acceptance and completed provider configuration. The latest confirmation-error and corrupt-space recovery packet passed 93 controls, Next/Eve builds and both fresh Chromium journeys; its temporary QA is retired. Consumer deployment remains pending. The public app serves the previous edition.
+
+[Account setup](docs/accounts.md) explains the Supabase Auth adapter, HttpOnly sessions, separate account/guest browser storage and lossless recovery. SMTP and the approved template correction deliver a direct HTTPS confirmation link with SPF/DKIM/DMARC passing. The fresh account is confirmed; the controlled link request found its token already consumed. Controlled first-click and real-provider hosted application journeys remain [pending release gates](docs/results/2026/11-16/consumer-release-status.md#pending-release-gates).
 
 Built with Next.js, React, Leaflet/OpenStreetMap, and Vercel EVE. Node 24 is required by EVE.
 
@@ -21,7 +27,7 @@ native v27 messages, interactions and usage limits. The recorded graph audits
 clean;13 focused authored checks, TypeScript and both builds pass remotely.
 Live AI and browser acceptance remain separate.
 
-Create trips worldwide with city search; edit dates, budget, and daily stops; skip or swap plans; compare stays by price and commute; track reservations and actual expenses; export a travel story card. Choose the events you are open to, discover them within your trip dates, and confirm an editable itinerary stop and EUR admission estimate. Completed events earn individual badges alongside country milestones. Trips, itinerary choices, reservations, expenses and your profile persist in your browser. Stay-comparison inputs are temporary scratch estimates and reset when the calculator remounts or the page reloads. Export a backup before clearing site data. The Munich trip and community previews are sample data. Prices are planning estimates and provider purchases happen externally.
+Create trips worldwide with city search; edit dates, budget, and daily stops; skip or swap plans; compare stays by price and commute; track reservations and actual expenses; export a travel story card. Choose the events you are open to, find them within your trip dates, and confirm an editable itinerary stop and EUR admission estimate. Completed events earn individual badges alongside country milestones. Trips, itinerary choices, reservations, expenses and your profile persist in your browser. Stay-comparison inputs are temporary scratch estimates and reset when the calculator remounts or the page reloads. Export a backup before clearing site data. Older saved workspaces can contain labeled sample trips; their original storage is preserved. Prices are planning estimates and provider purchases happen externally.
 
 CSV expenses use EUR; an explicit foreign, blank or ambiguous currency column is rejected. Compact backups preserve private workspace data and restore within the existing workspace limit; oversized or unsupported in-memory data remains exportable as a recovery archive. Restore validates the file and saves it before replacing current trips. See the [CSV/backup repair](docs/results/2026/10-27/csv-backup-repair.md) and [ten passing hosted desktop/narrow Chromium cases](docs/results/2026/11-05/csv-backup-checks.md), including actual download/restore/reload and safe navigation during map zoom.
 
