@@ -3,6 +3,7 @@
 // validation, codecs and persistence use the actual frontend trip module.
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { legacyWorkspace } from './factories/legacy-workspace.mjs';
 import { readFileSync } from 'node:fs';
 import { createRequire, registerHooks } from 'node:module';
 import { fileURLToPath } from 'node:url';
@@ -55,7 +56,7 @@ assert.ok(component?.body, 'Find the actual Workspace function.');
 const locals = new Map(component.body.statements.filter(ts.isVariableStatement).flatMap(statement =>
   statement.declarationList.declarations.filter(item => ts.isIdentifier(item.name))
     .map(item => [item.name.text, item.initializer])));
-for (const name of ['refreshManagement', 'preserveManagement']) {
+for (const name of ['refreshManagement', 'preserveManagement', 'exportBackup']) {
   // Immutable baseline callbacks predate the independent management journal.
   if (locals.has(name)) callbacks[name] = [locals.get(name)];
 }
@@ -75,7 +76,7 @@ const rawCap = 16 * 1024 * 1024;
 const encode = value => new TextEncoder().encode(typeof value === 'string' ? value : JSON.stringify(value));
 const plain = value => JSON.parse(JSON.stringify(value));
 function workspaceWith(count = 1) {
-  const workspace = trip.initialWorkspace(), template = workspace.trips[0];
+  const workspace = legacyWorkspace(), template = workspace.trips[0];
   workspace.trips = Array.from({ length: count }, (_, index) => ({
     ...structuredClone(template), id: `backup-ui-owned-trip-${index}`,
   }));
@@ -148,7 +149,7 @@ function harness(initial = workspaceWith()) {
     state: current, backupInput: { current: input }, pendingPlan: { current: null }, storageKey,
     backupReadGeneration: { current: 0 },
     workspaceRef: { current: { workspace: current } },
-    setManagedTrips() {}, setManagementError() {},
+    setManagedTrips() {}, setManagementError() {}, close() {},
     Uint8Array, TextEncoder, TextDecoder, JSON, Error, fetch: forbidden,
     localStorage: {
       length: 0,
@@ -193,7 +194,7 @@ function harness(initial = workspaceWith()) {
     assert.equal(typeof context.module.exports, 'function');
     return context.module.exports;
   }
-  for (const name of ['refreshManagement', 'preserveManagement']) {
+  for (const name of ['refreshManagement', 'preserveManagement', 'exportBackup']) {
     if (scripts[name]) context[name] = callback(name);
   }
   return {

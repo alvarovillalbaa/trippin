@@ -174,7 +174,8 @@ function harness(initial = workspace(), saved = {}, shared = null) {
   let context, cleanup;
   const forbidden = () => { throw new Error('Unexpected DOM, browser, model or provider operation.'); };
   const bindings = {
-    ...tripApi, ...editorApi, ...managementApi, ...managementStorageApi, initial, storageKey: workspaceKey,
+    ...tripApi, ...editorApi, ...managementApi, ...managementStorageApi, initial, initialState: initial,
+    initialSharedPlan: undefined, storagePrefix: '', storageKey: workspaceKey,
     crypto: webcrypto, JSON, Uint8Array, TextEncoder, TextDecoder, Error, URL, URLSearchParams, AbortController,
     window: { location: { origin: 'https://trippin.test', href: 'https://trippin.test/', hash: '', search: '' }, history: { state: null, replaceState: forbidden } },
     navigator: { clipboard: { writeText: forbidden } },
