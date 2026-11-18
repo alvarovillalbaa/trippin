@@ -43,7 +43,7 @@ function evaluate(node, context) {
   }
   context.module = { exports: {} }; script.runInContext(context); return context.module.exports;
 }
-const failure = 'This confirmation link could not be used. Open your latest confirmation email before logging in.';
+const failure = 'This confirmation link may have expired or already been used. If you already confirmed your email, try Log in. Otherwise, open your latest confirmation email.';
 const guestReply = { available: true, user: null };
 const verifiedReply = { available: true, user: { id: '11111111-1111-4111-8111-111111111111', email: 'authored@example.test', name: 'Authored account' } };
 const drain = () => new Promise(resolve => setImmediate(resolve));
