@@ -7,6 +7,42 @@ operator handoffs and unrelated portfolio operations are excluded from this page
 
 ## Current status
 
+The consumer edition was activated through [PR3](https://github.com/alvarovillalbaa/trippin/pull/3),
+merge source `1b6a4c3d4e1ec6089281139a8b1d89ba3704cb62`. Its production
+`dpl_2AYA6SccmYSgJYvkK7VbhUkQtCFe` was READY on the canonical alias. Actual root
+HTML returned200 and embedded that deployment ID; a referenced entry asset returned200.
+Its Preview and production passed Next compilation, TypeScript and Eve builds.
+The exact196-blob tree preserves every unselected main path and history; the
+merged release branch is deleted. The dirty local index/refs remain untouched.
+The pre-activation snapshot below remains historical.
+
+A fresh real-provider hosted API journey passes anonymous lookup, signup with
+confirmation required/no session cookie, actual signed direct HTTPS email,
+ordinary login, a separate cookie-jar session lookup for the same confirmed own
+identity, logout/cookie clearing and a final anonymous session. Both cookies
+are host-only, Secure, HttpOnly and SameSite=Lax; replies are private/no-store
+with no tokens in JSON. The single new email allowance is closed. Controlled
+confirmation returned `otp_expired`; the token was already consumed, with cause
+unproven. No first-click, browser-cookie, rendered return, reload or renewal
+acceptance is claimed. All29 private API/mail/cookie files were removed after
+hash binding and absence checks; credentials and original identity are preserved.
+
+Storage Guard failed at15.8 GiB free against34.0 GiB required; native hosted
+browser acceptance remains pending. A20-minute deployment-scoped error/fatal
+scan returned no matching groups, without a full-observability claim.
+The activation baseline audit reported one moderate affected Next16.4.2 package covering
+[unstable_cache nesting](https://github.com/vercel/next.js/security/advisories/GHSA-mfr8-8qww-v76h)
+and [nested use-cache metadata](https://github.com/vercel/next.js/security/advisories/GHSA-vc7v-qv4w-wrv8).
+Source/config has no documented use-cache/root-param prerequisites; this is a
+source inference, not an exploit test. The later [Next16.4.6 repair](../11-18/next-security-release.md)
+qualifies the exact generated pair with an explicit complete-graph clean audit,
+42 focused controls, types, both builds and normal process/source/output cleanup.
+Its release PR records Preview/production and served-source readbacks separately.
+The first failed cleanup and second incomplete audit remain preserved and
+unaccepted. All three temporary workflows/refs and invocation budgets are closed.
+
+## Before activation — retained snapshot
+
 The consumer iteration is implemented locally: an empty first workspace,
 signup/login entry, separate account/guest browser spaces, trip-owned budgets,
 ordered Maps links, save/departure safeguards and explicit corrupt-space recovery.
@@ -93,8 +129,8 @@ prefix remain byte-exact. No shared SES/DNS setting, other template, rate or
 admission policy, application source or production activation changed.
 
 These are provider/configuration observations, distinct from app-issued cookies
-or hosted signup, confirmation, login, renewal and logout. Real-provider hosted
-application acceptance is still pending.
+or hosted signup, confirmation, login, renewal and logout. Native real-provider hosted
+application acceptance remains pending.
 
 ## Source and isolated qualification
 
@@ -134,6 +170,18 @@ Automatic recovery is limited to 40 source trips and 256 final scoped entries.
 Lossless original-data downloads remain available when automatic repair refuses.
 
 ## Pending release gates
+
+1. Qualify native hosted Auth/confirmation-return rendering when Storage Guard
+   passes, or under a separately approved remote scope. API/cookie-jar proof
+   cannot establish native browser cookies, reload or renewal.
+2. Preserve the consumed-token observations and unknown cause. Controlled
+   first-click proof remains missing; current email allowances and prior QA
+   identities/budgets are closed. Do not resend or replay.
+3. Preserve the exact qualified dependency pair and source/build receipts.
+   Bind deployment/served-source checks to its actual release head; isolated
+   audit/build acceptance alone does not establish hosted browser behavior.
+
+## Before activation — retained gates
 
 1. Keep the completed SMTP/template operations and message allowances closed.
    Direct HTTPS receipt and confirmed provider identity pass. A controlled

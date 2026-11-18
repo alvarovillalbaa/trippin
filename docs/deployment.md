@@ -3,23 +3,29 @@
 ## Current consumer transition — 18 November
 
 The [dated release status](results/2026/11-16/consumer-release-status.md#current-status)
-records the previous production edition and rollback metadata. The current
-consumer source remains undeployed; its latest confirmation/recovery packet passes
-93 controls, builds and both fresh native cases at its recorded source. Production metadata is not served-asset proof.
+records the published consumer edition and rollback metadata. PR3 activated
+`1b6a4c3d4e1ec6089281139a8b1d89ba3704cb62`; production was READY and actual
+root HTML embedded its deployment ID. Its Preview/production builds and hosted Auth
+API checks pass. The recovery packet remains closed at its accepted source.
+Native real-provider browser acceptance remains pending under Storage Guard.
+The later [Next security repair](results/2026/11-18/next-security-release.md)
+qualifies the exact dependency pair; its release PR records the subsequent
+Preview, production and served-source readbacks.
 
 Prepare the production payload as an explicit overlay on fresh main, preserving
 existing files/history. The accepted QA tree is sparse: merging it wholesale
 would remove unrelated files and carry its synthetic `git.deploymentEnabled=false`.
 Keep all closed QA workflows/identities retired. Activation, actual served-source
 verification and hosted real-provider Auth remain separate from local source or
-isolated build proof. The existing READY deployment is the identified rollback
-target; any actual transition needs fresh metadata/readiness and owner authority.
+isolated build proof. Deployment `dpl_2AYA6SccmYSgJYvkK7VbhUkQtCFe` at the PR3
+merge is the identified rollback target for the dependency repair; transitions
+need fresh metadata/readiness and task authority.
 
 Production return settings and server Auth variables are already configured.
 SMTP and the approved template correction deliver a direct HTTPS link. Confirmed
 identity and local logout pass; the token was already consumed before controlled
-verification. Controlled first click, actual deployment/source verification and
-hosted real-provider Auth remain [pending release gates](results/2026/11-16/consumer-release-status.md#pending-release-gates).
+verification. Hosted Auth API and deployment/source checks pass; controlled
+first click and native browser Auth remain [pending release gates](results/2026/11-16/consumer-release-status.md#pending-release-gates).
 Read [account setup](accounts.md) for configuration and session boundaries.
 
 ## Original deployment configuration and historical proof

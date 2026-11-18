@@ -8,17 +8,28 @@ Historical receipts and earlier failed candidates remain unchanged.
 
 ## Current source and release boundaries
 
-- The consumer edition remains undeployed. The approved confirmation/recovery
+- The consumer edition was activated through PR3 at
+  `1b6a4c3d4e1ec6089281139a8b1d89ba3704cb62`; its actual homepage/deployment-ID
+  and hosted Auth API checks passed. The [Next security repair](docs/results/2026/11-18/next-security-release.md)
+  binds the later qualified dependency pair, complete audit and release gates.
+  Native browser and controlled first-click proof
+  remain pending; Storage Guard failed at15.8 GiB against34.0 GiB required.
+  The approved confirmation/recovery
   packet passes 93 controls, Next/Eve builds and both fresh Chromium journeys at
   source `762911fc0f9ba3375dd68bb535de2b71dfcd31ac`, run `44055810000`.
   Its workflow/ref are retired after142/1200CIseconds. All older packets and
   unused budgets remain closed; never replay their identities.
+- The owner's standing approval covers necessary execution follow-ups for this
+  Trippin task. Give changed qualification candidates fresh identities and
+  bounded ledgers; preserve earlier failures and close each invocation's unused
+  budget. This does not reopen closed cases or extend work to unrelated services.
 - Approved SMTP/IAM setup and the separately approved one-field confirmation
   template correction are applied. A fresh own-mailbox email has a direct HTTPS
   provider link and passing SPF/DKIM/DMARC. Its controlled verification returned
   `otp_expired`; password login and `/user` confirm the same new account was
   already confirmed. The prior consumption cause and controlled first click
-  remain unproven. Production publication/deployment retains its owner gate.
+  remain unproven. Approved release publication/deployment is done; future
+  changes retain their scope-specific owner gates.
 - Assemble a release as an overlay on fresh full main. Never merge the sparse QA
   tree wholesale or ship its synthetic Vercel deployment refusal. Preserve dirty
   shared work, unselected main files and history.
@@ -36,9 +47,10 @@ Historical receipts and earlier failed candidates remain unchanged.
   directory700/token600, with per-command `SUPABASE_HOME` and
   `SUPABASE_NO_KEYRING=1`; ignored `.env.trippin-auth-setup.local` and identity
   files remain600. Retain the dedicated SMTP credential for the configured
-  service;45 original and33 template-check ephemeral files and current test
-  sessions were removed. Never
-  publish login links, codes, tokens or test credentials.
+  service. The45 original,33 template-check and29 hosted-API ephemeral files and
+  current test sessions were removed. The two hosted-test credential fields were
+  removed with exact pre-hosted setup restoration. Never publish login links,
+  codes, tokens or test credentials.
   The completed login supersedes the old interactive handoff; inspect its private
   state before reuse and do not replay codes or restart login automatically.
 

@@ -10,11 +10,12 @@ journeys at its recorded source; it is retired after 142 cumulative CI seconds.
 Earlier accepted case identities remain closed at their exact source. Historical
 overlapping control counts must not be added together.
 
-The consumer edition remains unpublished and undeployed. SMTP and the approved
-template correction deliver a fresh direct HTTPS link with SPF/DKIM/DMARC passing.
-The same fresh account is confirmed by password login and `/user`, then locally
-logged out. Its controlled verification found the token already consumed;
-controlled first-click and hosted real-provider application journeys remain pending.
+The consumer edition is published through PR3 and production READY. Hosted
+real-provider signup, login, cookie-jar session lookup and logout pass. Native
+browser and first-click acceptance remain pending under Storage Guard. The
+approved SMTP/template correction delivers a direct HTTPS link with
+SPF/DKIM/DMARC passing. Controlled verification found the token already consumed;
+the prior consumption cause remains unproven.
 The historical table below describes the earlier edition and its scoped evidence;
 it does not qualify the changed consumer flows. Operational histories and their
 dependencies are preserved locally rather than automatically included in a

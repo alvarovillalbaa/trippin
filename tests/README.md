@@ -15,7 +15,17 @@ The approved SMTP/template check separately verifies actual signed own-mailbox
 delivery with a direct HTTPS confirmation anchor, the same confirmed provider
 identity and local logout. Controlled verification returned `otp_expired` after
 prior token consumption; the first click and hosted application remain unproven.
-Its one-message allowance is closed; do not resend or replay closed QA packets.
+Its one-message allowance is closed. A separate hosted API check now passes
+signup, signed direct email, login, cookie-jar session lookup and logout. Its
+one-email allowance is also closed; controlled verification found the token
+already consumed. Native browser acceptance remains pending under Storage Guard.
+Do not resend or replay closed QA packets.
+
+The [Next security repair](../docs/results/2026/11-18/next-security-release.md)
+records a fresh complete-graph audit,42 selected Auth/entry/usage controls,
+seven authored ownership/environment controls, type checks and Next/Eve builds.
+Its exact source/artifact and normal cleanup checks do not extend the older
+native case identities or establish real-provider browser acceptance.
 
 Use Node 24, matching `package.json`. These focused frontend checks use existing
 source and dependencies; no browser, provider, account or server is started:
