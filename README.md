@@ -6,9 +6,9 @@ A flexible travel workspace for the days you have, and the things you stumble in
 
 The current local iteration opens on a consumer landing page with signup/login and an empty travel space. No fictional profile or sample trips are created for new users. Plans, reservations and the full budget live inside the selected trip; daily food/transport allowances are now trip-specific. Each day has ordered, multi-stop Google Maps links. The standalone Discover page and desktop sidebar are removed; trip-specific events and shared-trip management remain available.
 
-The [current release status](docs/results/2026/11-16/consumer-release-status.md#current-status) separates the current source, earlier isolated build/browser acceptance and completed provider configuration. The latest confirmation-error and corrupt-space recovery packet passed 93 controls, Next/Eve builds and both fresh Chromium journeys; its temporary QA is retired. Consumer deployment remains pending. The public app serves the previous edition.
+The [current release status](docs/results/2026/11-16/consumer-release-status.md#current-status) separates source-specific acceptance, deployment and provider proof. The consumer edition is live through [PR #3](https://github.com/alvarovillalbaa/trippin/pull/3). Preview and production Next/Eve builds pass; actual homepage and hosted Auth API checks pass. The latest confirmation/recovery packet's93 controls and two native journeys remain closed at their accepted source. Real-provider native browser acceptance remains pending under Storage Guard.
 
-[Account setup](docs/accounts.md) explains the Supabase Auth adapter, HttpOnly sessions, separate account/guest browser storage and lossless recovery. SMTP and the approved template correction deliver a direct HTTPS confirmation link with SPF/DKIM/DMARC passing. The fresh account is confirmed; the controlled link request found its token already consumed. Controlled first-click and real-provider hosted application journeys remain [pending release gates](docs/results/2026/11-16/consumer-release-status.md#pending-release-gates).
+[Account setup](docs/accounts.md) explains the Supabase Auth adapter, HttpOnly sessions, separate account/guest browser storage and lossless recovery. Actual hosted signup, direct signed email, login, cookie-jar session lookup and logout pass. Controlled confirmation found the fresh token already consumed. First-click and real-provider native browser journeys remain [pending release gates](docs/results/2026/11-16/consumer-release-status.md#pending-release-gates).
 
 Built with Next.js, React, Leaflet/OpenStreetMap, and Vercel EVE. Node 24 is required by EVE.
 
@@ -26,6 +26,11 @@ upgrades Eve to0.88.1 with patched Undici8.12.3 and migrates the assistant to
 native v27 messages, interactions and usage limits. The recorded graph audits
 clean;13 focused authored checks, TypeScript and both builds pass remotely.
 Live AI and browser acceptance remain separate.
+
+Next is now pinned to16.4.6. The [security repair qualification](docs/results/2026/11-18/next-security-release.md)
+passes a complete dependency audit,42 focused controls, type checks and both
+builds in an isolated runner. Only its ten coupled Next-family entries change;
+deployment and real-provider browser evidence retain their separate boundaries.
 
 Create trips worldwide with city search; edit dates, budget, and daily stops; skip or swap plans; compare stays by price and commute; track reservations and actual expenses; export a travel story card. Choose the events you are open to, find them within your trip dates, and confirm an editable itinerary stop and EUR admission estimate. Completed events earn individual badges alongside country milestones. Trips, itinerary choices, reservations, expenses and your profile persist in your browser. Stay-comparison inputs are temporary scratch estimates and reset when the calculator remounts or the page reloads. Export a backup before clearing site data. Older saved workspaces can contain labeled sample trips; their original storage is preserved. Prices are planning estimates and provider purchases happen externally.
 
