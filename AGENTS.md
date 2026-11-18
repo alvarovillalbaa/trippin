@@ -12,8 +12,10 @@ Historical receipts and earlier failed candidates remain unchanged.
   `1b6a4c3d4e1ec6089281139a8b1d89ba3704cb62`; its actual homepage/deployment-ID
   and hosted Auth API checks passed. The [Next security repair](docs/results/2026/11-18/next-security-release.md)
   binds the later qualified dependency pair, complete audit and release gates.
-  Native browser and controlled first-click proof
-  remain pending; Storage Guard failed at15.8 GiB against34.0 GiB required.
+  [Native hosted sessions](docs/results/2026/11-18/hosted-auth-sessions.md) pass
+  desktop/narrow login, reload, provider renewal after access-cookie removal
+  and visible logout. Controlled signup/first-click return and real elapsed TTL
+  expiry remain unqualified. Latest Storage Guard fails at13.1 GiB against34.0 GiB.
   The approved confirmation/recovery
   packet passes 93 controls, Next/Eve builds and both fresh Chromium journeys at
   source `762911fc0f9ba3375dd68bb535de2b71dfcd31ac`, run `44055810000`.

@@ -23,12 +23,19 @@ identity, logout/cookie clearing and a final anonymous session. Both cookies
 are host-only, Secure, HttpOnly and SameSite=Lax; replies are private/no-store
 with no tokens in JSON. The single new email allowance is closed. Controlled
 confirmation returned `otp_expired`; the token was already consumed, with cause
-unproven. No first-click, browser-cookie, rendered return, reload or renewal
-acceptance is claimed. All29 private API/mail/cookie files were removed after
+unproven. That API packet does not accept first click, native cookies, rendered
+return, reload or renewal. All29 private API/mail/cookie files were removed after
 hash binding and absence checks; credentials and original identity are preserved.
 
-Storage Guard failed at15.8 GiB free against34.0 GiB required; native hosted
-browser acceptance remains pending. A20-minute deployment-scoped error/fatal
+The later [native hosted-session packet](../11-18/hosted-auth-sessions.md)
+passes desktop and narrow touch-emulated login, native-cookie reload, real
+provider renewal after access-cookie removal and visible logout. It binds
+production `9657b96830c2bdbc136640a471c2cc9ca20a2977` and deployment
+`dpl_FX3xgx3fDhvv3Hx6WK1nqzo4MWf5`; four safe anonymous screenshots were
+visually reviewed. Native signup, controlled confirmation first click and real
+elapsed TTL expiry remain unqualified. Local Storage Guard newly fails at13.1
+GiB against34.0 required; the isolated remote runner supplied this proof.
+A20-minute deployment-scoped error/fatal
 scan returned no matching groups, without a full-observability claim.
 The activation baseline audit reported one moderate affected Next16.4.2 package covering
 [unstable_cache nesting](https://github.com/vercel/next.js/security/advisories/GHSA-mfr8-8qww-v76h)
@@ -171,12 +178,15 @@ Lossless original-data downloads remain available when automatic repair refuses.
 
 ## Pending release gates
 
-1. Qualify native hosted Auth/confirmation-return rendering when Storage Guard
-   passes, or under a separately approved remote scope. API/cookie-jar proof
-   cannot establish native browser cookies, reload or renewal.
+1. Qualify native signup and controlled confirmation-return rendering in a
+   fresh bounded remote scope under the owner's standing execution approval.
+   H-A01/H-A02 accept existing-account sessions only; real elapsed TTL expiry,
+   cross-tab refresh, physical devices and assistive technology remain separate.
 2. Preserve the consumed-token observations and unknown cause. Controlled
    first-click proof remains missing; current email allowances and prior QA
-   identities/budgets are closed. Do not resend or replay.
+   identities/budgets are closed. A necessary fresh follow-up needs new
+   identities, one explicit message ceiling and unchanged provider rate limits;
+   never replay a closed link or resend an unchanged failure.
 3. Preserve the exact qualified dependency pair and source/build receipts.
    Bind deployment/served-source checks to its actual release head; isolated
    audit/build acceptance alone does not establish hosted browser behavior.
