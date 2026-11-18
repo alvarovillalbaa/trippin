@@ -4,7 +4,7 @@ Last updated: 2026-11-18
 
 ## Current consumer iteration
 
-The [14 November GEN-3659 request](https://app.notion.com/p/418a1ee8bd0680c99343ea23eb42d0dd) supersedes the sample-first entry and three-column visual direction below. Fresh users see a consumer landing page, register/login actions and an empty profile/trip list. Planning without an account remains an explicit device-local option. Accounts use server-verified Supabase Auth sessions; their browser workspaces and public-plan capabilities have separate namespaces. The isolated application passed its authored-provider acceptance, and the dedicated provider separately passed real signup, email confirmation and session qualification. Production Auth variables and the [production return configuration](results/2026/11-16/consumer-release-status.md#provider-and-auth-configuration) are verified. The consumer edition is published through PR3; real-provider hosted API checks pass, while native browser and controlled first-click acceptance remain pending. See [account setup](accounts.md) for current boundaries.
+The [14 November GEN-3659 request](https://app.notion.com/p/418a1ee8bd0680c99343ea23eb42d0dd) supersedes the sample-first entry and three-column visual direction below. Fresh users see a consumer landing page, register/login actions and an empty profile/trip list. Planning without an account remains an explicit device-local option. Accounts use server-verified Supabase Auth sessions; their browser workspaces and public-plan capabilities have separate namespaces. The isolated application passed its authored-provider acceptance, and the dedicated provider separately passed real signup, email confirmation and session qualification. Production Auth variables and the [production return configuration](results/2026/11-16/consumer-release-status.md#provider-and-auth-configuration) are verified. The consumer edition is published through PR3; real-provider hosted API checks and [desktop/narrow native sessions](results/2026/11-18/hosted-auth-sessions.md) pass. Native signup and controlled first-click return remain unqualified. See [account setup](accounts.md) for current boundaries.
 
 The selected trip owns itinerary, reservations, budget and daily food/transport allowances. No standalone budget or Discover destination page remains. Event search is inside its trip; existing public-trip management remains under the profile. The sidebar becomes a compact header and trip tabs, with narrow-screen itinerary/map switching retained. Daily directions preserve stop order and exclude skipped/unchosen alternatives. Links split with an overlapping stop after five destinations to fit mobile-browser waypoint limits; see [Google's Maps URL contract](https://developers.google.com/maps/documentation/urls/get-started#directions-action).
 
@@ -35,8 +35,11 @@ real-provider hosted application acceptance remains pending.
 The approved sender/template setup now delivers a direct HTTPS confirmation
 link from `hello@clous.app`, with SPF/DKIM/DMARC passing. The fresh own test
 account is confirmed; its controlled verification found the token already
-consumed. Controlled first-click and hosted application acceptance remain
-separate from these provider observations.
+consumed. Controlled first-click return remains separate from these provider
+observations and the later accepted hosted browser sessions. Failed returns
+explain that the link may have expired or already been used and suggest Log in
+if the user already confirmed their email; they never infer confirmation or
+account identity from the URL fragment.
 
 ## Original product scope and release history
 

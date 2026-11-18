@@ -78,7 +78,7 @@ export default function TravelApp() {
       history.replaceState(history.state, '', window.location.pathname + window.location.search);
       if (confirmationFailed) {
         setNotice('');
-        setError('This confirmation link could not be used. Open your latest confirmation email before logging in.');
+        setError('This confirmation link may have expired or already been used. If you already confirmed your email, try Log in. Otherwise, open your latest confirmation email.');
       } else setNotice('Return to Log in after confirming your email.');
     }
     void accountRequest({ action: 'session' }).then(value => {
