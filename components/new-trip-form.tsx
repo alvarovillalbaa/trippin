@@ -51,7 +51,11 @@ export default function NewTripForm({onCreate,initialCity}:{onCreate:(trip:Trip)
   const [error,setError]=useState('');
   const request=useRef<AbortController|null>(null);
   const custom=destinationId==='custom';
-  const dayCount=useMemo(()=>{try{return getTripDays(startDate,endDate).length}catch{return null}},[startDate,endDate]);
+  const dateRange=useMemo(()=>{
+    if(!startDate||!endDate)return {days:null,error:''};
+    try{return {days:getTripDays(startDate,endDate).length,error:''}}
+    catch(caught){return {days:null,error:caught instanceof Error?caught.message:'Choose valid trip dates.'}}
+  },[startDate,endDate]);
 
   useEffect(()=>()=>{request.current?.abort();request.current=null},[]);
 
@@ -137,11 +141,12 @@ export default function NewTripForm({onCreate,initialCity}:{onCreate:(trip:Trip)
     </>}
     <label>Give it a name<input name="title" placeholder="A few days of something good" maxLength={100}/></label>
     <div className="form-grid">
-      <label>First day<input type="date" value={startDate} onChange={event=>setStartDate(event.target.value)} required/></label>
-      <label>Last day<input type="date" value={endDate} min={startDate||undefined} onChange={event=>setEndDate(event.target.value)} required/></label>
+      <label>First day<input type="date" value={startDate} onChange={event=>setStartDate(event.target.value)} aria-describedby={`${id}-dates`} aria-invalid={!!dateRange.error} required/></label>
+      <label>Last day<input type="date" value={endDate} min={startDate||undefined} onChange={event=>setEndDate(event.target.value)} aria-describedby={`${id}-dates`} aria-invalid={!!dateRange.error} required/></label>
     </div>
+    <p id={`${id}-dates`} className={dateRange.error?'form-error':'form-note'} role="status">{dateRange.error||`${dateRange.days?`${dateRange.days} ${dateRange.days===1?'day':'days'}, ready to shape. `:'Choose your first and last day. '}Trips can be up to 31 days.`}</p>
     <label>Whole-trip budget (€)<input type="number" min="1" max="1000000" step="0.01" value={budget} onChange={event=>setBudget(event.target.value)} required/></label>
-    <p className="form-note">{dayCount?`${dayCount} ${dayCount===1?'day':'days'}, ready to shape. `:''}Start with a blank itinerary. Add your stops, flights, and stay as you go. Trips can be up to 31 days.</p>
+    <p className="form-note">Start with a blank itinerary. Add your stops, flights, and stay as you go.</p>
     <button className="primary" type="submit" disabled={searching}>Let’s go <ArrowRight size={16}/></button>
   </form>;
 }

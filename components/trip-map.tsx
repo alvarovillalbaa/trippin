@@ -64,8 +64,8 @@ export default function TripMap({trip,activities,selected,onSelect}:{trip:Trip;a
   return <section className={`map-panel ${mode==='terrain'?'map-muted':''}`} aria-label={`Map of ${trip.city}`}>
     <div ref={element} className="leaflet-map"/>
     <div className="map-label"><span className="live-dot"/>Your day, mapped out <span>{activities.filter(a=>a.status!=='skipped'&&!a.alternativeFor).length} stops</span></div>
-    <button className="map-layers icon-button" aria-label="Toggle muted map colors" onClick={()=>setMode(mode==='street'?'terrain':'street')}><Layers3 size={19}/></button>
-    {failed&&<div className="map-error">Map tiles are unavailable. Your places and directions are still here.</div>}
+    <button className="map-layers icon-button" aria-label="Toggle muted map colors" aria-pressed={mode==='terrain'} onClick={()=>setMode(mode==='street'?'terrain':'street')}><Layers3 size={19}/></button>
+    {failed&&<div className="map-error" role="status">Map tiles are unavailable. Your places and directions are still here.</div>}
     <div className="map-place"><span className="map-place-icon"><MapPin size={20}/></span><div><small>{point?'SELECTED PLACE':'YOUR EXPLORING GROUND'}</small><strong>{point?.title||`${trip.city}, ${trip.country}`}</strong><span>{point?.location||'A good place to get a little lost.'}</span></div><a className="icon-button" aria-label="Open directions in Google Maps" target="_blank" rel="noreferrer" href={`https://www.google.com/maps/dir/?api=1&destination=${point?`${point.lat},${point.lng}`:`${trip.lat},${trip.lng}`}&travelmode=walking`}><Navigation size={19}/></a></div>
     <a className="map-attribution" target="_blank" rel="noreferrer" href="https://www.openstreetmap.org">Explore on OpenStreetMap <ExternalLink size={11}/></a>
   </section>;

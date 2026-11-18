@@ -6,14 +6,14 @@ import type {Activity,Trip} from '@/lib/types';
 import {formatDate,isTrip,makeId} from '@/lib/trip';
 import {describeEventPrice,type EventPlanDraft} from '@/lib/events';
 
-export default function EventPlanForm({draft,trip,onSave}:{draft:EventPlanDraft;trip:Trip;onSave:(activity:Activity,dayIndex:number)=>void}){
+export default function EventPlanForm({draft,trip,onSave,busy=false}:{draft:EventPlanDraft;trip:Trip;onSave:(activity:Activity,dayIndex:number)=>void;busy?:boolean}){
   const [error,setError]=useState('');
   const dayIndex=trip.days.findIndex(day=>day.date===draft.date);
   const alreadySaved=trip.days.some(day=>day.activities.some(activity=>activity.event?.provider===draft.provider&&activity.event.id===draft.id));
   const coordinatesKnown=draft.lat!==null&&draft.lng!==null;
   const quote=describeEventPrice(draft.price);
   function save(event:FormEvent<HTMLFormElement>){
-    event.preventDefault();setError('');
+    event.preventDefault();if(busy)return;setError('');
     if(dayIndex<0){setError('This event falls outside your trip. Change your trip dates before adding it.');return}
     if(alreadySaved){setError('This event is already in your trip. Edit its stop in your itinerary.');return}
     const form=new FormData(event.currentTarget);
@@ -51,6 +51,6 @@ export default function EventPlanForm({draft,trip,onSave}:{draft:EventPlanDraft;
     <label>Venue or meeting place<input name="location" defaultValue={draft.location} maxLength={120} required/></label>
     <label>Notes<textarea name="description" maxLength={600} defaultValue={draft.description.slice(0,600)}/></label>
     <details><summary><MapPin size={12}/> Map pin</summary><div className="form-grid"><label>Latitude<input name="lat" type="number" min="-90" max="90" step="any" defaultValue={draft.lat??trip.lat} required/></label><label>Longitude<input name="lng" type="number" min="-180" max="180" step="any" defaultValue={draft.lng??trip.lng} required/></label></div><p className="form-note">{coordinatesKnown?'Coordinates were supplied for this venue.':'No venue coordinates were supplied. This pin starts at the city center; adjust it to the meeting place.'}</p></details>
-    <button className="primary" type="submit" disabled={dayIndex<0||alreadySaved}>Add to my day <ArrowRight size={16}/></button>
+    <button className="primary" type="submit" disabled={busy||dayIndex<0||alreadySaved}>{busy?'Applying…':'Add to my day'} <ArrowRight size={16}/></button>
   </form>;
 }
