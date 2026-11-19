@@ -12,6 +12,7 @@ import { initialWorkspace, importSharedPlan, parseWorkspaceBackup, MAX_BACKUP_FI
 import type { Trip, WorkspaceState } from '@/lib/types';
 
 type Auth = { available: boolean; user: AccountUser | null; message?: string; error?: string };
+type EntryForm = 'login' | 'signup' | 'trip' | 'recover' | 'reset';
 class AccountReplyError extends Error {
   readonly uncertain: boolean;
   constructor(message: string, uncertain = false) { super(message); this.uncertain = uncertain; }
@@ -31,7 +32,9 @@ async function accountRequest(body: object): Promise<Auth> {
   const user = data.user as AccountUser | null;
   try { accountWorkspaceKey(user); } catch { throw new AccountReplyError('The account identity was incomplete. Its outcome is not confirmed.', true); }
   const action = (body as { action?: string }).action;
-  if (action === 'logout' && user !== null || action === 'login' && user === null) throw new AccountReplyError('The account action was not confirmed.', true);
+  if ((action === 'logout' || action === 'recover' || action === 'resetPassword') && user !== null || action === 'login' && user === null) {
+    throw new AccountReplyError('The account action was not confirmed.', true);
+  }
   return { available: data.available, user, ...(typeof data.message === 'string' ? { message: data.message } : {}), ...(typeof data.error === 'string' ? { error: data.error } : {}) };
 }
 
@@ -40,7 +43,9 @@ export default function TravelApp() {
   const [loading, setLoading] = useState(true), [pending, setPending] = useState(false);
   const [workspace, setWorkspace] = useState<WorkspaceState | null>(null), [inTrip, setInTrip] = useState(false);
   const [sharedPlan, setSharedPlan] = useState<{tripId: string; hash: string} | undefined>(undefined);
-  const [form, setForm] = useState<'login' | 'signup' | 'trip' | null>(null);
+  const [form, setForm] = useState<EntryForm | null>(null);
+  const [recoveryEmail, setRecoveryEmail] = useState('');
+  const [resetNotice, setResetNotice] = useState('');
   const [notice, setNotice] = useState(''), [error, setError] = useState('');
   const [accountUncertain, setAccountUncertain] = useState(false);
   const [incoming, setIncoming] = useState(false);
@@ -51,9 +56,9 @@ export default function TravelApp() {
   const backupReadGeneration = useRef(0);
   const renderAccountEpoch = epoch.current;
   useEffect(() => {
-    if (form === 'login' || form === 'signup') authForm.current?.querySelector<HTMLInputElement>('input:not([disabled])')?.focus();
+    if (form && form !== 'trip') authForm.current?.querySelector<HTMLInputElement>('input:not([disabled])')?.focus();
   }, [form]);
-  function showForm(value: 'login' | 'signup' | 'trip') {
+  function showForm(value: EntryForm) {
     backupReadGeneration.current++; setRecovery(null); setForm(value);
   }
   function openSavedTrip(trip: Trip) {
@@ -127,6 +132,44 @@ export default function TravelApp() {
       }
     }
     finally { working.current = false; setPending(false); }
+  }
+  async function submitPasswordRecovery(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (working.current || accountUncertain || (form !== 'recover' && form !== 'reset')) return;
+    const values = new FormData(event.currentTarget);
+    const email = form === 'recover' ? String(values.get('email') ?? '').trim() : recoveryEmail;
+    const generation = ++epoch.current;
+    working.current = true;
+    setPending(true);
+    setError('');
+    try {
+      if (form === 'recover') {
+        const value = await accountRequest({ action: 'recover', email });
+        if (generation !== epoch.current) return;
+        setRecoveryEmail(email);
+        setResetNotice(value.message || 'If an account uses this email, a reset code will arrive from hello@clous.app.');
+        showForm('reset');
+      } else {
+        const value = await accountRequest({ action: 'resetPassword', email, code: values.get('code'), password: values.get('password') });
+        if (generation !== epoch.current) return;
+        setRecoveryEmail('');
+        setResetNotice('');
+        setNotice(value.message || 'Password updated. Log in with your new password.');
+        setForm(null);
+      }
+    } catch (reason) {
+      if (generation !== epoch.current) return;
+      if (reason instanceof AccountReplyError && reason.uncertain) {
+        if (form === 'recover') {
+          setRecoveryEmail(email);
+          setResetNotice('Email delivery could not be confirmed. If a code arrives, enter it below.');
+          showForm('reset');
+        } else setError('The password update could not be confirmed. Try logging in with your new password. If that fails, request a new code.');
+      } else setError(reason instanceof Error ? reason.message : 'The request could not be completed.');
+    } finally {
+      working.current = false;
+      setPending(false);
+    }
   }
   async function logout() {
     if (working.current) return;
@@ -297,16 +340,28 @@ export default function TravelApp() {
         <button className="text-button" disabled={pending} onClick={cancelRecovery}>Cancel recovery</button>
       </div>
     </Dialog>}
-    {form && <Dialog title={form === 'trip' ? 'Your next little escape' : form === 'signup' ? 'Make room for your next trip' : 'Welcome back'} onClose={() => { if (!pending) { setForm(null); setError(''); } }}>
+    {form && <Dialog title={form === 'trip' ? 'Your next little escape' : form === 'signup' ? 'Make room for your next trip' : form === 'recover' ? 'Reset your password' : form === 'reset' ? 'Choose a new password' : 'Welcome back'} onClose={() => { if (!pending) { setForm(null); setError(''); setRecoveryEmail(''); setResetNotice(''); } }}>
       {error && <p className="form-error" role="alert">{error}</p>}
       {accountUncertain && form !== 'trip' && <button className="text-button" disabled={pending} onClick={checkAccount}>Check account status</button>}
-      {form === 'trip' ? <NewTripForm onCreate={create}/> : <form key={form} ref={authForm} className="dialog-form" onSubmit={submitAuth}>
+      {form === 'trip' ? <NewTripForm onCreate={create}/> : form === 'recover' || form === 'reset' ? <form key={form} ref={authForm} className="dialog-form" onSubmit={submitPasswordRecovery}>
+        {form === 'recover' ? <label>Email<input name="email" type="email" defaultValue={recoveryEmail} autoComplete="email" maxLength={254} required disabled={pending}/></label> : <>
+          <p className="form-note" role="status">{resetNotice}</p>
+          <p className="form-note">Use the latest code for {recoveryEmail}.</p>
+          <label>Email code<input name="code" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{8}" maxLength={8} required disabled={pending}/></label>
+          <label>New password<input name="password" type="password" minLength={10} maxLength={128} autoComplete="new-password" aria-describedby="reset-password-note" required disabled={pending}/></label>
+          <p id="reset-password-note" className="form-note">Use 10–128 characters for your new password.</p>
+        </>}
+        <button className="primary" disabled={pending || accountUncertain}>{pending ? 'One moment…' : form === 'recover' ? 'Email me a code' : 'Save new password'}</button>
+        {form === 'reset' && <button type="button" className="text-button auth-switch" disabled={pending} onClick={() => { setError(''); showForm('recover'); }}>Request a new code</button>}
+        <button type="button" className="text-button auth-switch" disabled={pending} onClick={() => { setError(''); setRecoveryEmail(''); setResetNotice(''); showForm('login'); }}>Back to Log in</button>
+      </form> : <form key={form} ref={authForm} className="dialog-form" onSubmit={submitAuth}>
         {!auth.available && <p className="form-note">Accounts are not connected yet. Planning without an account is available; registration and login need the account service.</p>}
         {form === 'signup' && <label>Your name<input name="name" maxLength={100} autoComplete="name" required disabled={pending}/></label>}
         <label>Email<input name="email" type="email" maxLength={254} autoComplete="email" required disabled={pending}/></label>
         <label>Password<input name="password" type="password" minLength={form === 'signup' ? 10 : 1} maxLength={128} autoComplete={form === 'signup' ? 'new-password' : 'current-password'} aria-describedby={form === 'signup' ? 'signup-password-note' : undefined} required disabled={pending}/></label>
         {form === 'signup' && <p id="signup-password-note" className="form-note">Use 10–128 characters for your password. Confirm your email before logging in.</p>}
         <button className="primary" disabled={pending || accountUncertain}>{pending ? 'One moment…' : form === 'signup' ? 'Create account' : 'Log in'}</button>
+        {form === 'login' && auth.available && <button type="button" className="text-button auth-switch" disabled={pending} onClick={() => { setRecoveryEmail(authForm.current?.querySelector<HTMLInputElement>('[name=email]')?.value ?? ''); setError(''); showForm('recover'); }}>Forgot password?</button>}
         <p className="form-note">Trips stay on this device. Signing in creates a separate space; guest plans are not attached to your account automatically.</p>
         <button type="button" className="text-button auth-switch" disabled={pending} onClick={() => { setError(''); showForm(form === 'signup' ? 'login' : 'signup'); }}>{form === 'signup' ? 'Already have an account? Log in' : 'New to Trippin? Create an account'}</button>
       </form>}

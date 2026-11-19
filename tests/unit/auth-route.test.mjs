@@ -39,6 +39,62 @@ function request(body, headers = {}) {
     headers: { Origin: 'https://trippin.example.test', 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(body) });
 }
 
+test('repeated signup gives neutral email and password recovery guidance', async t => {
+  harness(t, () => Response.json({ id: user.id, identities: [] }));
+  const response = await POST(request({ action: 'signup', email, password }));
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('set-cookie'), null);
+  const result = await response.json();
+  assert.equal(result.user, null);
+  assert.match(result.message, /^If this is a new account/);
+  assert.match(result.message, /reset your password/);
+});
+
+test('password recovery requests one code with generic success', async t => {
+  const calls = harness(t, () => Response.json({}));
+  const response = await POST(request({ action: 'recover', email }));
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('set-cookie'), null);
+  assert.match((await response.json()).message, /^If an account uses this email/);
+  assert.deepEqual(calls.map(call => [call.path, JSON.parse(call.init.body)]), [['/auth/v1/recover', { email }]]);
+});
+
+test('only a verified recovery code can change the password and no session reaches the caller', async t => {
+  const code = '01234567';
+  let valid = false, rejectsPassword = false;
+  const calls = harness(t, (path, init) => {
+    if (path === '/auth/v1/verify') {
+      assert.deepEqual(JSON.parse(init.body), { email, token: code, type: 'recovery' });
+      return valid ? Response.json(session) : Response.json({}, { status: 403 });
+    }
+    assert.equal(init.headers.Authorization, `Bearer ${access}`);
+    if (path === '/auth/v1/user') {
+      assert.equal(init.method, 'PUT');
+      assert.deepEqual(JSON.parse(init.body), { password });
+      return rejectsPassword ? Response.json({}, { status: 422 }) : Response.json(user);
+    }
+    assert.equal(path, '/auth/v1/logout?scope=local');
+    return new Response(null, { status: 204 });
+  });
+  const payload = { action: 'resetPassword', email, code, password };
+  assert.equal((await POST(request({ ...payload, code: 'wrong' }))).status, 400);
+  assert.equal(calls.length, 0);
+  const invalid = await POST(request(payload));
+  assert.equal(invalid.status, 400);
+  assert.match((await invalid.json()).error, /invalid or has expired/);
+  assert.deepEqual(calls.splice(0).map(call => call.path), ['/auth/v1/verify']);
+  valid = true;
+  for (const rejected of [false, true]) {
+    rejectsPassword = rejected;
+    const response = await POST(request(payload));
+    assert.equal(response.status, rejected ? 400 : 200);
+    assert.equal(response.headers.get('set-cookie'), null);
+    const result = await response.text();
+    assert.ok([access, refresh, code, password].every(secret => !result.includes(secret)));
+    assert.deepEqual(calls.splice(0).map(call => call.path), ['/auth/v1/verify', '/auth/v1/user', '/auth/v1/logout?scope=local']);
+  }
+});
+
 test('A01 a provider user without confirmed email is never admitted as a session', async t => {
   harness(t, path => Response.json(path.startsWith('/auth/v1/token') ? session : { ...user, email_confirmed_at: null }));
   const response = await POST(request({ action: 'login', email, password }));

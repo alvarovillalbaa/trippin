@@ -40,9 +40,9 @@ function reply(request: Request, body: object, status = 200, session?: Session |
   }
   return Response.json(body, { status, headers });
 }
-async function provider(config: NonNullable<ReturnType<typeof configuration>>, path: string, body?: object, access?: string) {
+async function provider(config: NonNullable<ReturnType<typeof configuration>>, path: string, body?: object, access?: string, method = body ? 'POST' : 'GET') {
   const signal = AbortSignal.timeout(5000);
-  const response = await fetch(config.url + path, { method: body ? 'POST' : 'GET', redirect: 'error', cache: 'no-store',
+  const response = await fetch(config.url + path, { method, redirect: 'error', cache: 'no-store',
     signal, headers: { apikey: config.key, 'Content-Type': 'application/json',
       ...(access ? { Authorization: `Bearer ${access}` } : {}) }, ...(body ? { body: JSON.stringify(body) } : {}) });
   if (!response.ok) { void response.body?.cancel().catch(() => {}); throw new AuthFailure(response.status); }
@@ -100,8 +100,9 @@ export async function POST(request: Request) {
   if (request.headers.get('content-type')?.split(';')[0].trim().toLowerCase() !== 'application/json') return reply(request, { error: 'Use a JSON account request.' }, 415);
   try {
     const body = await readObject(request.body, 16384, 400, 408, request.signal), action = body.action;
-    if (typeof action !== 'string' || !['session', 'signup', 'login', 'logout'].includes(action)) throw new AuthFailure(400);
-    const fields = action === 'signup' || action === 'login' ? ['action', 'email', 'password', 'name'] : ['action'];
+    if (typeof action !== 'string' || !['session', 'signup', 'login', 'logout', 'recover', 'resetPassword'].includes(action)) throw new AuthFailure(400);
+    const fields = action === 'signup' || action === 'login' ? ['action', 'email', 'password', 'name']
+      : action === 'recover' ? ['action', 'email'] : action === 'resetPassword' ? ['action', 'email', 'code', 'password'] : ['action'];
     if (Object.keys(body).some(key => !fields.includes(key))) throw new AuthFailure(400);
     const config = configuration();
     if (action === 'logout') {
@@ -140,6 +141,37 @@ export async function POST(request: Request) {
       }
     }
     const email = typeof body.email === 'string' ? body.email.trim() : '', password = body.password;
+    if (action === 'recover' || action === 'resetPassword') {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
+        return reply(request, { error: 'Enter a valid email address.' }, 400);
+      }
+      if (action === 'recover') {
+        await provider(config, '/recover', { email });
+        return reply(request, { available: true, user: null, message: 'If an account uses this email, a reset code will arrive from hello@clous.app.' });
+      }
+      if (typeof body.code !== 'string' || !/^\d{8}$/.test(body.code) || typeof password !== 'string' || password.length < 10 || password.length > 128) {
+        return reply(request, { error: 'Enter the 8-digit code and a new password of 10–128 characters.' }, 400);
+      }
+      let verification: Record<string, unknown>;
+      try { verification = await provider(config, '/verify', { email, token: body.code, type: 'recovery' }); }
+      catch (error) {
+        if (!(error instanceof AuthFailure) || ![400, 401, 403, 404, 422].includes(error.status)) throw error;
+        return reply(request, { error: 'That reset code is invalid or has expired. Check the email and code, or request a new one.' }, 400);
+      }
+      const recoverySession = sessionValue(verification);
+      if (!recoverySession) throw new AuthFailure(502);
+      try {
+        await provider(config, '/user', { password }, recoverySession.access_token, 'PUT');
+      } catch (error) {
+        if (!(error instanceof AuthFailure) || ![400, 401, 403, 422].includes(error.status)) throw error;
+        return reply(request, { error: 'The password was rejected. Request a new code and choose a different password.' }, 400);
+      } finally {
+        // The recovery session is server-only. Revoke it even when the update fails.
+        try { await provider(config, '/logout?scope=local', {}, recoverySession.access_token); }
+        catch { /* The provider session was never given to the browser. */ }
+      }
+      return reply(request, { available: true, user: null, message: 'Password updated. Log in with your new password.' });
+    }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254 || typeof password !== 'string' || password.length < (action === 'signup' ? 10 : 1) || password.length > 128) {
       return reply(request, { error: 'Use a valid email and password. New passwords need 10–128 characters.' }, 400);
     }
@@ -153,7 +185,7 @@ export async function POST(request: Request) {
       const created = result.user && typeof result.user === 'object' ? result.user as Record<string, unknown> : result;
       if (typeof created.id !== 'string' || !/^[a-f\d]{8}-(?:[a-f\d]{4}-){3}[a-f\d]{12}$/i.test(created.id)) throw new AuthFailure(502);
       // Do not infer an authenticated user from an unconfirmed signup response.
-      return reply(request, { available: true, user: null, message: 'Check your email to confirm your account, then log in.' });
+      return reply(request, { available: true, user: null, message: 'If this is a new account, check your email to confirm it. Already have an account? Log in or reset your password.' });
     }
     const user = await verifiedUser(config, session.access_token);
     return reply(request, { available: true, user }, 200, session);
