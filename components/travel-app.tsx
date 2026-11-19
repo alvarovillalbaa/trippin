@@ -352,6 +352,14 @@ export default function TravelApp() {
           <p id="reset-password-note" className="form-note">Use 10–128 characters for your new password.</p>
         </>}
         <button className="primary" disabled={pending || accountUncertain}>{pending ? 'One moment…' : form === 'recover' ? 'Email me a code' : 'Save new password'}</button>
+        {form === 'recover' && <button type="button" className="text-button auth-switch" disabled={pending || accountUncertain} onClick={event => {
+          const emailForm = event.currentTarget.form;
+          if (!emailForm?.reportValidity()) return;
+          setRecoveryEmail(String(new FormData(emailForm).get('email') ?? '').trim());
+          setResetNotice('Enter the code from hello@clous.app.');
+          setError('');
+          showForm('reset');
+        }}>I already have a code</button>}
         {form === 'reset' && <button type="button" className="text-button auth-switch" disabled={pending} onClick={() => { setError(''); showForm('recover'); }}>Request a new code</button>}
         <button type="button" className="text-button auth-switch" disabled={pending} onClick={() => { setError(''); setRecoveryEmail(''); setResetNotice(''); showForm('login'); }}>Back to Log in</button>
       </form> : <form key={form} ref={authForm} className="dialog-form" onSubmit={submitAuth}>
