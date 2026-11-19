@@ -1,6 +1,6 @@
 # Tests and verification boundaries
 
-Last updated: 2026-11-18
+Last updated: 2026-11-19
 
 The [consumer release status](../docs/results/2026/11-16/consumer-release-status.md)
 owns the current proof and publication snapshot. The latest confirmation/recovery
@@ -14,12 +14,21 @@ remains separate.
 The approved SMTP/template check separately verifies actual signed own-mailbox
 delivery with a direct HTTPS confirmation anchor, the same confirmed provider
 identity and local logout. Controlled verification returned `otp_expired` after
-prior token consumption; the first click and hosted application remain unproven.
+prior token consumption; that provider-only packet did not prove a first click
+or hosted application behavior. Later hosted packets qualify their separate scope.
 Its one-message allowance is closed. A separate hosted API check now passes
 signup, signed direct email, login, cookie-jar session lookup and logout. Its
 one-email allowance is also closed; controlled verification found the token
-already consumed. Native browser acceptance remains pending under Storage Guard.
-Do not resend or replay closed QA packets.
+already consumed. [Existing-account native sessions](../docs/results/2026/11-18/hosted-auth-sessions.md)
+now pass login, native cookies/reload, provider renewal after access-cookie
+removal and visible logout in desktop/narrow Chromium. [Fresh native signup and
+controlled first click](../docs/results/2026/11-19/hosted-auth-confirmation.md)
+now pass all request/redirect/source/privacy/cleanup gates; local Storage Guard
+still prohibits heavy runtime and scoped remote runners supply browser proof.
+Do not resend or replay closed QA packets. The later hosted authored-error
+H-U02 check also verifies actual fragment scrubbing, sanitized alerts, Email
+focus, contained390px geometry and computed12px/13px text with contrast above4.5:1.
+That authored error does not substitute for the distinct real received-link case.
 
 The [Next security repair](../docs/results/2026/11-18/next-security-release.md)
 records a fresh complete-graph audit,42 selected Auth/entry/usage controls,

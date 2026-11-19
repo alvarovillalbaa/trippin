@@ -18,6 +18,21 @@ the published stylesheet hash; no other stylesheet bytes change.
 The prior H-U01 hosted authored-error check passes actual fragment scrubbing,
 sanitized alerts, blank login fields, Email focus and contained390px dialog
 geometry at main63bd8566; its screenshots motivated this change. It does not
-qualify the new CSS. Deployment build/served-source checks and a fresh rendered
-check will be recorded on the release PR. The one-use signup/confirmation
-packet remains separate and respects its existing email-rate window.
+qualify the new CSS. PR6 separately ships the two-rule repair at main
+`c5edeabdf8a0ee1199f6dd4149f2b4ea809b3909`, with Preview/production Next/types/Eve
+builds and actual canonical/immutable HTML agreement.
+
+Fresh [H-U02/run44427511057](https://github.com/alvarovillalbaa/trippin/actions/runs/44427511057)
+at [checked source6b21bead](https://github.com/alvarovillalbaa/trippin/commit/6b21beade2f9e706b7403e7b1d016c5beb851b0c)
+verifies actual computed12px helper text at6.1783:1 and13px alert text at6.6502:1.
+The empty, focused login dialog stays inside390×844. Both anonymous screenshots
+were inspected; the larger/darker message and device-storage explanation are
+readable. The home frame precedes completed hero-image loading, so it qualifies
+text/error geometry only, not the whole landing/photo load.
+
+All213 source inputs,29 supporting controls, the Chromium redirect/refusal
+control and normal source/process/browser/tool fixture/scratch/privacy closure
+pass independent review. The28 actual CI seconds and872 unused seconds are
+closed; workflow/ref retirement and zero QA Vercel deployments are read back.
+No credentials, account, email or provider link were used. Real signup/first
+click is qualified by the separate [fresh hosted packet](hosted-auth-confirmation.md).

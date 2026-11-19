@@ -1,6 +1,6 @@
 # Consumer release status
 
-Updated 18 November 2026; initial summary 16 November. This page curates the retained source, CI and provider
+Updated 19 November 2026; initial summary 16 November. This page curates the retained source, CI and provider
 receipts for release documentation. It does not execute or replace those checks.
 Historical failures and originals remain preserved. Private credentials,
 operator handoffs and unrelated portfolio operations are excluded from this page.
@@ -32,8 +32,14 @@ passes desktop and narrow touch-emulated login, native-cookie reload, real
 provider renewal after access-cookie removal and visible logout. It binds
 production `9657b96830c2bdbc136640a471c2cc9ca20a2977` and deployment
 `dpl_FX3xgx3fDhvv3Hx6WK1nqzo4MWf5`; four safe anonymous screenshots were
-visually reviewed. Native signup, controlled confirmation first click and real
-elapsed TTL expiry remain unqualified. Local Storage Guard newly fails at13.1
+visually reviewed. The later [fresh hosted signup/confirmation packet](../11-19/hosted-auth-confirmation.md)
+passes H-C21/H-C22, including the actual received-link first click, all redirect
+hops, native cookies/reload and both own-session revocations at PR6 source
+`c5edeabdf8a0ee1199f6dd4149f2b4ea809b3909` /
+`dpl_HhGyF9EUZctjWx69ezMmXEKfjBR4`. Its62 actual CI seconds, both unused
+budgets, six encrypted inputs, workflows and refs are closed. Earlier partial
+and failed packets remain unaccepted. Real elapsed TTL expiry remains separate.
+Latest measured local Storage Guard fails at15.3
 GiB against34.0 required; the isolated remote runner supplied this proof.
 A20-minute deployment-scoped error/fatal
 scan returned no matching groups, without a full-observability claim.
@@ -45,7 +51,11 @@ source inference, not an exploit test. The later [Next16.4.6 repair](../11-18/ne
 qualifies the exact generated pair with an explicit complete-graph clean audit,
 42 focused controls, types, both builds and normal process/source/output cleanup.
 Its release PR records Preview/production and served-source readbacks separately.
-The first failed cleanup and second incomplete audit remain preserved and
+The [account-feedback legibility repair](../11-19/account-dialog-legibility.md)
+ships through PR6; H-U02 verifies actual12px/13px text, contrast above4.5:1,
+blank-field focus and contained390px geometry. The [delivery summary](../11-19/consumer-completion.md)
+maps all five consumer requirements and the reliability/test/documentation work.
+The security packet's first failed cleanup and second incomplete audit remain preserved and
 unaccepted. All three temporary workflows/refs and invocation budgets are closed.
 
 ## Before activation — retained snapshot
@@ -176,16 +186,20 @@ before replacement, then verifies the candidate and preserved references.
 Automatic recovery is limited to 40 source trips and 256 final scoped entries.
 Lossless original-data downloads remain available when automatic repair refuses.
 
-## Pending release gates
+<a id="pending-release-gates"></a>
+## Remaining proof boundaries and closed scopes
 
-1. Qualify native signup and controlled confirmation-return rendering in a
-   fresh bounded remote scope under the owner's standing execution approval.
-   H-A01/H-A02 accept existing-account sessions only; real elapsed TTL expiry,
-   cross-tab refresh, physical devices and assistive technology remain separate.
-2. Preserve the consumed-token observations and unknown cause. Controlled
-   first-click proof remains missing; current email allowances and prior QA
-   identities/budgets are closed. A necessary fresh follow-up needs new
-   identities, one explicit message ceiling and unchanged provider rate limits;
+The requested consumer/account release gates above now pass. These remaining
+limits are separate future integration/verification boundaries, not unstarted
+replays of completed packets.
+
+1. H-A01/H-A02 accept existing-account sessions; fresh H-C21/H-C22 accept native
+   signup and controlled confirmation return with complete redirect interception.
+   Real elapsed TTL expiry, cross-tab refresh, physical devices and assistive
+   technology remain separate.
+2. Preserve earlier consumed-token observations and unknown cause. Later fresh
+   controlled first-click success does not diagnose that earlier consumption.
+   Every prior identity, message allowance and unused budget stays closed;
    never replay a closed link or resend an unchanged failure.
 3. Preserve the exact qualified dependency pair and source/build receipts.
    Bind deployment/served-source checks to its actual release head; isolated
