@@ -1,6 +1,6 @@
 # Delivery coverage
 
-Last updated: 2026-11-18
+Last updated: 2026-11-19
 
 The [consumer release status](results/2026/11-16/consumer-release-status.md)
 owns the current qualification, configuration and publication snapshot, with
@@ -10,11 +10,16 @@ journeys at its recorded source; it is retired after 142 cumulative CI seconds.
 Earlier accepted case identities remain closed at their exact source. Historical
 overlapping control counts must not be added together.
 
-The consumer edition is published through PR3 and production READY. Hosted
-real-provider signup, login, cookie-jar session lookup and logout pass. Native
-browser and first-click acceptance remain pending under Storage Guard. The
+The consumer edition was activated through PR3; later maintenance is recorded
+in the dated release status. Hosted real-provider signup, login, cookie-jar
+session lookup and logout pass. [Existing-account native sessions](results/2026/11-18/hosted-auth-sessions.md)
+pass desktop/narrow login, reload, provider renewal after access-cookie removal
+and visible logout at their exact source/deployment. [Fresh native signup and
+controlled first-click packet acceptance](results/2026/11-19/hosted-auth-confirmation.md)
+now pass with all redirect hops intercepted and both own sessions locally revoked. Local Storage Guard
+still prohibits heavy runtime; scoped remote runners supply native proof. The
 approved SMTP/template correction delivers a direct HTTPS link with
-SPF/DKIM/DMARC passing. Controlled verification found the token already consumed;
+SPF/DKIM/DMARC passing. The earlier controlled verification found its token already consumed;
 the prior consumption cause remains unproven.
 The historical table below describes the earlier edition and its scoped evidence;
 it does not qualify the changed consumer flows. Operational histories and their

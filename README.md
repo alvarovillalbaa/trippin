@@ -1,6 +1,6 @@
 # trippin
 
-Last updated: 2026-11-18
+Last updated: 2026-11-19
 
 A flexible travel workspace for the days you have, and the things you stumble into.
 
@@ -8,7 +8,9 @@ The current local iteration opens on a consumer landing page with signup/login a
 
 The [current release status](docs/results/2026/11-16/consumer-release-status.md#current-status) separates source-specific acceptance, deployment and provider proof. The consumer edition is live through [PR #3](https://github.com/alvarovillalbaa/trippin/pull/3). Preview and production Next/Eve builds pass; actual homepage and hosted Auth API checks pass. The latest confirmation/recovery packet's93 controls and two native journeys remain closed at their accepted source. [Real-provider hosted browser sessions](docs/results/2026/11-18/hosted-auth-sessions.md) now pass on desktop and narrow touch-emulated Chromium.
 
-[Account setup](docs/accounts.md) explains the Supabase Auth adapter, HttpOnly sessions, separate account/guest browser storage and lossless recovery. Actual hosted signup, direct signed email, login, native-cookie reload, provider renewal and logout pass. Controlled confirmation found the fresh token already consumed. Native signup and controlled confirmation-link return remain [pending release gates](docs/results/2026/11-16/consumer-release-status.md#pending-release-gates).
+[Account setup](docs/accounts.md) explains the Supabase Auth adapter, HttpOnly sessions, separate account/guest browser storage and lossless recovery. Actual hosted signup, direct signed email, login, native-cookie reload, provider renewal and logout pass. An earlier controlled confirmation found its token already consumed; that earlier cause remains unknown. The [fresh native signup and controlled confirmation-link packet](docs/results/2026/11-19/hosted-auth-confirmation.md) now passes both stages with complete redirect interception and confirmed local session cleanup.
+
+The [consumer delivery summary](docs/results/2026/11-19/consumer-completion.md) maps the requested behavior, reliability repairs, rendered account-feedback improvements and source-specific proof.
 
 Built with Next.js, React, Leaflet/OpenStreetMap, and Vercel EVE. Node 24 is required by EVE.
 

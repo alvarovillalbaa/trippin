@@ -1,13 +1,18 @@
 # Deployment
 
-## Current consumer transition — 18 November
+## Current consumer release — 19 November
 
 The [dated release status](results/2026/11-16/consumer-release-status.md#current-status)
 records the published consumer edition and rollback metadata. PR3 activated
 `1b6a4c3d4e1ec6089281139a8b1d89ba3704cb62`; production was READY and actual
 root HTML embedded its deployment ID. Its Preview/production builds and hosted Auth
 API checks pass. The recovery packet remains closed at its accepted source.
-Native real-provider browser acceptance remains pending under Storage Guard.
+[Existing-account native sessions](results/2026/11-18/hosted-auth-sessions.md)
+pass desktop/narrow login, reload, provider renewal after access-cookie removal
+and visible logout at their recorded source/deployment. [Fresh native signup and
+controlled first click](results/2026/11-19/hosted-auth-confirmation.md) also pass;
+local Storage Guard
+continues to prohibit heavy runtime, with scoped remote runners used for checks.
 The later [Next security repair](results/2026/11-18/next-security-release.md)
 qualifies the exact dependency pair; its release PR records the subsequent
 Preview, production and served-source readbacks.
@@ -24,8 +29,14 @@ need fresh metadata/readiness and task authority.
 Production return settings and server Auth variables are already configured.
 SMTP and the approved template correction deliver a direct HTTPS link. Confirmed
 identity and local logout pass; the token was already consumed before controlled
-verification. Hosted Auth API and deployment/source checks pass; controlled
-first click and native browser Auth remain [pending release gates](results/2026/11-16/consumer-release-status.md#pending-release-gates).
+verification. Hosted API, deployment/source and the later fresh native signup/first-click
+packet pass at their recorded inputs. The older consumed-token cause remains
+unknown; [remaining proof boundaries](results/2026/11-16/consumer-release-status.md#pending-release-gates)
+retain physical-device, elapsed TTL and future integration limits.
+The [account-dialog readability repair](results/2026/11-19/account-dialog-legibility.md)
+ships through PR6, with actual computed text sizes/contrast and contained mobile
+rendering verified separately. Later documentation publication preserves app
+and dependency inputs; its PR records the final served-source readback.
 Read [account setup](accounts.md) for configuration and session boundaries.
 
 ## Original deployment configuration and historical proof

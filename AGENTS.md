@@ -14,8 +14,11 @@ Historical receipts and earlier failed candidates remain unchanged.
   binds the later qualified dependency pair, complete audit and release gates.
   [Native hosted sessions](docs/results/2026/11-18/hosted-auth-sessions.md) pass
   desktop/narrow login, reload, provider renewal after access-cookie removal
-  and visible logout. Controlled signup/first-click return and real elapsed TTL
-  expiry remain unqualified. Latest Storage Guard fails at13.1 GiB against34.0 GiB.
+  and visible logout. [Fresh hosted signup/confirmation](docs/results/2026/11-19/hosted-auth-confirmation.md)
+  passes H-C21/H-C22 at runtime `c5edeabdf8a0ee1199f6dd4149f2b4ea809b3909`
+  with complete redirect interception and both own sessions locally revoked.
+  Real elapsed TTL expiry remains unqualified. Latest measured Storage Guard
+  fails at15.3 GiB against34.0 GiB.
   The approved confirmation/recovery
   packet passes 93 controls, Next/Eve builds and both fresh Chromium journeys at
   source `762911fc0f9ba3375dd68bb535de2b71dfcd31ac`, run `44055810000`.
@@ -29,8 +32,9 @@ Historical receipts and earlier failed candidates remain unchanged.
   template correction are applied. A fresh own-mailbox email has a direct HTTPS
   provider link and passing SPF/DKIM/DMARC. Its controlled verification returned
   `otp_expired`; password login and `/user` confirm the same new account was
-  already confirmed. The prior consumption cause and controlled first click
-  remain unproven. Approved release publication/deployment is done; future
+  already confirmed. The prior consumption cause remains unproven; the later
+  fresh hosted packet separately passes controlled first click. Approved release
+  publication/deployment is done; future
   changes retain their scope-specific owner gates.
 - Assemble a release as an overlay on fresh full main. Never merge the sparse QA
   tree wholesale or ship its synthetic Vercel deployment refusal. Preserve dirty
@@ -41,8 +45,9 @@ Historical receipts and earlier failed candidates remain unchanged.
   Preserve confirmation requirements and unrelated settings.
 - The configured sender is `hello@clous.app`; actual own-mailbox delivery passes
   SPF/DKIM/DMARC. The old tracked-link HTTP failure remains preserved. The new
-  direct-link receipt, confirmed identity and current local logout pass;
-  those do not establish a controlled first click or hosted application.
+  provider-only direct-link receipt, confirmed identity and local logout pass;
+  the later fresh hosted packet separately qualifies controlled first click
+  and native application behavior at its named source/deployment.
   Never change unrelated projects, share their Auth, pause them or upgrade a
   paid plan to bypass capacity. Missing real checks remain explicitly pending.
 - Preserve private task credentials: ignored `.env.trippin-platform.local`
