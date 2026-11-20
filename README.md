@@ -1,5 +1,9 @@
 # trippin
 
+<!-- project-family:start -->
+> **Project family:** [Web & Creative Apps](https://github.com/alvarovillalbaa#web-and-creative-apps) · **Area:** Travel
+<!-- project-family:end -->
+
 Last updated: 2026-11-19
 
 A flexible travel workspace for the days you have, and the things you stumble into.
